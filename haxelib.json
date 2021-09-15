@@ -1,0 +1,10 @@
+{
+	"name" : "hl-recast",
+	"url" : "https://github.com/onehundredfeet/hl-recast",
+	"license" : "MIT",
+	"contributors" : ["onehundredfeet"],
+	"description" : "Recast Navigation support for Haxe HL/JS.",
+	"version" : "0.1.0",
+	"releasenote" : "",
+	"dependencies": { "webidl" : "" }
+}
