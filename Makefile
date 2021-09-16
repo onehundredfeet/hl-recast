@@ -1,5 +1,5 @@
 genhl:
-	haxe -cp generator  -lib webidl --macro "recast.Generator.generateCpp()"
+	haxe -cp generator  -lib hl-idl --macro "recast.Generator.generateCpp()"
 	
 genjs:
-	haxe -cp generator -lib webidl --macro "recast.Generator.generateJs()"
+	haxe -cp generator -lib hl-idl --macro "recast.Generator.generateJs()"
