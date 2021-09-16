@@ -12,7 +12,7 @@ THIS PROJECT IS IN PROGRESS - DO NOT CLONE, IT DOES NOT WORK
 1.3. Install heaps: (For linux: https://heaps.io/documentation/installation.html )  
 1.4. Install the modified webidl from git:   
 ```sh
-haxelib git webidl https://github.com/onehundredfeet/webidl.git
+haxelib git hl-idl https://github.com/onehundredfeet/hl-idl.git
 ```
 
 ### 2. Build
