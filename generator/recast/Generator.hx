@@ -10,18 +10,17 @@ class Generator {
 #pragma warning(disable:4244)
 #pragma warning(disable:4316)
 #endif
-
+#include <Recast.h>
+#include <RecastAlloc.h>
+#include <RecastAssert.h>
 
 ";
-
 
 	static var options = { idlFile : "generator/recast.idl", nativeLib : "recast", outputDir : "src", includeCode : INCLUDE, autoGC : true };
 
 	public static function generateCpp() {
 		webidl.Generate.generateCpp(options);
 	}
-
-
 
 }
 #end

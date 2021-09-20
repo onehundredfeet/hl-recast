@@ -1,5 +1,7 @@
 
-interface abc {
+interface Animal {
+	void Animal();
+	attribute float scalar;
 	attribute float[] list;
 };
 

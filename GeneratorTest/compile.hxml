@@ -1,0 +1,6 @@
+-lib heaps
+-lib recast
+-lib webidl
+-cp .
+-main Main
+-hl sample.hl
