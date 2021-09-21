@@ -1,0 +1,4 @@
+Build/
+sample.hl
+.vscode/
+src/recast.cpp
