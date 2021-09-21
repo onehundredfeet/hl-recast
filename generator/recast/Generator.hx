@@ -14,6 +14,9 @@ class Generator {
 #include <RecastAlloc.h>
 #include <RecastAssert.h>
 
+// Dummy decalration to fix some build errors.
+class Recast;
+
 ";
 
 	static var options = { idlFile : "generator/recast.idl", nativeLib : "recast", outputDir : "src", includeCode : INCLUDE, autoGC : true };
