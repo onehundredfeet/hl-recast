@@ -1,0 +1,6 @@
+-lib webidl
+-lib recast
+-lib tink
+-cp .
+-main Main
+-hl sample.hl

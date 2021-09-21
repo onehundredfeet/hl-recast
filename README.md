@@ -102,3 +102,6 @@ specific cmake command example on linux:
 ```sh
     make install
 ```
+
+
+cmake .. -A x64 -G "Visual Studio 15 2017" -DRECAST_SRC_DIR="C:/Projects/RecastToHL/recastnavigation_cpp/Recast" -DHL_INCLUDE_DIR="C:/HaxeToolkit/HashLink/hl-1.11.0-win/include" -DHL_LIB_DIR="C:/HaxeToolkit/HashLink/hl-1.11.0-win" -DHDLL_DESTINATION="C:/HaxeToolkit/HashLink/hl-1.11.0-win"
