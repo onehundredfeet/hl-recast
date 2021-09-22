@@ -14,6 +14,13 @@ ${RECAST_SRC_DIR}/Source/RecastMeshDetail.cpp
 ${RECAST_SRC_DIR}/Source/RecastRasterization.cpp
 ${RECAST_SRC_DIR}/Source/RecastRegion.cpp
 src/recast.cpp
+${DETOUR_SRC_DIR}/Source/DetourAlloc.cpp
+${DETOUR_SRC_DIR}/Source/DetourAssert.cpp
+${DETOUR_SRC_DIR}/Source/DetourCommon.cpp
+${DETOUR_SRC_DIR}/Source/DetourNavMesh.cpp
+${DETOUR_SRC_DIR}/Source/DetourNavMeshBuilder.cpp
+${DETOUR_SRC_DIR}/Source/DetourNavMeshQuery.cpp
+${DETOUR_SRC_DIR}/Source/DetourNode.cpp
 )
 
 set_target_properties(recast.hdll
@@ -28,6 +35,7 @@ cmake_policy(SET CMP0015 NEW)
 target_include_directories(recast.hdll
 PRIVATE
 ${RECAST_SRC_DIR}/Include
+${DETOUR_SRC_DIR}/Include
 ${HL_INCLUDE_DIR}
 )
 

@@ -292,6 +292,12 @@ interface CharArray {
 	void Set(int index, char value);
 };
 
+interface ShortArray {
+	void ShortArray(int size);
+	int Get(int index);
+	void Set(int index, int value);
+};
+
 interface Recast{
 	[Static] void rcFreeHeightField(rcHeightfield hf);
 	[Static] rcHeightfield rcAllocHeightfield();
@@ -373,4 +379,88 @@ interface Recast{
 
 	[Static] bool rcBuildRegionsMonotone(rcContext ctx, [Ref] rcCompactHeightfield chf, 
 							[Const]  int borderSize, [Const]  int minRegionArea, [Const]  int mergeRegionArea);
+};
+
+
+// Detour
+interface DetourMath {
+	[Static] float dtMathFabsf(float x);
+	[Static] float dtMathSqrtf(float x);
+	[Static] float dtMathFloorf(float x);
+	[Static] float dtMathCeilf(float x);
+	[Static] float dtMathCosf(float x);
+	[Static] float dtMathSinf(float x);
+	[Static] float dtMathAtan2f(float y, float x);
+	[Static] bool dtMathIsfinite(float x);
+};
+
+
+interface DetourCommon {
+
+	[Static] void dtVcross(FloatArray dest, [Const] FloatArray v1, [Const] FloatArray v2);
+	[Static] float dtVdot([Const] FloatArray v1, [Const] FloatArray v2);
+	[Static] void dtVmad(FloatArray dest, [Const] FloatArray v1, [Const] FloatArray v2, [Const] float s);
+	[Static] void dtVlerp(FloatArray dest, [Const] FloatArray v1, [Const] FloatArray v2, [Const] float t);
+	[Static] void dtVadd(FloatArray dest, [Const] FloatArray v1, [Const] FloatArray v2);
+	[Static] void dtVsub(FloatArray dest, [Const] FloatArray v1, [Const] FloatArray v2);
+	[Static] void dtVscale(FloatArray dest, [Const] FloatArray v, [Const] float t);
+	[Static] void dtVmin(FloatArray mn, [Const] FloatArray v);
+	[Static] void dtVmax(FloatArray mx, [Const] FloatArray v);
+	[Static] void dtVset(FloatArray dest, [Const] float x, [Const] float y, [Const] float z);
+	[Static] void dtVcopy(FloatArray dest, [Const] FloatArray a);
+	[Static] float dtVlen([Const] FloatArray v);
+	[Static] float dtVlenSqr([Const] FloatArray v);
+	[Static] float dtVdist([Const] FloatArray v1, [Const] FloatArray v2);
+	[Static] float dtVdistSqr([Const] FloatArray v1, [Const] FloatArray v2);
+	[Static] float dtVdist2D([Const] FloatArray v1, [Const] FloatArray v2);
+	[Static] float dtVdist2DSqr([Const] FloatArray v1, [Const] FloatArray v2);
+	[Static] void dtVnormalize(FloatArray v);
+	[Static] bool dtVequal([Const] FloatArray p0, [Const] FloatArray p1);
+	[Static] bool dtVisfinite([Const] FloatArray v);
+	[Static] bool dtVisfinite2D([Const] FloatArray v);
+	[Static] float dtVdot2D([Const] FloatArray u, [Const] FloatArray v);
+	[Static] float dtVperp2D([Const] FloatArray u, [Const] FloatArray v);
+	[Static] float dtTriArea2D([Const] FloatArray a, [Const] FloatArray b, [Const] FloatArray c);
+
+	[Static] bool dtOverlapQuantBounds([Const] ShortArray amin, [Const] ShortArray amax,
+						[Const] ShortArray bmin, [Const] ShortArray bmax);
+
+	[Static] bool dtOverlapBounds([Const] FloatArray amin, [Const] FloatArray amax,
+						[Const] FloatArray bmin, [Const] FloatArray bmax);
+
+	[Static] void dtClosestPtPointTriangle(FloatArray closest, [Const] FloatArray p,
+						[Const] FloatArray a, [Const] FloatArray b, [Const] FloatArray c);
+
+	[Static] bool dtClosestHeightPointTriangle([Const] FloatArray p, [Const] FloatArray a, [Const] FloatArray b, 
+						[Const] FloatArray c, [Ref] float h);
+
+	[Static] bool dtIntersectSegmentPoly2D([Const] FloatArray p0, [Const] FloatArray p1,
+							  [Const] FloatArray verts, int nverts,
+							  [Ref] float tmin, [Ref] float tmax,
+							  [Ref] int segMin, [Ref] int segMax);
+
+	[Static] bool dtIntersectSegSeg2D([Const] FloatArray ap, [Const] FloatArray aq,
+						 [Const] FloatArray bp, [Const] FloatArray bq,
+						 [Ref] float s, [Ref] float t);
+
+	[Static] bool dtPointInPolygon([Const] FloatArray pt, [Const] FloatArray verts, [Const] int nverts);
+
+	[Static] bool dtDistancePtPolyEdgesSqr([Const] FloatArray pt, [Const] FloatArray verts, [Const] int nverts,
+								FloatArray ed, FloatArray et);
+
+	[Static] float dtDistancePtSegSqr2D([Const] FloatArray pt, [Const] FloatArray p, [Const] FloatArray q, [Ref] float t);
+
+	[Static] void dtCalcPolyCenter(FloatArray tc, [Const] ShortArray idx, int nidx, [Const] FloatArray verts);
+
+	[Static] bool dtOverlapPolyPoly2D([Const] FloatArray polya, [Const] int npolya,
+							[Const] FloatArray polyb, [Const] int npolyb);
+
+	[Static] int dtNextPow2(int v);
+	[Static] int dtIlog2(int v);
+	[Static] int dtAlign4(int x);
+	[Static] int dtOppositeTile(int side);
+	[Static] void dtSwapByte(CharArray a, CharArray b);	
+
+	[Static] void dtRandomPointInConvexPoly([Const] FloatArray pts, [Const] int npts, FloatArray areas,
+								[Const] float s, [Const] float t, FloatArray out);
 };
