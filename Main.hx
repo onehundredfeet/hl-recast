@@ -4,8 +4,20 @@ class Main {
 	
 	public static function main() {
 		trace("main()");
-		test_rcCalcBounds_0();
-		test_rcCalcBounds_1();
+		test_DetourMath_0();
+		// test_rcCalcBounds_0();
+		// test_rcCalcBounds_1();
+	}
+
+	public static function test_DetourMath_0(){
+		
+		var x : Float = -10.0;
+		var y : Float = 10.0;
+		var abs_x = recast.Native.DetourMath.dtMathFabsf(x);
+		var abs_y = recast.Native.DetourMath.dtMathFabsf(y);
+
+		trace(x, abs_x);
+		trace(y, abs_y);
 	}
 
 	public static function test_rcCalcBounds_0(){

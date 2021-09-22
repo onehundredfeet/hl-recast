@@ -14,14 +14,25 @@ class Generator {
 #include <RecastAlloc.h>
 #include <RecastAssert.h>
 
+#include <DetourAlloc.h>
+#include <DetourAssert.h>
+#include <DetourCommon.h>
+#include <DetourMath.h>
+#include <DetourNavMesh.h>
+#include <DetourNavMeshBuilder.h>
+#include <DetourNavMeshQuery.h>
+#include <DetourNode.h>
+#include <DetourStatus.h>
+
 // Dummy decalration to fix some build errors.
 class Recast;
+class DetourMath;
+class DetourCommon;
 
 ";
-
-	static var options = { idlFile : "generator/recast.idl", nativeLib : "recast", outputDir : "src", includeCode : INCLUDE, autoGC : true };
-
-	public static function generateCpp() {
+	
+	public static function generateCpp() {	
+		var options = { idlFile : "generator/recast.idl", nativeLib : "recast", outputDir : "src", includeCode : INCLUDE, autoGC : true };
 		webidl.Generate.generateCpp(options);
 	}
 
