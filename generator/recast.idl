@@ -475,6 +475,7 @@ interface DetourCommon {
 //--------------------------------------------------------------------------------------------
 // DetourStatus.h
 //--------------------------------------------------------------------------------------------
+[NoDelete]
 interface DetourStatus 
 {
 	[Static] bool dtStatusSucceed(int status);
@@ -660,6 +661,7 @@ interface dtNavMesh
 	int decodePolyIdPoly(int ref);
 };
 
+[NoDelete]
 interface DetourNavMesh 
 {
 	[Static] int dtGetDetailTriEdgeFlags(char triFlags, int edgeIndex);
@@ -750,6 +752,7 @@ interface dtNavMeshCreateParams
 	attribute bool buildBvTree;
 };
 
+[NoDelete]
 interface DetourNavMeshBuilder
 {
 	//bool dtCreateNavMeshData(dtNavMeshCreateParams* params, unsigned char** outData, int* outDataSize); // TODO resolve unsigned char**
@@ -899,6 +902,7 @@ interface dtNavMeshQuery
 	[Const] dtNavMesh getAttachedNavMesh();
 };
 
+[NoDelete]
 interface DetourNavMeshQuery
 {
 	[Static] dtNavMeshQuery dtAllocNavMeshQuery();
