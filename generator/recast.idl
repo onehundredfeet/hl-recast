@@ -1,10 +1,6 @@
-
-// interface Animal {
-// 	void Animal();
-// 	attribute long size;
-// };
-
-// Recast
+//--------------------------------------------------------------------------------------------
+// Recast.h
+//--------------------------------------------------------------------------------------------
 
 enum rcLogCategory
 {
@@ -75,7 +71,8 @@ enum rcTimerLabel
 	"RC_MAX_TIMERS"
 };
 
-interface rcContext {
+interface rcContext 
+{
     void rcContext(boolean state);
     void enableLog(boolean state);
 	void resetLog();
@@ -84,7 +81,8 @@ interface rcContext {
 	void startTimer([Const] rcTimerLabel label);
 };
 
-interface rcScopedTimer {
+interface rcScopedTimer 
+{
 	void rcScopedTimer(rcContext ctx, [Const] rcTimerLabel label);
 };
 
@@ -111,18 +109,19 @@ interface rcConfig {
 	attribute float detailSampleMaxError;
 };
 
-interface rcSpan {
+interface rcSpan 
+{
 	attribute long smin;
 	attribute long smax;
 	attribute long area; 
-	//[Value] attribute rcSpan next;
+	attribute rcSpan next;
 };
 
-// interface rcSpanPool {
-// 	[Value] attribute rcSpanPool next;					
-// 	[Value] attribute rcSpan items;	
-// };
-
+interface rcSpanPool 
+{
+	attribute rcSpanPool next;					
+	//rcSpan items[RC_SPANS_PER_POOL]; //TODO 
+};
 
 /// A dynamic heightfield representing obstructed space.
 /// @ingroup recast
@@ -174,8 +173,8 @@ interface rcCompactHeightfield
 	//attribute float bmax[3];				///< The maximum bounds in world space. [(x, y, z)]
 	attribute float cs;					///< The size of each cell. (On the xz-plane.)
 	attribute float ch;					///< The height of each cell. (The minimum increment along the y-axis.)
-	//[Value] attribute rcCompactCell cells;		///< Array of cells. [Size: #width*#height]
-	//[Value] attribute rcCompactSpan spans;		///< Array of spans. [Size: #spanCount]
+	attribute rcCompactCell cells;		///< Array of cells. [Size: #width*#height]
+	attribute rcCompactSpan spans;		///< Array of spans. [Size: #spanCount]
 	// attribute unsigned short* dist;		///< Array containing border distance data. [Size: #spanCount]
 	// attribute unsigned char* areas;		///< Array containing area id data. [Size: #spanCount]
 };
@@ -275,25 +274,29 @@ interface rcPolyMeshDetail
 	attribute long ntris;				///< The number of triangles in #tris.
 };
 
-interface FloatArray {
+interface FloatArray 
+{
 	void FloatArray(int size);
 	float Get(int index);
 	void Set(int index, float value);
 };
 
-interface IntArray {
+interface IntArray 
+{
 	void IntArray(int size);
 	int Get(int index);
 	void Set(int index, int value);
 };
 
-interface CharArray {
+interface CharArray 
+{
 	void CharArray(int size);
 	char Get(int index);
 	void Set(int index, char value);
 };
 
-interface ShortArray {
+interface ShortArray 
+{
 	void ShortArray(int size);
 	int Get(int index);
 	void Set(int index, int value);
@@ -467,4 +470,437 @@ interface DetourCommon {
 
 	[Static] void dtRandomPointInConvexPoly([Const] FloatArray pts, [Const] int npts, FloatArray areas,
 								[Const] float s, [Const] float t, FloatArray out);
+};
+
+//--------------------------------------------------------------------------------------------
+// DetourStatus.h
+//--------------------------------------------------------------------------------------------
+interface DetourStatus 
+{
+	[Static] bool dtStatusSucceed(int status);
+	[Static] bool dtStatusFailed(int status);
+	[Static] bool dtStatusInProgress(int status);
+	[Static] bool dtStatusDetail(int status, int detail);
+};
+
+//--------------------------------------------------------------------------------------------
+// DetourNavMesh.h
+//--------------------------------------------------------------------------------------------
+interface dtPoly 
+{
+	attribute int firstLink;
+	// unsigned short verts[DT_VERTS_PER_POLYGON];
+	// unsigned short neis[DT_VERTS_PER_POLYGON];
+	attribute short flags;
+	attribute char vertCount;
+	attribute char areaAndtype;
+	void setArea(char a);
+	void setType(char t);
+	[Const] char getArea();
+    [Const] char getType();
+};
+
+interface dtPolyDetail 
+{
+	attribute int vertBase;			
+	attribute int triBase;			
+	attribute char vertCount;		
+	attribute char triCount;		
+};
+
+interface dtLink 
+{
+	attribute int ref;		
+	attribute int next;				
+	attribute char edge;			
+	attribute char side;			
+	attribute char bmin;			
+	attribute char bmax;			
+};
+
+interface dtBVNode 
+{
+	// short bmin[3];			
+	// short bmax[3];		
+	attribute int i;					
+};
+
+interface dtOffMeshConnection 
+{
+	// float pos[6];
+	attribute float rad;		
+	attribute short poly;
+	attribute char flags;
+	attribute char side;
+	attribute int userId;
+};
+
+interface dtMeshHeader 
+{
+	attribute int magic;				
+	attribute int version;			
+	attribute int x;					
+	attribute int y;					
+	attribute int layer;				
+	attribute int userId;	
+	attribute int polyCount;			
+	attribute int vertCount;			
+	attribute int maxLinkCount;		
+	attribute int detailMeshCount;	
+	attribute int detailVertCount;		
+	attribute int detailTriCount;		
+	attribute int bvNodeCount;		
+	attribute int offMeshConCount;	
+	attribute int offMeshBase;		
+	attribute float walkableHeight;	
+	attribute float walkableRadius;	
+	attribute float walkableClimb;	
+	// float bmin[3];			
+	// float bmax[3];			
+	attribute float bvQuantFactor;
+};
+
+interface dtMeshTile 
+{
+	attribute int salt;			
+	attribute int linksFreeList;
+		
+	attribute dtMeshHeader header;	//TODO resolve this
+	attribute dtPoly polys; //TODO resolve this			  	
+	//float* verts;					
+	
+	attribute dtLink links;	 //TODO resolve this				
+	attribute dtPolyDetail detailMeshes;	//TODO resolve this
+	//float* detailVerts;	  //TODO resolve this
+	//unsigned char* detailTris;	
+
+	attribute dtBVNode bvTree;//TODO resolve this
+	attribute dtOffMeshConnection offMeshCons;	//TODO resolve this			
+	attribute int dataSize;						
+	attribute int flags;							
+	//attribute dtMeshTile next;		//TODO resolve this			
+};
+
+interface dtNavMeshParams 
+{
+	//float orig[3];		
+	attribute float tileWidth;	
+	attribute float tileHeight;	
+	attribute int maxTiles;		
+	attribute int maxPolys;		
+};
+
+interface dtNavMesh
+{
+
+	void dtNavMesh();
+
+	int init([Const] dtNavMeshParams params);
+
+	int init(CharArray data, [Const] int dataSize, [Const] int flags);
+
+	[Const] dtNavMeshParams getParams();
+
+	//int addTile(CharArray data, int dataSize, int flags, int lastRef, dtTileRef result); //TODO
+
+	//dtStatus removeTile(dtTileRef ref, unsigned char** data, int* dataSize); //TODO
+
+	void calcTileLoc([Const] FloatArray pos, IntArray tx, IntArray ty);
+
+	[Const] dtMeshTile getTileAt([Const] int x, [Const] int y, [Const] int layer);
+
+	//TODO
+	//int getTilesAt([Const] int x, [Const] int y, dtMeshTile [Const]** tiles, [Const] int maxTiles);
+
+	int getTileRefAt(int x, int y, int layer);
+	
+	int getTileRef([Const] dtMeshTile tile);
+	
+	[Const] dtMeshTile getTileByRef(int ref);
+	
+	int getMaxTiles();
+	
+	//TODO
+	// [Const] dtMeshTile getTile(int i); 
+
+	// dtStatus getTileAndPolyByRef([Const] dtPolyRef ref, [Const] dtMeshTile** tile, [Const] dtPoly** poly);
+	
+	// void getTileAndPolyByRefUnsafe([Const] dtPolyRef ref, [Const] dtMeshTile** tile, [Const] dtPoly** poly);
+
+	bool isValidPolyRef(int ref);
+	
+	int getPolyRefBase([Const] dtMeshTile tile);
+	
+	int getOffMeshConnectionPolyEndPoints(int prevRef, int polyRef, FloatArray startPos, FloatArray endPos);
+
+	[Const] dtOffMeshConnection getOffMeshConnectionByRef(int ref);
+	
+	int setPolyFlags(int ref, short flags);
+
+	int getPolyFlags(int ref, ShortArray resultFlags);
+
+	int setPolyArea(int ref, char area);
+
+	int getPolyArea(int ref, CharArray resultArea);
+
+	int getTileStateSize([Const] dtMeshTile tile);
+
+	int storeTileState([Const] dtMeshTile tile, CharArray data, [Const] int maxDataSize);
+	
+	int restoreTileState(dtMeshTile tile, [Const] CharArray data, [Const] int maxDataSize);
+	
+	int encodePolyId(int salt, int it, int ip);
+
+	// void decodePolyId(int ref, [Ref] int salt, [Ref] int it, [Ref] int ip); //TODO
+	
+	int decodePolyIdSalt(int ref);
+
+	int decodePolyIdTile(int ref);
+
+	int decodePolyIdPoly(int ref);
+};
+
+interface DetourNavMesh 
+{
+	[Static] int dtGetDetailTriEdgeFlags(char triFlags, int edgeIndex);
+	[Static] dtNavMesh dtAllocNavMesh();
+	[Static] void dtFreeNavMesh(dtNavMesh navmesh);
+};
+
+//--------------------------------------------------------------------------------------------
+// DetourNode.h
+//--------------------------------------------------------------------------------------------
+interface dtNode 
+{
+	// [Value] attribute FloatArray pos;
+	attribute float cost;
+	attribute float total;
+	attribute int pidx;
+	attribute int state;
+	attribute int flags;
+	attribute int id;
+};
+
+interface dtNodePool
+{
+	void dtNodePool(int maxNodes, int hashSize);
+	// [Value] dtNode getNode(dtPolyRef id, char state);	
+	// [Value] dtNode findNode(dtPolyRef id, char state);
+	//int findNodes(dtPolyRef id, dtNode** nodes, const int maxNodes);
+	int getNodeIdx([Const] dtNode node);
+	dtNode getNodeAtIdx(int idx);	
+	int getMemUsed();	
+	int getMaxNodes();
+	int getHashSize();
+ 	short getFirst(int bucket); //TODO
+	short getNext(int i); // TODO 
+	int getNodeCount();
+};
+
+
+interface dtNodeQueue
+{
+	void dtNodeQueue(int n);
+	void clear();
+	dtNode top();
+	dtNode pop();
+	void push(dtNode node);
+	void modify(dtNode node);
+	bool empty();
+	int getMemUsed();
+	int getCapacity();
+};
+	
+
+//--------------------------------------------------------------------------------------------
+// DetourNavMeshBuilder.h
+//--------------------------------------------------------------------------------------------
+interface dtNavMeshCreateParams 
+{
+	//const unsigned short* verts;		
+	attribute int vertCount;							
+	//const unsigned short* polys;			
+	//const unsigned short* polyFlags;		
+	//const unsigned char* polyAreas;			
+	attribute int polyCount;							
+	attribute int nvp;								
+	//const unsigned int* detailMeshes;		
+	//const float* detailVerts;				
+	attribute int detailVertsCount;					
+	//const unsigned char* detailTris;		
+	attribute int detailTriCount;
+	//const float* offMeshConVerts;
+	//const float* offMeshConRad;
+	//const unsigned short* offMeshConFlags;
+	//const unsigned char* offMeshConAreas;
+	//const unsigned char* offMeshConDir;	
+	//const unsigned int* offMeshConUserID;
+	attribute int offMeshConCount;
+	attribute int userId;	
+	attribute int tileX;				
+	attribute int tileY;				
+	attribute int tileLayer;			
+	// attribute float bmin;			
+	// attribute float bmax;			
+	attribute float walkableHeight;
+	attribute float walkableRadius;	
+	attribute float walkableClimb;	
+	attribute float cs;				
+	attribute float ch;				
+	attribute bool buildBvTree;
+};
+
+interface DetourNavMeshBuilder
+{
+	//bool dtCreateNavMeshData(dtNavMeshCreateParams* params, unsigned char** outData, int* outDataSize); // TODO resolve unsigned char**
+	[Static] bool dtNavMeshHeaderSwapEndian(CharArray data, [Const] int dataSize);
+	[Static] bool dtNavMeshDataSwapEndian(CharArray data, [Const] int dataSize);
+};
+
+
+//--------------------------------------------------------------------------------------------
+// DetourNavMeshBuilder.h
+//--------------------------------------------------------------------------------------------
+interface dtQueryFilter
+{
+	void dtQueryFilter();	
+	// bool passFilter([Const] dtPolyRef ref,[Const] dtMeshTile tile,[Const] dtPoly poly);
+	// bool passFilter([Const] dtPolyRef ref,[Const] dtMeshTile tile,[Const] dtPoly poly);
+
+// #ifdef DT_VIRTUAL_QUERYFILTER
+// 	virtual float getCost(const float* pa, const float* pb,
+// 						  const dtPolyRef prevRef, const dtMeshTile* prevTile, const dtPoly* prevPoly,
+// 						  const dtPolyRef curRef, const dtMeshTile* curTile, const dtPoly* curPoly,
+// 						  const dtPolyRef nextRef, const dtMeshTile* nextTile, const dtPoly* nextPoly) const;
+// #else
+// 	float getCost(const float* pa, const float* pb,
+// 				  const dtPolyRef prevRef, const dtMeshTile* prevTile, const dtPoly* prevPoly,
+// 				  const dtPolyRef curRef, const dtMeshTile* curTile, const dtPoly* curPoly,
+// 				  const dtPolyRef nextRef, const dtMeshTile* nextTile, const dtPoly* nextPoly) const;
+// #endif
+
+	float getAreaCost([Const] int i);
+	void setAreaCost([Const] int i, [Const] float cost);
+	short getIncludeFlags();
+	void setIncludeFlags([Const] short flags);
+	short getExcludeFlags();
+	void setExcludeFlags([Const] short flags);
+};
+
+interface dtRaycastHit
+{
+	attribute float t; 
+	//attribute float hitNormal[3];
+	attribute int hitEdgeIndex;
+	//attribute dtPolyRef path;
+	attribute int pathCount;
+	attribute int maxPath;
+	attribute float pathCost;
+};
+
+interface dtNavMeshQuery
+{
+	void dtNavMeshQuery();
+
+	//dtStatus init([Const] dtNavMesh nav, [Const] int maxNodes);
+	
+	// dtStatus findPath(dtPolyRef startRef, dtPolyRef endRef,
+	// 				  [Const] FloatArray startPos, [Const] FloatArray endPos,
+	// 				  [Const] dtQueryFilter* filter,
+	// 				  dtPolyRef* path, IntArray pathCount, [Const] int maxPath);
+
+	// dtStatus findStraightPath([Const] FloatArray startPos, [Const] FloatArray endPos,
+	// 						  [Const] dtPolyRef* path, [Const] int pathSize,
+	// 						  FloatArray straightPath, CharArray straightPathFlags, dtPolyRef* straightPathRefs,
+	// 						  IntArray straightPathCount, [Const] int maxStraightPath, [Const] int options);
+
+	// dtStatus initSlicedFindPath(dtPolyRef startRef, dtPolyRef endRef,
+	// 							[Const] FloatArray startPos, [Const] FloatArray endPos,
+	// 							[Const] dtQueryFilter filter, [Const] unsigned int options);
+
+	//dtStatus updateSlicedFindPath([Const] int maxIter, IntArray doneIters);
+
+	// dtStatus finalizeSlicedFindPath(dtPolyRef* path, IntArray pathCount, [Const] int maxPath);
+	
+	// dtStatus finalizeSlicedFindPathPartial([Const] dtPolyRef* existing, [Const] int existingSize,
+	// 									   dtPolyRef* path, IntArray pathCount, [Const] int maxPath);
+
+	// dtStatus findPolysAroundCircle(dtPolyRef startRef, [Const] FloatArray centerPos, [Const] float radius,
+	// 							   [Const] dtQueryFilter* filter,
+	// 							   dtPolyRef* resultRef, dtPolyRef* resultParent, FloatArray resultCost,
+	// 							   IntArray resultCount, [Const] int maxResult);
+
+	// dtStatus findPolysAroundShape(dtPolyRef startRef, [Const] FloatArray verts, [Const] int nverts,
+	// 							  [Const] dtQueryFilter* filter,
+	// 							  dtPolyRef* resultRef, dtPolyRef* resultParent, FloatArray resultCost,
+	// 							  IntArray resultCount, [Const] int maxResult);
+	
+	// dtStatus getPathFromDijkstraSearch(dtPolyRef endRef, dtPolyRef* path, IntArray pathCount, int maxPath);
+
+	// dtStatus findNearestPoly([Const] FloatArray center, [Const] FloatArray halfExtents,
+	// 						 [Const] dtQueryFilter* filter,
+	// 						 dtPolyRef* nearestRef, FloatArray nearestPt);
+
+	// dtStatus findNearestPoly([Const] FloatArray center, [Const] FloatArray halfExtents,
+	// 						 [Const] dtQueryFilter* filter,
+	// 						 dtPolyRef* nearestRef, FloatArray nearestPt, bool* isOverPoly);
+
+	// dtStatus queryPolygons([Const] FloatArray center, [Const] FloatArray halfExtents,
+	// 					   [Const] dtQueryFilter* filter,
+	// 					   dtPolyRef* polys, IntArray polyCount, [Const] int maxPolys);
+
+	// dtStatus queryPolygons([Const] FloatArray center, [Const] FloatArray halfExtents,
+	// 					   [Const] dtQueryFilter* filter, dtPolyQuery* query);
+
+	// dtStatus findLocalNeighbourhood(dtPolyRef startRef, [Const] FloatArray centerPos, [Const] float radius,
+	// 								[Const] dtQueryFilter* filter,
+	// 								dtPolyRef* resultRef, dtPolyRef* resultParent,
+	// 								IntArray resultCount, [Const] int maxResult);
+
+	// dtStatus moveAlongSurface(dtPolyRef startRef, [Const] FloatArray startPos, [Const] FloatArray endPos,
+	// 						  [Const] dtQueryFilter* filter,
+	// 						  FloatArray resultPos, dtPolyRef* visited, IntArray visitedCount, [Const] int maxVisitedSize);
+	
+	// dtStatus raycast(dtPolyRef startRef, [Const] FloatArray startPos, [Const] FloatArray endPos,
+	// 				 [Const] dtQueryFilter* filter,
+	// 				 FloatArray t, FloatArray hitNormal, dtPolyRef* path, IntArray pathCount, [Const] int maxPath);
+	
+	// dtStatus raycast(dtPolyRef startRef, [Const] FloatArray startPos, [Const] FloatArray endPos,
+	// 				 [Const] dtQueryFilter filter, [Const] int options,
+	// 				 dtRaycastHit hit, dtPolyRef prevRef = 0);
+
+	// dtStatus findDistanceToWall(dtPolyRef startRef, [Const] FloatArray centerPos, [Const] float maxRadius,
+	// 							[Const] dtQueryFilter filter,
+	// 							FloatArray hitDist, FloatArray hitPos, FloatArray hitNormal);
+
+	// dtStatus getPolyWallSegments(dtPolyRef ref, [Const] dtQueryFilter* filter,
+	// 							 FloatArray segmentVerts, dtPolyRef segmentRefs, IntArray segmentCount,
+	// 							 [Const] int maxSegments);
+
+	// dtStatus findRandomPoint([Const] dtQueryFilter filter, float (*frand)(),
+	// 						 dtPolyRef randomRef, FloatArray randomPt) [Const];
+
+	// dtStatus findRandomPointAroundCircle(dtPolyRef startRef, [Const] FloatArray centerPos, [Const] float maxRadius,
+	// 									 [Const] dtQueryFilter filter, float (*frand)(),
+	// 									 dtPolyRef randomRef, FloatArray randomPt); //TODO
+
+	//dtStatus closestPointOnPoly(dtPolyRef ref, [Const] FloatArray pos, FloatArray closest, bool* posOverPoly); //TODO
+
+	// dtStatus closestPointOnPolyBoundary(dtPolyRef ref, [Const] FloatArray pos, FloatArray closest);
+
+	// dtStatus getPolyHeight(dtPolyRef ref, [Const] FloatArray pos, FloatArray height);
+
+	// bool isValidPolyRef(dtPolyRef ref, [Const] dtQueryFilter filter);
+
+	// bool isInClosedList(dtPolyRef ref);
+
+    dtNodePool getNodePool();
+
+	[Const] dtNavMesh getAttachedNavMesh();
+};
+
+interface DetourNavMeshQuery
+{
+	[Static] dtNavMeshQuery dtAllocNavMeshQuery();
+	[Static] void dtFreeNavMeshQuery(dtNavMeshQuery query);
 };

@@ -28,6 +28,10 @@ class Generator {
 class Recast;
 class DetourMath;
 class DetourCommon;
+class DetourStatus;
+class DetourNavMesh;
+class DetourNavMeshBuilder;
+class DetourNavMeshQuery;
 
 #include \"hl-idl-helpers.h\"
 ";
