@@ -39,6 +39,15 @@ ${DETOUR_SRC_DIR}/Include
 ${HL_INCLUDE_DIR}
 )
 
-target_link_directories(recast.hdll PRIVATE ${HL_LIB_DIR})
-target_link_libraries(recast.hdll libhl)
 
+if (UNIX)
+    # Some special flags are needed for GNU GCC compiler
+    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -fPIC  -O3  -fpermissive")
+    #not sure why the ${HL_LIB_DIR} is necessary given the above.
+    SET(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -shared  ")
+endif (UNIX)
+
+find_library(LIBHL NAMES hl HINTS ${HL_LIB_DIR} )
+target_link_libraries(recast.hdll ${LIBHL})
+
+install(TARGETS recast.hdll DESTINATION ${HDLL_DESTINATION})

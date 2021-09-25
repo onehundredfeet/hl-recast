@@ -13,16 +13,31 @@ class Main {
 		
 		var x : Float = -10.0;
 		var y : Float = 10.0;
-		var abs_x = recast.Native.DetourMath.dtMathFabsf(x);
-		var abs_y = recast.Native.DetourMath.dtMathFabsf(y);
 
-		trace(x, abs_x);
-		trace(y, abs_y);
+
+//		var abs_x = recast.Native.DetourMath.dtMathFabsf(x);
+//		var abs_y = recast.Native.DetourMath.dtMathFabsf(y);
+
+//		trace(x, abs_x);
+//		trace(y, abs_y);
+	}
+
+	public static function get_set_rcConfig_bounds() {
+		var x = new recast.Native.Config();
+	
+		var v = x.bmin;
+		v[0] = 0.0;
+		x.bmin = v;
+
+		var y : Array<Single> = [0., 0., 0.];
+		x.bmin = y;
+
 	}
 
 	public static function test_rcCalcBounds_0(){
 		// bounds of one vector
 	
+		
 		var verts = new recast.Native.FloatArray(3);
 		var bmin = new recast.Native.FloatArray(3);
 		var bmax = new recast.Native.FloatArray(3);

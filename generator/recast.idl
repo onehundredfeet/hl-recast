@@ -89,13 +89,14 @@ interface rcScopedTimer {
 };
 
 interface rcConfig {
+	void rcConfig();
 	attribute long width;
 	attribute long height;
 	attribute long tileSize;
 	attribute long borderSize;
 	attribute float cs;
 	attribute float ch;
-	// attribute float[] bmin;
+	attribute float3 bmin;
 	// attribute float[] bmax;
 	attribute float walkableSlopeAngle;
 	attribute long walkableHeight;
@@ -298,6 +299,8 @@ interface ShortArray {
 	void Set(int index, int value);
 };
 
+
+[NoDelete]
 interface Recast{
 	[Static] void rcFreeHeightField(rcHeightfield hf);
 	[Static] rcHeightfield rcAllocHeightfield();
@@ -383,6 +386,7 @@ interface Recast{
 
 
 // Detour
+[NoDelete]
 interface DetourMath {
 	[Static] float dtMathFabsf(float x);
 	[Static] float dtMathSqrtf(float x);
@@ -394,7 +398,7 @@ interface DetourMath {
 	[Static] bool dtMathIsfinite(float x);
 };
 
-
+[NoDelete]
 interface DetourCommon {
 
 	[Static] void dtVcross(FloatArray dest, [Const] FloatArray v1, [Const] FloatArray v2);

@@ -29,6 +29,7 @@ class Recast;
 class DetourMath;
 class DetourCommon;
 
+#include \"hl-idl-helpers.h\"
 ";
 	
 	public static function generateCpp() {	

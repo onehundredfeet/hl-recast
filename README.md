@@ -53,7 +53,7 @@ This will generate src/recast.cpp from recast/recast.idl
 **For linux:**  
 ```sh
     cmake ..
-      -Drecast_SRC_DIR="ext/recast" # This is the /src from step 2
+      -DRECAST_SRC_DIR="ext/recast" # This is the /src from step 2
       -DHL_INCLUDE_DIR="<path-to-hashlink headers>" # Path to where hashlink headers (hl.h, ...) are located. Usually under ...hashlink-x.xx/src 
       -DHL_LIB_DIR="<path-to-hashlink>" # Path to where hashlink binaries (libhl.so, ...) are located. Usually ...hashlink-x.xx
       -HDLL_DESTINATION="final/install/destination" #The path of all *hdll binaries, usually this is 'usr/lib' or 'usr/local/lib'
@@ -90,8 +90,8 @@ specific cmake command example on linux:
 * Note: Specify the hashlink directories on your system.  On Mac, brew defaults /usr/local (lib/include).
 ```sh
     cmake ..  -GNinja 
-    -Drecast_SRC_DIR="ext/recast" 
-    -Drecast_INC_DIR="ext/recast" 
+    -DRECAST_SRC_DIR="ext/recast" 
+    -DRECAST_INC_DIR="ext/recast" 
     -DHL_LIB_DIR="/usr/local/lib" 
     -DHL_INCLUDE_DIR="/usr/local/include" 
     -DHDLL_DESTINATION="/usr/local/lib"

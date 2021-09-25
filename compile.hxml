@@ -1,6 +1,4 @@
--lib webidl
--lib recast
--lib tink
+-lib hl-idl
 -cp .
 -main Main
 -hl sample.hl
