@@ -318,7 +318,8 @@ interface Recast{
 	[Static] rcPolyMeshDetail rcAllocPolyMeshDetail();
 	[Static] void rcFreePolyMeshDetail(rcPolyMeshDetail dmesh);
 
-	[Static] void rcCalcBounds([Const] FloatArray verts, int nv, float3 bmin, float3 bmax);
+	// UPDATED TO NEW METHOD
+	[Static] void rcCalcBounds(float[] verts, int nv, float3 bmin, float3 bmax);
 
 	[Static] void rcCalcGridSize([Const] FloatArray bmin, [Const] FloatArray bmax, float cs,
 							IntArray w, IntArray h);
