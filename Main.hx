@@ -5,6 +5,9 @@ class Main {
 	public static function main() {
 		trace("main()");
 		test_DetourMath_0();
+
+		trace("vectors");
+		get_set_rcConfig_bounds();
 		// test_rcCalcBounds_0();
 		// test_rcCalcBounds_1();
 	}
@@ -25,13 +28,21 @@ class Main {
 	public static function get_set_rcConfig_bounds() {
 		var x = new recast.Native.Config();
 	
+		trace("get");
+
 		var v = x.bmin;
+		trace("modify");
+
 		v[0] = 0.0;
+		trace("set");
 		x.bmin = v;
 
-		var y : Array<Single> = [0., 0., 0.];
+		trace("array");
+		var y   = new hl.NativeArray<Single>(3);
 		x.bmin = y;
 
+		x.setbmin3(0.,0.,0.);
+		trace("Done");
 	}
 
 	public static function test_rcCalcBounds_0(){
