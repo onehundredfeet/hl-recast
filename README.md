@@ -88,13 +88,11 @@ specific cmake command example on linux:
 
 **For UNIX (Mac / Linux):**  
 * Note: Specify the hashlink directories on your system.  On Mac, brew defaults /usr/local (lib/include).
+
+Ninja is optional.  You can use make just by removing -GNinja.
+
 ```sh
-    cmake ..  -GNinja 
-    -DRECAST_SRC_DIR="ext/recast" 
-    -DRECAST_INC_DIR="ext/recast" 
-    -DHL_LIB_DIR="/usr/local/lib" 
-    -DHL_INCLUDE_DIR="/usr/local/include" 
-    -DHDLL_DESTINATION="/usr/local/lib"
+ cmake -GNinja .. -DRECAST_SRC_DIR="ext/recast/Recast" -DHL_INCLUDE_DIR="/usr/local/include" -DHL_LIB_DIR="/usr/local/lib" -DDETOUR_SRC_DIR="ext/recast/Detour" -DHDLL_DESTINATION="/usr/local/lib"
 ```
 ```sh
     make
