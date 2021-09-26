@@ -1,4 +1,5 @@
 import recast.Native;
+import ShaderMath;
 
 class Main {
 	
@@ -33,15 +34,19 @@ class Main {
 		var v = x.bmin;
 		trace("modify");
 
-		v[0] = 0.0;
+		v[0] = 20.0;
 		trace("set");
 		x.bmin = v;
 
+		var k = x.bmin.x;
+
+		trace("x: " + k);
+
 		trace("array");
-		var y   = new hl.NativeArray<Single>(3);
+		var y   = vec3(0., 0., 0.);
 		x.bmin = y;
 
-		x.setbmin3(0.,0.,0.);
+		//x.setbmin3(0.,0.,0.);
 		trace("Done");
 	}
 
@@ -51,8 +56,8 @@ class Main {
 	
 		
 		var verts = new hl.NativeArray<Single>(3);
-		var bmin = new hl.NativeArray<Single>(3);
-		var bmax = new hl.NativeArray<Single>(3);
+		var bmin = vec3(0., 0., 0.);
+		var bmax = vec3(0., 0., 0.);
 		verts[0] = 1;
 		verts[1] = 2;
 		verts[2] = 3;
@@ -78,8 +83,8 @@ class Main {
 		// bounds of more than one vector
 
 		var verts = new hl.NativeArray<Single>(6);
-		var bmin = new hl.NativeArray<Single>(3);
-		var bmax = new hl.NativeArray<Single>(3);
+		var bmin = vec3(0., 0., 0.);
+		var bmax = vec3(0., 0., 0.);
 		verts[0] = 1;
 		verts[1] =  2;
 		verts[2] =  3;

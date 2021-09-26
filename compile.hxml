@@ -1,4 +1,5 @@
 -lib hl-idl
+-lib hvector
 -cp .
 -main Main
 -hl sample.hl
