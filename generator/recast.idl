@@ -86,16 +86,16 @@ interface rcScopedTimer
 	void rcScopedTimer(rcContext ctx, [Const] rcTimerLabel label);
 };
 
-interface rcConfig 
-{
+interface rcConfig {
+	void rcConfig();
 	attribute long width;
 	attribute long height;
 	attribute long tileSize;
 	attribute long borderSize;
 	attribute float cs;
 	attribute float ch;
-	// attribute float[] bmin;
-	// attribute float[] bmax;
+	attribute float3 bmin;
+	attribute float3 bmax;
 	attribute float walkableSlopeAngle;
 	attribute long walkableHeight;
 	attribute long walkableClimb;
@@ -302,8 +302,9 @@ interface ShortArray
 	void Set(int index, int value);
 };
 
-interface Recast
-{
+
+[NoDelete]
+interface Recast{
 	[Static] void rcFreeHeightField(rcHeightfield hf);
 	[Static] rcHeightfield rcAllocHeightfield();
 	[Static] rcCompactHeightfield rcAllocCompactHeightfield();
@@ -317,7 +318,8 @@ interface Recast
 	[Static] rcPolyMeshDetail rcAllocPolyMeshDetail();
 	[Static] void rcFreePolyMeshDetail(rcPolyMeshDetail dmesh);
 
-	[Static] void rcCalcBounds([Const] FloatArray verts, int nv, FloatArray bmin, FloatArray bmax);
+	// UPDATED TO NEW METHOD
+	[Static] void rcCalcBounds(float[] verts, int nv, float3 bmin, float3 bmax);
 
 	[Static] void rcCalcGridSize([Const] FloatArray bmin, [Const] FloatArray bmax, float cs,
 							IntArray w, IntArray h);
@@ -387,12 +389,9 @@ interface Recast
 };
 
 
-//--------------------------------------------------------------------------------------------
-// Detour.h
-//--------------------------------------------------------------------------------------------
-
-interface DetourMath 
-{
+// Detour
+[NoDelete]
+interface DetourMath {
 	[Static] float dtMathFabsf(float x);
 	[Static] float dtMathSqrtf(float x);
 	[Static] float dtMathFloorf(float x);
@@ -403,9 +402,8 @@ interface DetourMath
 	[Static] bool dtMathIsfinite(float x);
 };
 
-
-interface DetourCommon 
-{
+[NoDelete]
+interface DetourCommon {
 
 	[Static] void dtVcross(FloatArray dest, [Const] FloatArray v1, [Const] FloatArray v2);
 	[Static] float dtVdot([Const] FloatArray v1, [Const] FloatArray v2);
@@ -478,6 +476,7 @@ interface DetourCommon
 //--------------------------------------------------------------------------------------------
 // DetourStatus.h
 //--------------------------------------------------------------------------------------------
+[NoDelete]
 interface DetourStatus 
 {
 	[Static] bool dtStatusSucceed(int status);
@@ -663,6 +662,7 @@ interface dtNavMesh
 	int decodePolyIdPoly(int ref);
 };
 
+[NoDelete]
 interface DetourNavMesh 
 {
 	[Static] int dtGetDetailTriEdgeFlags(char triFlags, int edgeIndex);
@@ -753,6 +753,7 @@ interface dtNavMeshCreateParams
 	attribute bool buildBvTree;
 };
 
+[NoDelete]
 interface DetourNavMeshBuilder
 {
 	//bool dtCreateNavMeshData(dtNavMeshCreateParams* params, unsigned char** outData, int* outDataSize); // TODO resolve unsigned char**
@@ -902,6 +903,7 @@ interface dtNavMeshQuery
 	[Const] dtNavMesh getAttachedNavMesh();
 };
 
+[NoDelete]
 interface DetourNavMeshQuery
 {
 	[Static] dtNavMeshQuery dtAllocNavMeshQuery();
