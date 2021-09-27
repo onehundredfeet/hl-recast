@@ -65,6 +65,14 @@ class Main {
 
 		recast.Native.Recast.rcCalcBounds(verts, 1, bmin, bmax);
 		
+		var x = new DtNavMeshCreateParams();
+		var bb = new hl.Bytes( 100 );	// need to make sure that there's enough bytes
+		var bs : hl.BytesAccess<hl.UI16> = bb;
+		bs[0] = 1;
+		x.verts = bs;
+		var xy = x.verts;
+		trace("Verts: " + xy[0]);
+
 		var test = true;
 
 		test = test && bmin[0] == verts[0];
@@ -85,7 +93,7 @@ class Main {
 		var verts = new hl.NativeArray<Single>(6);
 		var bmin = vec3(0., 0., 0.);
 		var bmax = vec3(0., 0., 0.);
-		verts[0] = 1;
+		verts[0] =  1;
 		verts[1] =  2;
 		verts[2] =  3;
 		verts[3] =  0;
