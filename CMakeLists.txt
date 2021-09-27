@@ -14,6 +14,7 @@ ${RECAST_SRC_DIR}/Source/RecastMeshDetail.cpp
 ${RECAST_SRC_DIR}/Source/RecastRasterization.cpp
 ${RECAST_SRC_DIR}/Source/RecastRegion.cpp
 src/recast.cpp
+src/hl-idl-helpers.cpp
 ${DETOUR_SRC_DIR}/Source/DetourAlloc.cpp
 ${DETOUR_SRC_DIR}/Source/DetourAssert.cpp
 ${DETOUR_SRC_DIR}/Source/DetourCommon.cpp

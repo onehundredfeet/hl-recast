@@ -56,6 +56,7 @@ class Main {
 	
 		
 		var verts = new hl.NativeArray<Single>(3);
+		var verts16 = new hl.NativeArray<hl.UI16>(3);
 		var bmin = vec3(0., 0., 0.);
 		var bmax = vec3(0., 0., 0.);
 		verts[0] = 1;
@@ -69,7 +70,8 @@ class Main {
 		var bb = new hl.Bytes( 100 );	// need to make sure that there's enough bytes
 		var bs : hl.BytesAccess<hl.UI16> = bb;
 		bs[0] = 1;
-		x.verts = bs;
+		verts16[0] = 1;
+		x.verts = verts16;
 		var xy = x.verts;
 		trace("Verts: " + xy[0]);
 

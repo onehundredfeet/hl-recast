@@ -736,12 +736,16 @@ interface dtNodeQueue
 interface dtNavMeshCreateParams 
 {
 	void dtNavMeshCreateParams();
-	
-	// Who owns this array?
-	//attribute short [] verts;
-	attribute short * verts;
+
+	// Option 1 - Arrays that get coppied and will use the member variable as size	
+	// Currently, setting this will likely leak memory. Unless it's disposed by the dtNavMeshCreateParams class
+	//	attribute short [vertCount] verts;
+
+	// Option 2 - Direct pointer access.
+	//attribute short * verts;
 	
 	attribute int vertCount;
+
 	//const unsigned short* polys;
 	//const unsigned short* polyFlags;
 	//const unsigned char* polyAreas;
