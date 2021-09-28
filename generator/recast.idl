@@ -114,12 +114,18 @@ interface rcSpan
 	attribute long smin;
 	attribute long smax;
 	attribute long area; 
-	attribute rcSpan next;
+
+	// Can this just simply be assigned?
+	// Who is managing this memory?
+	attribute rcSpan next; 
 };
 
 interface rcSpanPool 
 {
 	attribute rcSpanPool next;					
+
+	// How should this get translated?
+
 	//rcSpan items[RC_SPANS_PER_POOL]; //TODO 
 };
 
@@ -135,6 +141,9 @@ interface rcHeightfield
 	//attribute float bmax[3];		///< The maximum bounds in world space. [(x, y, z)]
 	attribute float cs;			///< The size of each cell. (On the xz-plane.)
 	attribute float ch;			///< The height of each cell. (The minimum increment along the y-axis.)
+
+	// How should this be translated?
+	// Is it internal?
 	// rcSpan** spans;		///< Heightfield of spans (width*height).
 	// rcSpanPool* pools;	///< Linked list of span pools.
 	// rcSpan* freelist;	///< The next free span.
@@ -195,6 +204,8 @@ interface rcHeightfieldLayer
 	attribute int maxy;					///< The maximum y-bounds of usable data. (Along the z-axis.)
 	attribute int hmin;					///< The minimum height bounds of usable data. (Along the y-axis.)
 	attribute int hmax;					///< The maximum height bounds of usable data. (Along the y-axis.)
+
+	// Is this internal?
 	// attribute unsigned char* heights;		///< The heightfield. [Size: width * height]
 	// attribute unsigned char* areas;		///< Area ids. [Size: Same as #heights]
 	// attribute unsigned char* cons;		///< Packed neighbor connection information. [Size: Same as #heights]
@@ -226,8 +237,11 @@ interface rcContour
 interface rcContourSet
 {
 	void rcContourSet();
+
+	// These two together make an array
 	//[Value] attribute rcContour[] conts;	///< An array of the contours in the set. [Size: #nconts]
 	attribute int nconts;			///< The number of contours in the set.
+
 	//attribute float bmin[3];  	///< The minimum bounds in world space. [(x, y, z)]
 	//attribute float bmax[3];		///< The maximum bounds in world space. [(x, y, z)]
 	attribute float cs;			///< The size of each cell. (On the xz-plane.)
@@ -569,12 +583,13 @@ interface dtMeshTile
 		
 	attribute dtMeshHeader header;	//TODO resolve this
 	attribute dtPoly polys; //TODO resolve this			  	
-	//float* verts;					
 	
-	attribute dtLink links;	 //TODO resolve this				
+	attribute float* verts;
+	
+	attribute dtLink links;	 //TODO resolve this
 	attribute dtPolyDetail detailMeshes;	//TODO resolve this
 	//float* detailVerts;	  //TODO resolve this
-	//unsigned char* detailTris;	
+	//unsigned char* detailTris;
 
 	attribute dtBVNode bvTree;//TODO resolve this
 	attribute dtOffMeshConnection offMeshCons;	//TODO resolve this			
@@ -720,11 +735,16 @@ interface dtNodeQueue
 //--------------------------------------------------------------------------------------------
 interface dtNavMeshCreateParams 
 {
-	//const unsigned short* verts;		
-	attribute int vertCount;							
-	//const unsigned short* polys;			
-	//const unsigned short* polyFlags;		
-	//const unsigned char* polyAreas;			
+	void dtNavMeshCreateParams();
+	
+	// Who owns this array?
+	//attribute short [] verts;
+	attribute short * verts;
+	
+	attribute int vertCount;
+	//const unsigned short* polys;
+	//const unsigned short* polyFlags;
+	//const unsigned char* polyAreas;
 	attribute int polyCount;							
 	attribute int nvp;								
 	//const unsigned int* detailMeshes;		
