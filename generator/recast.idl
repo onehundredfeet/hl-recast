@@ -728,7 +728,7 @@ interface dtNavMeshCreateParams
 	//	attribute short [vertCount] verts;
 
 	// Option 2 - Direct pointer access.
-	//attribute short * verts;
+	attribute short * verts;
 	
 	attribute int vertCount;
 

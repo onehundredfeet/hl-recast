@@ -1,3 +1,5 @@
+import Float3.NativeArrayFloat3;
+import hl.NativeArray;
 import recast.Native;
 import ShaderMath;
 
@@ -20,6 +22,10 @@ class Main {
 		}
 	}
 
+	public static function ApproxEqualVec3(a : Vec3, b : Vec3){
+		return ApproxEqual(a.x, b.x) && ApproxEqual(a.y, b.y) && ApproxEqual(a.z, b.z);
+	}
+
 	public static function testPointer(){
 		
 		var verts16 = new hl.NativeArray<hl.UI16>(3);
@@ -29,7 +35,7 @@ class Main {
 		var bs : hl.BytesAccess<hl.UI16> = bb;
 		bs[0] = 1;
 		verts16[0] = 1;
-		x.verts = verts16;
+		x.verts = bs;
 		var xy = x.verts;
 		trace("Verts: " + xy[0]);
 	}
@@ -54,23 +60,17 @@ class Main {
 	public static function test_rcCalcBounds_0(){
 		// bounds of one vector
 		
-		var verts = new hl.NativeArray<Single>(3);
+		var verts : Vec3.NativeArrayVec3 = new hl.NativeArray<Single>(3);
 		var bmin = vec3(0., 0., 0.);
 		var bmax = vec3(0., 0., 0.);
-		verts[0] = 1;
-		verts[1] = 2;
-		verts[2] = 3;
-		
+		verts[0] = vec3(1.,2.,3.);
 		recast.Native.Recast.rcCalcBounds(verts, 1, bmin, bmax);
 		
 		var test = true;
 
-		test = test && ApproxEqual(bmin[0], verts[0]);
-		test = test && ApproxEqual(bmin[1], verts[1]);
-		test = test && ApproxEqual(bmin[2], verts[2]);
-		test = test && ApproxEqual(bmax[0], verts[0]);
-		test = test && ApproxEqual(bmax[1], verts[1]);
-		test = test && ApproxEqual(bmax[2], verts[2]);
+
+		test = test && ApproxEqualVec3(bmin, verts[0]);
+		test = test && ApproxEqualVec3(bmax, verts[0]);
 
 		trace('rcCalcBounds (bounds of one vector): $test');
 	}
@@ -129,36 +129,36 @@ class Main {
 		
 		var test = true;
 		
-		var pts = new FloatArray(9);
-		pts.Set(0, 0);
-		pts.Set(1, 0);
-		pts.Set(2, 0);
-		pts.Set(3, 0);
-		pts.Set(4, 0);
-		pts.Set(5, 1);
-		pts.Set(6, 1);
-		pts.Set(7, 0);
-		pts.Set(8, 0);
+		var pts = new NativeArray<Single>(9);
+		pts[0] =0;
+		pts[1] =0;
+		pts[2] =0;
+		pts[3] =0;
+		pts[4] =0;
+		pts[5] =1;
+		pts[6] =1;
+		pts[7] =0;
+		pts[8] =0;
 
 		var npts:Int = 3;
 
-		var areas = new FloatArray(6);
-		var out = new FloatArray(3);
+		var areas =  new NativeArray<Single>(6);
+		var out =  new NativeArray<Single>(3);
 
 		DetourCommon.dtRandomPointInConvexPoly(pts, npts, areas, 0.0, 1.0, out);
-		test = test && ApproxEqual(out.Get(0), 0.0);
-		test = test && ApproxEqual(out.Get(1), 0.0);
-		test = test && ApproxEqual(out.Get(2), 1.0);
+		test = test && ApproxEqual(out[0], 0.0);
+		test = test && ApproxEqual(out[1], 0.0);
+		test = test && ApproxEqual(out[2], 1.0);
 
 		DetourCommon.dtRandomPointInConvexPoly(pts, npts, areas, 0.5, 1.0, out);
-		test = test && ApproxEqual(out.Get(0), 1.0 / 2.0);
-		test = test && ApproxEqual(out.Get(1), 0.0);
-		test = test && ApproxEqual(out.Get(2), 1.0 / 2.0);
+		test = test && ApproxEqual(out[0], 1.0 / 2.0);
+		test = test && ApproxEqual(out[1], 0.0);
+		test = test && ApproxEqual(out[2], 1.0 / 2.0);
 
 		DetourCommon.dtRandomPointInConvexPoly(pts, npts, areas, 1.0, 1.0, out);
-		test = test && ApproxEqual(out.Get(0), 1.0);
-		test = test && ApproxEqual(out.Get(1), 0.0);
-		test = test && ApproxEqual(out.Get(2), 0.0);
+		test = test && ApproxEqual(out[0], 1.0);
+		test = test && ApproxEqual(out[1], 0.0);
+		test = test && ApproxEqual(out[2], 0.0);
 
 		trace('testDetourRandomPointInConvexPoly: $test');
 	}
