@@ -95,7 +95,7 @@ interface rcConfig {
 	attribute float cs;
 	attribute float ch;
 	attribute float3 bmin;
-	// attribute float[] bmax;
+	attribute float3 bmax;
 	attribute float walkableSlopeAngle;
 	attribute long walkableHeight;
 	attribute long walkableClimb;
@@ -115,7 +115,6 @@ interface rcSpan
 	attribute long smax;
 	attribute long area; 
 
-	// Can this just simply be assigned?
 	// Who is managing this memory?
 	attribute rcSpan next; 
 };
@@ -123,169 +122,146 @@ interface rcSpan
 interface rcSpanPool 
 {
 	attribute rcSpanPool next;					
-
 	// How should this get translated?
-
 	//rcSpan items[RC_SPANS_PER_POOL]; //TODO 
 };
 
-/// A dynamic heightfield representing obstructed space.
-/// @ingroup recast
+
 interface rcHeightfield
 {
 	void rcHeightfield();
 
-	attribute int width;			///< The width of the heightfield. (Along the x-axis in cell units.)
-	attribute int height;			///< The height of the heightfield. (Along the z-axis in cell units.)
-	//attribute float bmin[3];  	///< The minimum bounds in world space. [(x, y, z)]
-	//attribute float bmax[3];		///< The maximum bounds in world space. [(x, y, z)]
-	attribute float cs;			///< The size of each cell. (On the xz-plane.)
-	attribute float ch;			///< The height of each cell. (The minimum increment along the y-axis.)
+	attribute int width;		
+	attribute int height;		
+	attribute float3 bmin;  	
+	attribute float3 bmax;		
+	attribute float cs;			
+	attribute float ch;	
 
-	// How should this be translated?
-	// Is it internal?
-	// rcSpan** spans;		///< Heightfield of spans (width*height).
-	// rcSpanPool* pools;	///< Linked list of span pools.
-	// rcSpan* freelist;	///< The next free span.
+	// How should this get translated?
+	//attribute rcSpan * spans; //TODO
+	attribute rcSpanPool pools;
+	attribute rcSpan freelist;
 };
 
-/// Provides information on the content of a cell column in a compact heightfield. 
 interface rcCompactCell
 {
-	attribute int index;	///< Index to the first span in the column.
-	attribute int count;		///< Number of spans in the column.
+	attribute int index;
+	attribute int count;
 };
 
-/// Represents a span of unobstructed space within a compact heightfield.
 interface rcCompactSpan
 {
-	attribute short y;			///< The lower extent of the span. (Measured from the heightfield's base.)
-	attribute short reg;			///< The id of the region the span belongs to. (Or zero if not in a region.)
-	attribute int con;		///< Packed neighbor connection data.
-	attribute int h;			///< The height of the span.  (Measured from #y.)
+	attribute short y;	
+	attribute short reg;
+	attribute int con;	
+	attribute int h;	
 };
 
-/// A compact, static heightfield representing unobstructed space.
-/// @ingroup recast
 interface rcCompactHeightfield
 {
 	void rcCompactHeightfield();
-	attribute int width;					///< The width of the heightfield. (Along the x-axis in cell units.)
-	attribute int height;					///< The height of the heightfield. (Along the z-axis in cell units.)
-	attribute int spanCount;				///< The number of spans in the heightfield.
-	attribute int walkableHeight;			///< The walkable height used during the build of the field.  (See: rcConfig::walkableHeight)
-	attribute int walkableClimb;			///< The walkable climb used during the build of the field. (See: rcConfig::walkableClimb)
-	attribute int borderSize;				///< The AABB border size used during the build of the field. (See: rcConfig::borderSize)
-	attribute int maxDistance;	///< The maximum distance value of any span within the field. 
-	attribute int maxRegions;	///< The maximum region id of any span within the field. 
-	//attribute float bmin[3];				///< The minimum bounds in world space. [(x, y, z)]
-	//attribute float bmax[3];				///< The maximum bounds in world space. [(x, y, z)]
-	attribute float cs;					///< The size of each cell. (On the xz-plane.)
-	attribute float ch;					///< The height of each cell. (The minimum increment along the y-axis.)
-	attribute rcCompactCell cells;		///< Array of cells. [Size: #width*#height]
-	attribute rcCompactSpan spans;		///< Array of spans. [Size: #spanCount]
-	// attribute unsigned short* dist;		///< Array containing border distance data. [Size: #spanCount]
-	// attribute unsigned char* areas;		///< Array containing area id data. [Size: #spanCount]
+	attribute int width;			
+	attribute int height;			
+	attribute int spanCount;		
+	attribute int walkableHeight;	
+	attribute int walkableClimb;	
+	attribute int borderSize;		
+	attribute int maxDistance;
+	attribute int maxRegions;	
+	attribute float3 bmin;		
+	attribute float3 bmax;		
+	attribute float cs;				
+	attribute float ch;				
+	attribute rcCompactCell cells;	
+	attribute rcCompactSpan spans;	
+	attribute short * dist;		
+	attribute char * areas;		
 };
 
-/// Represents a heightfield layer within a layer set.
-/// @see rcHeightfieldLayerSet
 interface rcHeightfieldLayer
 {
-	//attribute float bmin[3];				///< The minimum bounds in world space. [(x, y, z)]
-	//attribute float bmax[3];				///< The maximum bounds in world space. [(x, y, z)]
-	attribute float cs;					///< The size of each cell. (On the xz-plane.)
-	attribute float ch;					///< The height of each cell. (The minimum increment along the y-axis.)
-	attribute int width;					///< The width of the heightfield. (Along the x-axis in cell units.)
-	attribute int height;					///< The height of the heightfield. (Along the z-axis in cell units.)
-	attribute int minx;					///< The minimum x-bounds of usable data.
-	attribute int maxx;					///< The maximum x-bounds of usable data.
-	attribute int miny;					///< The minimum y-bounds of usable data. (Along the z-axis.)
-	attribute int maxy;					///< The maximum y-bounds of usable data. (Along the z-axis.)
-	attribute int hmin;					///< The minimum height bounds of usable data. (Along the y-axis.)
-	attribute int hmax;					///< The maximum height bounds of usable data. (Along the y-axis.)
+	attribute float3 bmin;
+	attribute float3 bmax;
+	attribute float cs;		
+	attribute float ch;		
+	attribute int width;	
+	attribute int height;	
+	attribute int minx;		
+	attribute int maxx;		
+	attribute int miny;		
+	attribute int maxy;		
+	attribute int hmin;		
+	attribute int hmax;		
 
 	// Is this internal?
-	// attribute unsigned char* heights;		///< The heightfield. [Size: width * height]
-	// attribute unsigned char* areas;		///< Area ids. [Size: Same as #heights]
-	// attribute unsigned char* cons;		///< Packed neighbor connection information. [Size: Same as #heights]
+	attribute char * heights;
+	attribute char * areas;
+	attribute char * cons;
 };
 
-/// Represents a set of heightfield layers.
-/// @ingroup recast
-/// @see rcAllocHeightfieldLayerSet, rcFreeHeightfieldLayerSet 
 interface rcHeightfieldLayerSet
 {
 	void rcHeightfieldLayerSet();
-	//[Value] attribute rcHeightfieldLayer layers;			///< The layers in the set. [Size: #nlayers]
-	attribute int nlayers;						///< The number of layers in the set.
+	attribute rcHeightfieldLayer layers;
+	attribute int nlayers;
 };
 
-/// Represents a simple, non-overlapping contour in field space.
+
 interface rcContour
 {
-	//attribute int* verts;			///< Simplified contour vertex and connection data. [Size: 4 * #nverts]
-	attribute int nverts;			///< The number of vertices in the simplified contour. 
-	//attribute int* rverts;		///< Raw contour vertex and connection data. [Size: 4 * #nrverts]
-	attribute int nrverts;		///< The number of vertices in the raw contour. 
-	attribute int reg;	///< The region id of the contour.
-	//attribute unsigned char area;	///< The area id of the contour.
+	attribute int * verts;		
+	attribute int nverts;	
+    attribute int * rverts;
+	attribute int nrverts;	
+	attribute int reg;
+	attribute char area;
 };
 
-/// Represents a group of related contours.
-/// @ingroup recast
+
 interface rcContourSet
 {
 	void rcContourSet();
-
-	// These two together make an array
-	//[Value] attribute rcContour[] conts;	///< An array of the contours in the set. [Size: #nconts]
-	attribute int nconts;			///< The number of contours in the set.
-
-	//attribute float bmin[3];  	///< The minimum bounds in world space. [(x, y, z)]
-	//attribute float bmax[3];		///< The maximum bounds in world space. [(x, y, z)]
-	attribute float cs;			///< The size of each cell. (On the xz-plane.)
-	attribute float ch;			///< The height of each cell. (The minimum increment along the y-axis.)
-	attribute int width;			///< The width of the set. (Along the x-axis in cell units.) 
-	attribute int height;			///< The height of the set. (Along the z-axis in cell units.) 
-	attribute int borderSize;		///< The AABB border size used to generate the source data from which the contours were derived.
-	attribute float maxError;		///< The max edge error that this contour set was simplified with.
+	attribute rcContour conts;
+	attribute int nconts;
+	attribute float3 bmin;  	
+	attribute float3 bmax;		
+	attribute float cs;			
+	attribute float ch;			
+	attribute int width;		
+	attribute int height;		
+	attribute int borderSize;
+	attribute float maxError;	
 };
 
-/// Represents a polygon mesh suitable for use in building a navigation mesh. 
-/// @ingroup recast
 interface rcPolyMesh
 {
 	void rcPolyMesh();
-
-	// unsigned short* verts;	///< The mesh vertices. [Form: (x, y, z) * #nverts]
-	// unsigned short* polys;	///< Polygon and neighbor data. [Length: #maxpolys * 2 * #nvp]
-	// unsigned short* regs;	///< The region id assigned to each polygon. [Length: #maxpolys]
-	// unsigned short* flags;	///< The user defined flags for each polygon. [Length: #maxpolys]
-	// unsigned char* areas;	///< The area id assigned to each polygon. [Length: #maxpolys]
-	attribute int nverts;				///< The number of vertices.
-	attribute int npolys;				///< The number of polygons.
-	attribute int maxpolys;			///< The number of allocated polygons.
-	attribute int nvp;				///< The maximum number of vertices per polygon.
-	//attribute float bmin[3];			///< The minimum bounds in world space. [(x, y, z)]
-	//attribute float bmax[3];			///< The maximum bounds in world space. [(x, y, z)]
-	attribute float cs;				///< The size of each cell. (On the xz-plane.)
-	attribute float ch;				///< The height of each cell. (The minimum increment along the y-axis.)
-	attribute int borderSize;			///< The AABB border size used to generate the source data from which the mesh was derived.
-	attribute float maxEdgeError;		///< The max error of the polygon edges in the mesh.
+	attribute short* verts;	
+	attribute short* polys;	
+	attribute short* regs;	
+	attribute short* flags;	
+	attribute char* areas;	
+	attribute int nverts;		
+	attribute int npolys;		
+	attribute int maxpolys;		
+	attribute int nvp;			
+	attribute float3 bmin;	
+	attribute float3 bmax;	
+	attribute float cs;			
+	attribute float ch;			
+	attribute int borderSize;
+	attribute float maxEdgeError;
 };
 
-/// Contains triangle meshes that represent detailed height data associated 
-/// with the polygons in its associated polygon mesh object.
-/// @ingroup recast
 interface rcPolyMeshDetail
 {
-	//attribute unsigned int* meshes;	///< The sub-mesh data. [Size: 4*#nmeshes] 
-	//float* verts;			///< The mesh vertices. [Size: 3*#nverts] 
-	//unsigned char* tris;	///< The mesh triangles. [Size: 4*#ntris] 
-	attribute long nmeshes;			///< The number of sub-meshes defined by #meshes.
-	attribute long nverts;				///< The number of vertices in #verts.
-	attribute long ntris;				///< The number of triangles in #tris.
+	//attribute int * meshes;
+	attribute float* verts;		
+	attribute char* tris;
+	attribute long nmeshes;			
+	attribute long nverts;			
+	attribute long ntris;			
 };
 
 interface FloatArray 
@@ -335,29 +311,29 @@ interface Recast{
 	// UPDATED TO NEW METHOD
 	[Static] void rcCalcBounds(float[] verts, int nv, float3 bmin, float3 bmax);
 
-	[Static] void rcCalcGridSize([Const] FloatArray bmin, [Const] FloatArray bmax, float cs,
-							IntArray w, IntArray h);
+	[Static] void rcCalcGridSize([Const] float3 bmin, [Const] float3 bmax, float cs,
+							int[] w, int[] h);
 
 	[Static] bool rcCreateHeightfield(rcContext ctx, [Ref] rcHeightfield hf, int width, int height, 
-							[Const] FloatArray bmin, [Const] FloatArray bmax, float cs, float ch);
+							[Const] float3 bmin, [Const] float3 bmax, float cs, float ch);
 
 	[Static] void rcMarkWalkableTriangles(rcContext ctx, [Const] float walkableSlopeAngle, 
-							[Const] FloatArray verts, int nv,[Const] IntArray tris, int nt, CharArray areas); 
+							[Const] float[] verts, int nv,[Const] int[] tris, int nt, char[] areas); 
 
 	[Static] void rcClearUnwalkableTriangles(rcContext ctx, [Const] float walkableSlopeAngle, 
-							[Const] FloatArray verts, int nv,[Const] IntArray tris, int nt, CharArray areas); 
+							[Const] float[] verts, int nv,[Const] int[] tris, int nt, char[] areas); 
 
 	[Static] bool rcAddSpan(rcContext ctx, [Ref] rcHeightfield hf, [Const] int x, [Const] int y, 
 							[Const] int smin, [Const] int smax, [Const] int area, [Const] int flagMergeThr);
 
-	[Static] bool rcRasterizeTriangle(rcContext ctx, [Const] FloatArray v0, [Const] FloatArray v1, 
-							[Const] FloatArray v2, [Const] int area, [Ref] rcHeightfield solid, [Const] int flagMergeThr);
+	[Static] bool rcRasterizeTriangle(rcContext ctx, [Const] float3 v0, [Const] float3 v1, 
+							[Const] float3 v2, [Const] int area, [Ref] rcHeightfield solid, [Const] int flagMergeThr);
 
-	[Static] bool rcRasterizeTriangles(rcContext ctx, [Const]  FloatArray verts, [Const]  int nv,
-							[Const]  IntArray tris, [Const]  CharArray areas, [Const]  int nt,
+	[Static] bool rcRasterizeTriangles(rcContext ctx, [Const]  float[] verts, [Const]  int nv,
+							[Const]  int[] tris, [Const]  char[] areas, [Const]  int nt,
 							[Ref] rcHeightfield solid, [Const]  int flagMergeThr);
 
-	[Static] bool rcRasterizeTriangles(rcContext ctx, [Const]  FloatArray verts, [Const]  CharArray areas, [Const]  int nt,
+	[Static] bool rcRasterizeTriangles(rcContext ctx, [Const]  float[] verts, [Const] char[] areas, [Const]  int nt,
 							[Ref] rcHeightfield solid, [Const]  int flagMergeThr);
 
 	[Static] void rcFilterLowHangingWalkableObstacles(rcContext ctx, [Const]  int walkableClimb, [Ref] rcHeightfield solid);
@@ -376,17 +352,17 @@ interface Recast{
 
 	[Static] bool rcMedianFilterWalkableArea(rcContext ctx, [Ref] rcCompactHeightfield chf);
 
-	[Static] void rcMarkBoxArea(rcContext ctx, [Const]  FloatArray bmin, [Const]  FloatArray bmax, char areaId,
+	[Static] void rcMarkBoxArea(rcContext ctx, [Const]  float3 bmin, [Const] float3 bmax, char areaId,
 							[Ref] rcCompactHeightfield chf);
 
-	[Static] void rcMarkConvexPolyArea(rcContext ctx, [Const]  FloatArray verts, [Const]  int nverts,
+	[Static] void rcMarkConvexPolyArea(rcContext ctx, [Const] float3 verts, [Const]  int nverts,
 							[Const]  float hmin, [Const]  float hmax, char areaId,
 							[Ref] rcCompactHeightfield chf);
 
-	[Static] int rcOffsetPoly([Const]  FloatArray verts, [Const]  int nverts, [Const]  float offset,
-							FloatArray outVerts, [Const]  int maxOutVerts);
+	[Static] int rcOffsetPoly([Const] float3 verts, [Const]  int nverts, [Const]  float offset,
+							float3 outVerts, [Const]  int maxOutVerts);
 
-	[Static] void rcMarkCylinderArea(rcContext ctx, [Const]  FloatArray pos,
+	[Static] void rcMarkCylinderArea(rcContext ctx, [Const]  float3 pos,
 							[Const]  float r, [Const]  float h, char areaId,
 							[Ref] rcCompactHeightfield chf);
 
@@ -403,7 +379,9 @@ interface Recast{
 };
 
 
-// Detour
+//--------------------------------------------------------------------------------------------
+// DetourMath.h
+//--------------------------------------------------------------------------------------------
 [NoDelete]
 interface DetourMath {
 	[Static] float dtMathFabsf(float x);
@@ -416,97 +394,106 @@ interface DetourMath {
 	[Static] bool dtMathIsfinite(float x);
 };
 
+//--------------------------------------------------------------------------------------------
+// DetourCommon.h
+//--------------------------------------------------------------------------------------------
 [NoDelete]
 interface DetourCommon {
 
-	[Static] void dtVcross(FloatArray dest, [Const] FloatArray v1, [Const] FloatArray v2);
-	[Static] float dtVdot([Const] FloatArray v1, [Const] FloatArray v2);
-	[Static] void dtVmad(FloatArray dest, [Const] FloatArray v1, [Const] FloatArray v2, [Const] float s);
-	[Static] void dtVlerp(FloatArray dest, [Const] FloatArray v1, [Const] FloatArray v2, [Const] float t);
-	[Static] void dtVadd(FloatArray dest, [Const] FloatArray v1, [Const] FloatArray v2);
-	[Static] void dtVsub(FloatArray dest, [Const] FloatArray v1, [Const] FloatArray v2);
-	[Static] void dtVscale(FloatArray dest, [Const] FloatArray v, [Const] float t);
-	[Static] void dtVmin(FloatArray mn, [Const] FloatArray v);
-	[Static] void dtVmax(FloatArray mx, [Const] FloatArray v);
-	[Static] void dtVset(FloatArray dest, [Const] float x, [Const] float y, [Const] float z);
-	[Static] void dtVcopy(FloatArray dest, [Const] FloatArray a);
-	[Static] float dtVlen([Const] FloatArray v);
-	[Static] float dtVlenSqr([Const] FloatArray v);
-	[Static] float dtVdist([Const] FloatArray v1, [Const] FloatArray v2);
-	[Static] float dtVdistSqr([Const] FloatArray v1, [Const] FloatArray v2);
-	[Static] float dtVdist2D([Const] FloatArray v1, [Const] FloatArray v2);
-	[Static] float dtVdist2DSqr([Const] FloatArray v1, [Const] FloatArray v2);
-	[Static] void dtVnormalize(FloatArray v);
-	[Static] bool dtVequal([Const] FloatArray p0, [Const] FloatArray p1);
-	[Static] bool dtVisfinite([Const] FloatArray v);
-	[Static] bool dtVisfinite2D([Const] FloatArray v);
-	[Static] float dtVdot2D([Const] FloatArray u, [Const] FloatArray v);
-	[Static] float dtVperp2D([Const] FloatArray u, [Const] FloatArray v);
-	[Static] float dtTriArea2D([Const] FloatArray a, [Const] FloatArray b, [Const] FloatArray c);
+	[Static] void dtVcross(float3 dest, [Const] float3 v1, [Const] float3 v2);
+	[Static] float dtVdot([Const] float3 v1, [Const] float3 v2);
+	[Static] void dtVmad(float3 dest, [Const] float3 v1, [Const] float3 v2, [Const] float s);
+	[Static] void dtVlerp(float3 dest, [Const] float3 v1, [Const] float3 v2, [Const] float t);
+	[Static] void dtVadd(float3 dest, [Const] float3 v1, [Const] float3 v2);
+	[Static] void dtVsub(float3 dest, [Const] float3 v1, [Const] float3 v2);
+	[Static] void dtVscale(float3 dest, [Const] float3 v, [Const] float t);
+	[Static] void dtVmin(float3 mn, [Const] float3 v);
+	[Static] void dtVmax(float3 mx, [Const] float3 v);
+	[Static] void dtVset(float3 dest, [Const] float x, [Const] float y, [Const] float z);
+	[Static] void dtVcopy(float3 dest, [Const] float3 a);
+	[Static] float dtVlen([Const] float3 v);
+	[Static] float dtVlenSqr([Const] float3 v);
+	[Static] float dtVdist([Const] float3 v1, [Const] float3 v2);
+	[Static] float dtVdistSqr([Const] float3 v1, [Const] float3 v2);
+	[Static] float dtVdist2D([Const] float3 v1, [Const] float3 v2);
+	[Static] float dtVdist2DSqr([Const] float3 v1, [Const] float3 v2);
+	[Static] void dtVnormalize(float3 v);
+	[Static] bool dtVequal([Const] float3 p0, [Const] float3 p1);
+	[Static] bool dtVisfinite([Const] float3 v);
+	[Static] bool dtVisfinite2D([Const] float3 v);
+	[Static] float dtVdot2D([Const] float3 u, [Const] float3 v);
+	[Static] float dtVperp2D([Const] float3 u, [Const] float3 v);
+	[Static] float dtTriArea2D([Const] float3 a, [Const] float3 b, [Const] float3 c);
 
-	[Static] bool dtOverlapQuantBounds([Const] ShortArray amin, [Const] ShortArray amax,
-						[Const] ShortArray bmin, [Const] ShortArray bmax);
+    // TODO replace with short3
+	[Static] bool dtOverlapQuantBounds([Const] short[] amin, [Const] short[] amax,
+						[Const] short[] bmin, [Const] short[] bmax);
 
-	[Static] bool dtOverlapBounds([Const] FloatArray amin, [Const] FloatArray amax,
-						[Const] FloatArray bmin, [Const] FloatArray bmax);
+	[Static] bool dtOverlapBounds([Const] float3 amin, [Const] float3 amax,
+						[Const] float3 bmin, [Const] float3 bmax);
 
-	[Static] void dtClosestPtPointTriangle(FloatArray closest, [Const] FloatArray p,
-						[Const] FloatArray a, [Const] FloatArray b, [Const] FloatArray c);
+	[Static] void dtClosestPtPointTriangle(float3 closest, [Const] float3 p,
+						[Const] float3 a, [Const] float3 b, [Const] float3 c);
 
-	[Static] bool dtClosestHeightPointTriangle([Const] FloatArray p, [Const] FloatArray a, [Const] FloatArray b, 
-						[Const] FloatArray c, [Ref] float h);
+	[Static] bool dtClosestHeightPointTriangle([Const] float3 p, [Const] float3 a, [Const] float3 b, 
+						[Const] float3 c, [Ref] float h);
 
-	[Static] bool dtIntersectSegmentPoly2D([Const] FloatArray p0, [Const] FloatArray p1,
-							  [Const] FloatArray verts, int nverts,
+	[Static] bool dtIntersectSegmentPoly2D([Const] float3 p0, [Const] float3 p1,
+							  [Const] float3 verts, int nverts,
 							  [Ref] float tmin, [Ref] float tmax,
 							  [Ref] int segMin, [Ref] int segMax);
 
-	[Static] bool dtIntersectSegSeg2D([Const] FloatArray ap, [Const] FloatArray aq,
-						 [Const] FloatArray bp, [Const] FloatArray bq,
+	[Static] bool dtIntersectSegSeg2D([Const] float3 ap, [Const] float3 aq,
+						 [Const] float3 bp, [Const] float3 bq,
 						 [Ref] float s, [Ref] float t);
 
-	[Static] bool dtPointInPolygon([Const] FloatArray pt, [Const] FloatArray verts, [Const] int nverts);
+	[Static] bool dtPointInPolygon([Const] float3 pt, [Const] float3 verts, [Const] int nverts);
 
-	[Static] bool dtDistancePtPolyEdgesSqr([Const] FloatArray pt, [Const] FloatArray verts, [Const] int nverts,
-								FloatArray ed, FloatArray et);
+	[Static] bool dtDistancePtPolyEdgesSqr([Const] float3 pt, [Const] float3 verts, [Const] int nverts,
+								float3 ed, float3 et);
 
-	[Static] float dtDistancePtSegSqr2D([Const] FloatArray pt, [Const] FloatArray p, [Const] FloatArray q, [Ref] float t);
+	[Static] float dtDistancePtSegSqr2D([Const] float3 pt, [Const] float3 p, [Const] float3 q, [Ref] float t);
 
-	[Static] void dtCalcPolyCenter(FloatArray tc, [Const] ShortArray idx, int nidx, [Const] FloatArray verts);
+	[Static] void dtCalcPolyCenter(float3 tc, [Const] ShortArray idx, int nidx, [Const] float3 verts);
 
-	[Static] bool dtOverlapPolyPoly2D([Const] FloatArray polya, [Const] int npolya,
-							[Const] FloatArray polyb, [Const] int npolyb);
+	[Static] bool dtOverlapPolyPoly2D([Const] float3 polya, [Const] int npolya,
+							[Const] float3 polyb, [Const] int npolyb);
 
 	[Static] int dtNextPow2(int v);
 	[Static] int dtIlog2(int v);
 	[Static] int dtAlign4(int x);
 	[Static] int dtOppositeTile(int side);
-	[Static] void dtSwapByte(CharArray a, CharArray b);	
+	[Static] void dtSwapByte(char[] a, char[] b);	
 
-	[Static] void dtRandomPointInConvexPoly([Const] FloatArray pts, [Const] int npts, FloatArray areas,
-								[Const] float s, [Const] float t, FloatArray out);
+	[Static] void dtRandomPointInConvexPoly([Const] float[] pts, [Const] int npts, float[] areas,
+								[Const] float s, [Const] float t, float[] out);
 };
 
 //--------------------------------------------------------------------------------------------
 // DetourStatus.h
 //--------------------------------------------------------------------------------------------
+typedef dtStatus int;
+
 [NoDelete]
 interface DetourStatus 
 {
-	[Static] bool dtStatusSucceed(int status);
-	[Static] bool dtStatusFailed(int status);
-	[Static] bool dtStatusInProgress(int status);
-	[Static] bool dtStatusDetail(int status, int detail);
+	[Static] bool dtStatusSucceed(dtStatus status);
+	[Static] bool dtStatusFailed(dtStatus status);
+	[Static] bool dtStatusInProgress(dtStatus status);
+	[Static] bool dtStatusDetail(dtStatus status, int detail);
 };
 
 //--------------------------------------------------------------------------------------------
 // DetourNavMesh.h
 //--------------------------------------------------------------------------------------------
+typedef dtPolyRef int64;
+typedef dtTileRef int64;
+
 interface dtPoly 
 {
 	attribute int firstLink;
-	// unsigned short verts[DT_VERTS_PER_POLYGON];
-	// unsigned short neis[DT_VERTS_PER_POLYGON];
+	//attribute short* verts; // TODO original:  unsigned short verts[DT_VERTS_PER_POLYGON];
+	//attribute short* neis;  // TODO original:  unsigned short neis[DT_VERTS_PER_POLYGON];
 	attribute short flags;
 	attribute char vertCount;
 	attribute char areaAndtype;
@@ -526,7 +513,7 @@ interface dtPolyDetail
 
 interface dtLink 
 {
-	attribute int ref;		
+	attribute dtPolyRef ref;		
 	attribute int next;				
 	attribute char edge;			
 	attribute char side;			
@@ -536,14 +523,14 @@ interface dtLink
 
 interface dtBVNode 
 {
-	// short bmin[3];			
-	// short bmax[3];		
+	// attribute short* bmin; // TODO replace with short3			
+	// attribute short* bmax; // TODO replace with short3	
 	attribute int i;					
 };
 
 interface dtOffMeshConnection 
 {
-	// float pos[6];
+	// float pos[6]; // TODO original: float pos[6];
 	attribute float rad;		
 	attribute short poly;
 	attribute char flags;
@@ -571,31 +558,27 @@ interface dtMeshHeader
 	attribute float walkableHeight;	
 	attribute float walkableRadius;	
 	attribute float walkableClimb;	
-	// float bmin[3];			
-	// float bmax[3];			
+	attribute float3 bmin;			
+	attribute float3 bmax;			
 	attribute float bvQuantFactor;
 };
 
 interface dtMeshTile 
 {
 	attribute int salt;			
-	attribute int linksFreeList;
-		
-	attribute dtMeshHeader header;	//TODO resolve this
-	attribute dtPoly polys; //TODO resolve this			  	
-	
+	attribute int linksFreeList;	
+	attribute dtMeshHeader header;	
+	attribute dtPoly polys; 		  	
 	attribute float* verts;
-	
-	attribute dtLink links;	 //TODO resolve this
-	attribute dtPolyDetail detailMeshes;	//TODO resolve this
-	//float* detailVerts;	  //TODO resolve this
-	//unsigned char* detailTris;
-
-	attribute dtBVNode bvTree;//TODO resolve this
-	attribute dtOffMeshConnection offMeshCons;	//TODO resolve this			
+	attribute dtLink links;	
+	attribute dtPolyDetail detailMeshes;	
+	attribute float* detailVerts;	  
+	attribute char* detailTris;
+	attribute dtBVNode bvTree;
+	attribute dtOffMeshConnection offMeshCons;		
 	attribute int dataSize;						
 	attribute int flags;							
-	//attribute dtMeshTile next;		//TODO resolve this			
+	attribute dtMeshTile next;			
 };
 
 interface dtNavMeshParams 
@@ -699,10 +682,13 @@ interface dtNode
 	attribute int id;
 };
 
+// typedef dtNodeIndex short;
+// typedef dtPolyRef int64;
+
 interface dtNodePool
 {
 	void dtNodePool(int maxNodes, int hashSize);
-	// [Value] dtNode getNode(dtPolyRef id, char state);	
+	// dtNode getNode(dtPolyRef id, char state);	
 	// [Value] dtNode findNode(dtPolyRef id, char state);
 	//int findNodes(dtPolyRef id, dtNode** nodes, const int maxNodes);
 	int getNodeIdx([Const] dtNode node);
@@ -710,8 +696,8 @@ interface dtNodePool
 	int getMemUsed();	
 	int getMaxNodes();
 	int getHashSize();
- 	short getFirst(int bucket); //TODO
-	short getNext(int i); // TODO 
+ 	//dtNodeIndex getFirst(int bucket); //TODO
+	//dtNodeIndex getNext(int i); // TODO 
 	int getNodeCount();
 };
 
@@ -776,8 +762,6 @@ interface dtNavMeshCreateParams
 	attribute float ch;				
 	attribute bool buildBvTree;
 };
-
-
 
 [NoDelete]
 interface DetourNavMeshBuilder

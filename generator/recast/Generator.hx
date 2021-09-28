@@ -33,7 +33,7 @@ class DetourNavMesh;
 class DetourNavMeshBuilder;
 class DetourNavMeshQuery;
 
-#include \"hl-idl-helpers.h\"
+// #include \"hl-idl-helpers.h\"
 ";
 	
 	public static function generateCpp() {	
