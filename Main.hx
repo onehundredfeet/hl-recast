@@ -1,6 +1,5 @@
 import Float3.NativeArrayFloat3;
 import hl.NativeArray;
-import recast.Native;
 import ShaderMath;
 
 class Main {
@@ -12,6 +11,7 @@ class Main {
 		test_rcCalcBounds_1();
 		// get_set_rcConfig_bounds();
 		testDetourRandomPointInConvexPoly();
+		test_context_0();
 	}
 
 	public static function ApproxEqual(a : Float, b : Float){
@@ -30,7 +30,7 @@ class Main {
 		
 		var verts16 = new hl.NativeArray<hl.UI16>(3);
 
-		var x = new DtNavMeshCreateParams();
+		var x = new recast.Native.DtNavMeshCreateParams();
 		var bb = new hl.Bytes( 100 );	// need to make sure that there's enough bytes
 		var bs : hl.BytesAccess<hl.UI16> = bb;
 		bs[0] = 1;
@@ -40,6 +40,15 @@ class Main {
 		trace("Verts: " + xy[0]);
 	}
 
+	public static function test_context_0() {
+		trace("Creating config");
+		var config = new recast.Native.Config();
+
+		trace("Creating context");
+		var ctx = new recast.Context.Context(config, true);
+
+		trace("Done creating contexts");
+	}
 	public static function test_DetourMath_0(){
 		
 		var test = true;
@@ -145,17 +154,17 @@ class Main {
 		var areas =  new NativeArray<Single>(6);
 		var out =  new NativeArray<Single>(3);
 
-		DetourCommon.dtRandomPointInConvexPoly(pts, npts, areas, 0.0, 1.0, out);
+		recast.Native.DetourCommon.dtRandomPointInConvexPoly(pts, npts, areas, 0.0, 1.0, out);
 		test = test && ApproxEqual(out[0], 0.0);
 		test = test && ApproxEqual(out[1], 0.0);
 		test = test && ApproxEqual(out[2], 1.0);
 
-		DetourCommon.dtRandomPointInConvexPoly(pts, npts, areas, 0.5, 1.0, out);
+		recast.Native.DetourCommon.dtRandomPointInConvexPoly(pts, npts, areas, 0.5, 1.0, out);
 		test = test && ApproxEqual(out[0], 1.0 / 2.0);
 		test = test && ApproxEqual(out[1], 0.0);
 		test = test && ApproxEqual(out[2], 1.0 / 2.0);
 
-		DetourCommon.dtRandomPointInConvexPoly(pts, npts, areas, 1.0, 1.0, out);
+		recast.Native.DetourCommon.dtRandomPointInConvexPoly(pts, npts, areas, 1.0, 1.0, out);
 		test = test && ApproxEqual(out[0], 1.0);
 		test = test && ApproxEqual(out[1], 0.0);
 		test = test && ApproxEqual(out[2], 0.0);

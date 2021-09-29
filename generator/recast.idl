@@ -72,9 +72,9 @@ enum rcTimerLabel
 };
 
 [Internal="rcContext"]
-interface Context 
+interface RCContext 
 {
-    void Context(boolean state);
+    void RCContext(boolean state);
     void enableLog(boolean state);
 	void resetLog();
 	void enableTimer(boolean state);
@@ -145,15 +145,13 @@ interface Context
 
 };
 
-[Internal="rcScopedTimer"]
-interface ScopedTimer 
+interface rcScopedTimer 
 {
-	void ScopedTimer(Context ctx, [Const] rcTimerLabel label);
+	void rcScopedTimer(RCContext ctx, [Const] rcTimerLabel label);
 };
 
-[Internal="rcConfig"]
-interface Config {
-	void Config();
+interface rcConfig {
+	void rcConfig();
 	attribute long width;
 	attribute long height;
 	attribute long tileSize;
