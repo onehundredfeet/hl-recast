@@ -783,12 +783,12 @@ interface DetourNavMeshBuilder
 interface dtQueryFilter
 {
 	void dtQueryFilter();	
-	bool passFilter([Const] dtPolyRef ref,[Const] dtMeshTile tile,[Const] dtPoly poly);
+	//bool passFilter([Const] dtPolyRef ref,[Const] dtMeshTile tile,[Const] dtPoly poly);
 
-	float getCost([Const] float* pa, [Const] float* pb,
-			[Const] dtPolyRef prevRef, [Const] dtMeshTile prevTile, [Const] dtPoly prevPoly,
-			[Const] dtPolyRef curRef, [Const] dtMeshTile curTile, [Const] dtPoly curPoly,
-			[Const] dtPolyRef nextRef, [Const] dtMeshTile nextTile, [Const] dtPoly nextPoly);
+	// float getCost([Const] float* pa, [Const] float* pb,
+	// 		[Const] dtPolyRef prevRef, [Const] dtMeshTile prevTile, [Const] dtPoly prevPoly,
+	// 		[Const] dtPolyRef curRef, [Const] dtMeshTile curTile, [Const] dtPoly curPoly,
+	// 		[Const] dtPolyRef nextRef, [Const] dtMeshTile nextTile, [Const] dtPoly nextPoly);
 
 	float getAreaCost([Const] int i);
 	void setAreaCost([Const] int i, [Const] float cost);
@@ -820,9 +820,9 @@ interface dtNavMeshQuery
 
 	dtStatus init([Const] dtNavMesh nav, [Const] int maxNodes);
 	
-	dtStatus findPath(dtPolyRef startRef, dtPolyRef endRef, [Const] float[] startPos, 
-					[Const] float[] endPos, [Const] dtQueryFilter filter,
-					dtPolyRef* path, int[] pathCount, [Const] int maxPath);
+	// dtStatus findPath(dtPolyRef startRef, dtPolyRef endRef, [Const] float[] startPos, 
+	// 				[Const] float[] endPos, [Const] dtQueryFilter filter,
+	// 				dtPolyRef* path, int[] pathCount, [Const] int maxPath);
 
 	// dtStatus findStraightPath([Const] FloatArray startPos, [Const] FloatArray endPos,
 	// 						  [Const] dtPolyRef* path, [Const] int pathSize,
