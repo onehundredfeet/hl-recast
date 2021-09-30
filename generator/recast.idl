@@ -190,7 +190,6 @@ interface rcSpanPool
 	//rcSpan items[RC_SPANS_PER_POOL]; //TODO 
 };
 
-
 interface rcHeightfield
 {
 	void rcHeightfield();
@@ -201,11 +200,12 @@ interface rcHeightfield
 	attribute float3 bmax;		
 	attribute float cs;			
 	attribute float ch;	
-
-	// How should this get translated?
-	//attribute rcSpan * spans; //TODO
 	attribute rcSpanPool pools;
 	attribute rcSpan freelist;
+
+	// Workaround for rcSpan **spans;
+	[CObject, Internal="rcHeightfield_rcSpanIsValidAt"] bool rcSpanIsValidAt(int pos);
+	[CObject, Internal="rcHeightfield_rcSpanAt"] rcSpan rcSpanAt(int pos);
 };
 
 interface rcCompactCell

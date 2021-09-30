@@ -178,28 +178,27 @@ class Main {
 			vec3(verts[6], verts[7], verts[8]), 
 			area, solid, flagMergeThr);
 
-		// TODO . make this tests work after we are able to have rcSpans**
-		//  test = test && solid.spans[0 + 0 * width]
-		// 	REQUIRE(solid.spans[0 + 0 * width]);
-		// 	REQUIRE(!solid.spans[1 + 0 * width]);
-		// 	REQUIRE(solid.spans[0 + 1 * width]);
-		// 	REQUIRE(solid.spans[1 + 1 * width]);
+		test = test && solid.rcSpanIsValidAt(0 + 0 * width[0]);
+		test = test && !solid.rcSpanIsValidAt(1 + 0 * width[0]);
+		test = test && solid.rcSpanIsValidAt(0 + 1 * width[0]);
+		test = test && solid.rcSpanIsValidAt(0 + 0 * width[0]);
+		test = test && solid.rcSpanIsValidAt(1 + 1 * width[0]);
+
+		test = test && solid.rcSpanAt(0 + 0 * width[0]).smin == 0;
+		test = test && solid.rcSpanAt(0 + 0 * width[0]).smax == 1;
+		test = test && solid.rcSpanAt(0 + 0 * width[0]).area == area;
+		test = test && solid.rcSpanAt(0 + 0 * width[0]).next == null;
 	
-		// 	REQUIRE(solid.spans[0 + 0 * width]->smin == 0);
-		// 	REQUIRE(solid.spans[0 + 0 * width]->smax == 1);
-		// 	REQUIRE(solid.spans[0 + 0 * width]->area == area);
-		// 	REQUIRE(!solid.spans[0 + 0 * width]->next);
-	
-		// 	REQUIRE(solid.spans[0 + 1 * width]->smin == 0);
-		// 	REQUIRE(solid.spans[0 + 1 * width]->smax == 1);
-		// 	REQUIRE(solid.spans[0 + 1 * width]->area == area);
-		// 	REQUIRE(!solid.spans[0 + 1 * width]->next);
-	
-		// 	REQUIRE(solid.spans[1 + 1 * width]->smin == 0);
-		// 	REQUIRE(solid.spans[1 + 1 * width]->smax == 1);
-		// 	REQUIRE(solid.spans[1 + 1 * width]->area == area);
-		// 	REQUIRE(!solid.spans[1 + 1 * width]->next);
-		// }
+		test = test && solid.rcSpanAt(0 + 1 * width[0]).smin == 0;
+		test = test && solid.rcSpanAt(0 + 1 * width[0]).smax == 1;
+		test = test && solid.rcSpanAt(0 + 1 * width[0]).area == area;
+		test = test && solid.rcSpanAt(0 + 1 * width[0]).next == null;
+
+		test = test && solid.rcSpanAt(1 + 1 * width[0]).smin == 0;
+		test = test && solid.rcSpanAt(1 + 1 * width[0]).smax == 1;
+		test = test && solid.rcSpanAt(1 + 1 * width[0]).area == area;
+		test = test && solid.rcSpanAt(1 + 1 * width[0]).next == null;
+
 		trace ('test_rasterizeTriangle $test');
 	}
 

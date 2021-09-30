@@ -33,7 +33,14 @@ class DetourNavMesh;
 class DetourNavMeshBuilder;
 class DetourNavMeshQuery;
 
-// #include \"hl-idl-helpers.h\"
+bool rcHeightfield_rcSpanIsValidAt(rcHeightfield *context, int pos) {
+	return context->spans[pos] ? true : false;
+}
+
+rcSpan* rcHeightfield_rcSpanAt(rcHeightfield *context, int pos) {
+	return context->spans[pos];
+}
+
 ";
 	
 	public static function generateCpp() {	
