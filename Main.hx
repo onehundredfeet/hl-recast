@@ -6,12 +6,12 @@ class Main {
 	
 	public static function main() {
 		trace("main()");
-		test_DetourMath_0();
+		test_pointer();
+		test_detourMath_0();
 		test_rcCalcBounds_0();
 		test_rcCalcBounds_1();
-		// get_set_rcConfig_bounds();
-		testDetourRandomPointInConvexPoly();
-		test_context_0();
+		test_detourRandomPointInConvexPoly();
+		test_rasterizeTriangle();
 	}
 
 	public static function ApproxEqual(a : Float, b : Float){
@@ -26,10 +26,8 @@ class Main {
 		return ApproxEqual(a.x, b.x) && ApproxEqual(a.y, b.y) && ApproxEqual(a.z, b.z);
 	}
 
-	public static function testPointer(){
-		
+	public static function test_pointer(){
 		var verts16 = new hl.NativeArray<hl.UI16>(3);
-
 		var x = new recast.Native.DtNavMeshCreateParams();
 		var bb = new hl.Bytes( 100 );	// need to make sure that there's enough bytes
 		var bs : hl.BytesAccess<hl.UI16> = bb;
@@ -37,19 +35,12 @@ class Main {
 		verts16[0] = 1;
 		x.verts = bs;
 		var xy = x.verts;
-		trace("Verts: " + xy[0]);
+
+		var test = ApproxEqual(xy[0], 1);
+		trace('test_pointer: $test');
 	}
 
-	public static function test_context_0() {
-		trace("Creating config");
-		var config = new recast.Native.Config();
-
-		trace("Creating context");
-		var ctx = new recast.Context.Context(config, true);
-
-		trace("Done creating contexts");
-	}
-	public static function test_DetourMath_0(){
+	public static function test_detourMath_0(){
 		
 		var test = true;
 
@@ -65,7 +56,6 @@ class Main {
 		trace('test_DetourMath_0: $test');
 	}
 
-	// Converted to new method
 	public static function test_rcCalcBounds_0(){
 		// bounds of one vector
 		
@@ -110,31 +100,7 @@ class Main {
 		trace('rcCalcBounds (bounds of more than one vect): $test');
 	}
 
-	public static function get_set_rcConfig_bounds() {
-		var x = new recast.Native.Config();
-		
-		trace("get");
-
-		var v = x.bmin;
-		trace("modify");
-
-		v[0] = 20.0;
-		trace("set");
-		x.bmin = v;
-
-		var k = x.bmin.x;
-
-		// trace("x: ", k);
-
-		trace("array");
-		var y   = vec3(0., 0., 0.);
-		x.bmin = y;
-
-		//x.setbmin3(0.,0.,0.);
-		trace("Done");
-	}
-
-	public static function testDetourRandomPointInConvexPoly(){
+	public static function test_detourRandomPointInConvexPoly(){
 		
 		var test = true;
 		
@@ -170,6 +136,70 @@ class Main {
 		test = test && ApproxEqual(out[2], 0.0);
 
 		trace('testDetourRandomPointInConvexPoly: $test');
+	}
+
+	public static function test_rasterizeTriangle(){
+		var test = true;
+
+		var ctx = new recast.Native.RCContext(true);
+
+		var verts = new hl.NativeArray<Single>(9);
+		verts[0] = 0;
+		verts[1] = 0;
+		verts[2] = 0;
+		verts[3] = 1;
+		verts[4] = 0;
+		verts[5] = 0;
+		verts[6] = 0;
+		verts[7] = 0;
+		verts[8] = -1;
+
+		var bmin = vec3(0., 0., 0.);
+		var bmax = vec3(0., 0., 0.);
+		
+		recast.Native.Recast.rcCalcBounds(verts, 3, bmin, bmax);
+		var cellSize:Float = 0.5;
+		var cellHeight:Float = 0.5;
+		var width = new NativeArray<Int>(0);
+		var height = new NativeArray<Int>(0);
+	
+		recast.Native.Recast.rcCalcGridSize(bmin, bmax, cellSize, width, height);
+		test = test && width[0] != 0;
+		test = test && height[0] != 0;
+
+		var solid = new recast.Native.Heightfield();
+		test = test && ctx.rcCreateHeightfield(solid, width[0], height[0], bmin, bmax, cellSize, cellHeight);
+	
+		var area = 42;
+		var flagMergeThr = 1;
+		test = test && ctx.rcRasterizeTriangle(
+			vec3(verts[0], verts[1], verts[2]), 
+			vec3(verts[3], verts[4], verts[5]), 
+			vec3(verts[6], verts[7], verts[8]), 
+			area, solid, flagMergeThr);
+
+		test = test && solid.rcSpanIsValidAt(0 + 0 * width[0]);
+		test = test && !solid.rcSpanIsValidAt(1 + 0 * width[0]);
+		test = test && solid.rcSpanIsValidAt(0 + 1 * width[0]);
+		test = test && solid.rcSpanIsValidAt(0 + 0 * width[0]);
+		test = test && solid.rcSpanIsValidAt(1 + 1 * width[0]);
+
+		test = test && solid.rcSpanAt(0 + 0 * width[0]).smin == 0;
+		test = test && solid.rcSpanAt(0 + 0 * width[0]).smax == 1;
+		test = test && solid.rcSpanAt(0 + 0 * width[0]).area == area;
+		test = test && solid.rcSpanAt(0 + 0 * width[0]).next == null;
+	
+		test = test && solid.rcSpanAt(0 + 1 * width[0]).smin == 0;
+		test = test && solid.rcSpanAt(0 + 1 * width[0]).smax == 1;
+		test = test && solid.rcSpanAt(0 + 1 * width[0]).area == area;
+		test = test && solid.rcSpanAt(0 + 1 * width[0]).next == null;
+
+		test = test && solid.rcSpanAt(1 + 1 * width[0]).smin == 0;
+		test = test && solid.rcSpanAt(1 + 1 * width[0]).smax == 1;
+		test = test && solid.rcSpanAt(1 + 1 * width[0]).area == area;
+		test = test && solid.rcSpanAt(1 + 1 * width[0]).next == null;
+
+		trace ('test_rasterizeTriangle $test');
 	}
 
 }

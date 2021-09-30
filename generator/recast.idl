@@ -190,7 +190,6 @@ interface rcSpanPool
 	//rcSpan items[RC_SPANS_PER_POOL]; //TODO 
 };
 
-
 interface rcHeightfield
 {
 	void rcHeightfield();
@@ -201,11 +200,12 @@ interface rcHeightfield
 	attribute float3 bmax;		
 	attribute float cs;			
 	attribute float ch;	
-
-	// How should this get translated?
-	//attribute rcSpan * spans; //TODO
 	attribute rcSpanPool pools;
 	attribute rcSpan freelist;
+
+	// Workaround for rcSpan **spans;
+	[CObject, Internal="rcHeightfield_rcSpanIsValidAt"] bool rcSpanIsValidAt(int pos);
+	[CObject, Internal="rcHeightfield_rcSpanAt"] rcSpan rcSpanAt(int pos);
 };
 
 interface rcCompactCell
@@ -590,7 +590,7 @@ interface dtMeshTile
 
 interface dtNavMeshParams 
 {
-	//float orig[3];		
+	attribute float3 orig;		
 	attribute float tileWidth;	
 	attribute float tileHeight;	
 	attribute int maxTiles;		
@@ -602,69 +602,67 @@ interface dtNavMesh
 
 	void dtNavMesh();
 
-	int init([Const] dtNavMeshParams params);
+	dtStatus init([Const] dtNavMeshParams params);
 
-	int init(CharArray data, [Const] int dataSize, [Const] int flags);
+	dtStatus init(char[] data, [Const] int dataSize, [Const] int flags);
 
 	[Const] dtNavMeshParams getParams();
 
-	//int addTile(CharArray data, int dataSize, int flags, int lastRef, dtTileRef result); //TODO
+	//dtStatus addTile(char[] data, int dataSize, int flags, dtTileRef lastRef, dtTileRef result); TODO
 
 	//dtStatus removeTile(dtTileRef ref, unsigned char** data, int* dataSize); //TODO
 
-	void calcTileLoc([Const] FloatArray pos, IntArray tx, IntArray ty);
+	void calcTileLoc([Const] float[] pos, int[] tx, int[] ty);
 
 	[Const] dtMeshTile getTileAt([Const] int x, [Const] int y, [Const] int layer);
 
-	//TODO
-	//int getTilesAt([Const] int x, [Const] int y, dtMeshTile [Const]** tiles, [Const] int maxTiles);
+	//int getTilesAt([Const] int x, [Const] int y, dtMeshTile [Const]** tiles, [Const] int maxTiles); //TODO
 
-	int getTileRefAt(int x, int y, int layer);
+	dtTileRef getTileRefAt(int x, int y, int layer);
 	
-	int getTileRef([Const] dtMeshTile tile);
+	dtTileRef getTileRef([Const] dtMeshTile tile);
 	
-	[Const] dtMeshTile getTileByRef(int ref);
+	[Const] dtMeshTile getTileByRef(dtTileRef ref);
 	
 	int getMaxTiles();
 	
-	//TODO
-	// [Const] dtMeshTile getTile(int i); 
+	//[Const] dtMeshTile getTile(int i); // TODO  Public and private duplicate in C++.
 
-	// dtStatus getTileAndPolyByRef([Const] dtPolyRef ref, [Const] dtMeshTile** tile, [Const] dtPoly** poly);
+	// dtStatus getTileAndPolyByRef([Const] dtPolyRef ref, [Const] dtMeshTile** tile, [Const] dtPoly** poly); //TODO
 	
-	// void getTileAndPolyByRefUnsafe([Const] dtPolyRef ref, [Const] dtMeshTile** tile, [Const] dtPoly** poly);
+	// void getTileAndPolyByRefUnsafe([Const] dtPolyRef ref, [Const] dtMeshTile** tile, [Const] dtPoly** poly); //TODO
 
-	bool isValidPolyRef(int ref);
+	bool isValidPolyRef(dtPolyRef ref);
 	
-	int getPolyRefBase([Const] dtMeshTile tile);
+	dtPolyRef getPolyRefBase([Const] dtMeshTile tile);
 	
-	int getOffMeshConnectionPolyEndPoints(int prevRef, int polyRef, FloatArray startPos, FloatArray endPos);
+	dtStatus getOffMeshConnectionPolyEndPoints(dtPolyRef prevRef, dtPolyRef polyRef, float[] startPos, float[] endPos);
 
-	[Const] dtOffMeshConnection getOffMeshConnectionByRef(int ref);
+	[Const] dtOffMeshConnection getOffMeshConnectionByRef(dtPolyRef ref);
 	
-	int setPolyFlags(int ref, short flags);
+	dtStatus setPolyFlags(dtPolyRef ref, short flags);
 
-	int getPolyFlags(int ref, ShortArray resultFlags);
+	dtStatus getPolyFlags(dtPolyRef ref, short[] resultFlags);
 
-	int setPolyArea(int ref, char area);
+	dtStatus setPolyArea(dtPolyRef ref, char area);
 
-	int getPolyArea(int ref, CharArray resultArea);
+	dtStatus getPolyArea(dtPolyRef ref, char[] resultArea);
 
 	int getTileStateSize([Const] dtMeshTile tile);
 
-	int storeTileState([Const] dtMeshTile tile, CharArray data, [Const] int maxDataSize);
+	dtStatus storeTileState([Const] dtMeshTile tile, char[] data, [Const] int maxDataSize);
 	
-	int restoreTileState(dtMeshTile tile, [Const] CharArray data, [Const] int maxDataSize);
+	dtStatus restoreTileState(dtMeshTile tile, [Const] char[] data, [Const] int maxDataSize);
 	
-	int encodePolyId(int salt, int it, int ip);
+	dtPolyRef encodePolyId(int salt, int it, int ip);
 
-	// void decodePolyId(int ref, [Ref] int salt, [Ref] int it, [Ref] int ip); //TODO
+	// void decodePolyId(int dtPolyRef, [Ref] int salt, [Ref] int it, [Ref] int ip); // TODO add unsigned int
 	
-	int decodePolyIdSalt(int ref);
+	int decodePolyIdSalt(dtPolyRef ref);
 
-	int decodePolyIdTile(int ref);
+	int decodePolyIdTile(dtPolyRef ref);
 
-	int decodePolyIdPoly(int ref);
+	int decodePolyIdPoly(dtPolyRef ref);
 };
 
 [NoDelete]
@@ -678,33 +676,34 @@ interface DetourNavMesh
 //--------------------------------------------------------------------------------------------
 // DetourNode.h
 //--------------------------------------------------------------------------------------------
+typedef dtNodeIndex short;
+
 interface dtNode 
 {
-	// [Value] attribute FloatArray pos;
+	attribute float3 pos;
 	attribute float cost;
 	attribute float total;
-	attribute int pidx;
-	attribute int state;
-	attribute int flags;
-	attribute int id;
+	attribute uint pidx;
+	attribute uint state;
+	attribute uint flags;
+	attribute dtPolyRef id;
 };
-
-// typedef dtNodeIndex short;
-// typedef dtPolyRef int64;
 
 interface dtNodePool
 {
 	void dtNodePool(int maxNodes, int hashSize);
-	// dtNode getNode(dtPolyRef id, char state);	
-	// [Value] dtNode findNode(dtPolyRef id, char state);
-	//int findNodes(dtPolyRef id, dtNode** nodes, const int maxNodes);
-	int getNodeIdx([Const] dtNode node);
-	dtNode getNodeAtIdx(int idx);	
+	void clear();
+
+	dtNode getNode(dtPolyRef id, char state);	
+	dtNode findNode(dtPolyRef id, char state);
+	//uint findNodes(dtPolyRef id, dtNode** nodes, const int maxNodes); //TODO
+	uint getNodeIdx([Const] dtNode node);
+	dtNode getNodeAtIdx(uint idx);	
 	int getMemUsed();	
 	int getMaxNodes();
 	int getHashSize();
- 	//dtNodeIndex getFirst(int bucket); //TODO
-	//dtNodeIndex getNext(int i); // TODO 
+ 	dtNodeIndex getFirst(int bucket);
+	dtNodeIndex getNext(int i); 
 	int getNodeCount();
 };
 
@@ -735,33 +734,32 @@ interface dtNavMeshCreateParams
 	//	attribute short [vertCount] verts;
 
 	// Option 2 - Direct pointer access.
-	attribute short * verts;
-	
-	attribute int vertCount;
 
-	//const unsigned short* polys;
-	//const unsigned short* polyFlags;
-	//const unsigned char* polyAreas;
+	attribute short* verts;
+	attribute int vertCount;
+	[Const] attribute short* polys;
+	[Const] attribute short* polyFlags;
+	[Const] attribute char* polyAreas;
 	attribute int polyCount;							
 	attribute int nvp;								
-	//const unsigned int* detailMeshes;		
-	//const float* detailVerts;				
+	[Const] attribute uint* detailMeshes;	//TODO check if working ok 
+	[Const] attribute float* detailVerts;				
 	attribute int detailVertsCount;					
-	//const unsigned char* detailTris;		
+	[Const] attribute char* detailTris;		
 	attribute int detailTriCount;
-	//const float* offMeshConVerts;
-	//const float* offMeshConRad;
-	//const unsigned short* offMeshConFlags;
-	//const unsigned char* offMeshConAreas;
-	//const unsigned char* offMeshConDir;	
-	//const unsigned int* offMeshConUserID;
+	[Const] attribute float* offMeshConVerts;
+	[Const] attribute float* offMeshConRad;
+	[Const] attribute short* offMeshConFlags;
+	[Const] attribute char* offMeshConAreas;
+	[Const] attribute char* offMeshConDir;	
+	[Const] attribute uint* offMeshConUserID;
 	attribute int offMeshConCount;
-	attribute int userId;	
+	attribute uint userId;	
 	attribute int tileX;				
 	attribute int tileY;				
 	attribute int tileLayer;			
-	// attribute float bmin;			
-	// attribute float bmax;			
+	attribute float3 bmin;			
+	attribute float3 bmax;			
 	attribute float walkableHeight;
 	attribute float walkableRadius;	
 	attribute float walkableClimb;	
@@ -773,32 +771,24 @@ interface dtNavMeshCreateParams
 [NoDelete]
 interface DetourNavMeshBuilder
 {
-	//bool dtCreateNavMeshData(dtNavMeshCreateParams* params, unsigned char** outData, int* outDataSize); // TODO resolve unsigned char**
+	//bool dtCreateNavMeshData(dtNavMeshCreateParams* params, char** outData, int* outDataSize); // TODO resolve unsigned char**
 	[Static] bool dtNavMeshHeaderSwapEndian(CharArray data, [Const] int dataSize);
 	[Static] bool dtNavMeshDataSwapEndian(CharArray data, [Const] int dataSize);
 };
 
 
 //--------------------------------------------------------------------------------------------
-// DetourNavMeshBuilder.h
+// DetourNavMeshQuery.h
 //--------------------------------------------------------------------------------------------
 interface dtQueryFilter
 {
 	void dtQueryFilter();	
-	// bool passFilter([Const] dtPolyRef ref,[Const] dtMeshTile tile,[Const] dtPoly poly);
-	// bool passFilter([Const] dtPolyRef ref,[Const] dtMeshTile tile,[Const] dtPoly poly);
+	//bool passFilter([Const] dtPolyRef ref,[Const] dtMeshTile tile,[Const] dtPoly poly);
 
-// #ifdef DT_VIRTUAL_QUERYFILTER
-// 	virtual float getCost(const float* pa, const float* pb,
-// 						  const dtPolyRef prevRef, const dtMeshTile* prevTile, const dtPoly* prevPoly,
-// 						  const dtPolyRef curRef, const dtMeshTile* curTile, const dtPoly* curPoly,
-// 						  const dtPolyRef nextRef, const dtMeshTile* nextTile, const dtPoly* nextPoly) const;
-// #else
-// 	float getCost(const float* pa, const float* pb,
-// 				  const dtPolyRef prevRef, const dtMeshTile* prevTile, const dtPoly* prevPoly,
-// 				  const dtPolyRef curRef, const dtMeshTile* curTile, const dtPoly* curPoly,
-// 				  const dtPolyRef nextRef, const dtMeshTile* nextTile, const dtPoly* nextPoly) const;
-// #endif
+	// float getCost([Const] float* pa, [Const] float* pb,
+	// 		[Const] dtPolyRef prevRef, [Const] dtMeshTile prevTile, [Const] dtPoly prevPoly,
+	// 		[Const] dtPolyRef curRef, [Const] dtMeshTile curTile, [Const] dtPoly curPoly,
+	// 		[Const] dtPolyRef nextRef, [Const] dtMeshTile nextTile, [Const] dtPoly nextPoly);
 
 	float getAreaCost([Const] int i);
 	void setAreaCost([Const] int i, [Const] float cost);
@@ -811,24 +801,28 @@ interface dtQueryFilter
 interface dtRaycastHit
 {
 	attribute float t; 
-	//attribute float hitNormal[3];
+	attribute float3 hitNormal;
 	attribute int hitEdgeIndex;
-	//attribute dtPolyRef path;
+	//attribute dtPolyRef path; TODO
 	attribute int pathCount;
 	attribute int maxPath;
 	attribute float pathCost;
+};
+
+interface dtPolyQuery
+{
+	// void process([Const]] dtMeshTile tile, dtPoly** polys, dtPolyRef refs, int count); //TODO
 };
 
 interface dtNavMeshQuery
 {
 	void dtNavMeshQuery();
 
-	//dtStatus init([Const] dtNavMesh nav, [Const] int maxNodes);
+	dtStatus init([Const] dtNavMesh nav, [Const] int maxNodes);
 	
-	// dtStatus findPath(dtPolyRef startRef, dtPolyRef endRef,
-	// 				  [Const] FloatArray startPos, [Const] FloatArray endPos,
-	// 				  [Const] dtQueryFilter* filter,
-	// 				  dtPolyRef* path, IntArray pathCount, [Const] int maxPath);
+	// dtStatus findPath(dtPolyRef startRef, dtPolyRef endRef, [Const] float[] startPos, 
+	// 				[Const] float[] endPos, [Const] dtQueryFilter filter,
+	// 				dtPolyRef* path, int[] pathCount, [Const] int maxPath);
 
 	// dtStatus findStraightPath([Const] FloatArray startPos, [Const] FloatArray endPos,
 	// 						  [Const] dtPolyRef* path, [Const] int pathSize,
@@ -837,9 +831,9 @@ interface dtNavMeshQuery
 
 	// dtStatus initSlicedFindPath(dtPolyRef startRef, dtPolyRef endRef,
 	// 							[Const] FloatArray startPos, [Const] FloatArray endPos,
-	// 							[Const] dtQueryFilter filter, [Const] unsigned int options);
+	// 							[Const] dtQueryFilter filter, [Const] uint options);
 
-	//dtStatus updateSlicedFindPath([Const] int maxIter, IntArray doneIters);
+	// dtStatus updateSlicedFindPath([Const] int maxIter, IntArray doneIters);
 
 	// dtStatus finalizeSlicedFindPath(dtPolyRef* path, IntArray pathCount, [Const] int maxPath);
 	
