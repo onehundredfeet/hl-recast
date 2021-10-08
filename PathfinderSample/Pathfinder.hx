@@ -326,31 +326,6 @@ class Pathfinder extends hxd.App {
 		}
 
 		trace("Detour done");
-
-		// Check NavMesh data extraction in CPP sample: 
-		// Sample_SoloMesh::handleRender()
-
-		// hxd.Res.initEmbed();
-
-		// var cache = new h3d.prim.ModelCache();
-		// cache.loadLibrary(hxd.Res.plane);
-		// var obj = cache.loadModel(hxd.Res.plane);
-
-		// s3d.addChild(obj);
-
-		// // Extract geometry
-		// var meshes = obj.getMeshes();
-		// for (mesh in meshes) {
-		// 	var primitive = mesh.primitive;
-		// 	trace(primitive.buffer.totalVertices());
-		// 	trace(primitive.indexes);
-		// }
-
-		// // Clear the cache instance. Note that cache will dispose all cached model textures as well.
-		// // cache.dispose();
-
-		// new h3d.scene.CameraController(80, s3d);
-
     }
 
     static function main() {
