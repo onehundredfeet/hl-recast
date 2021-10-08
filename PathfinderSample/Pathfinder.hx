@@ -151,7 +151,7 @@ class Pathfinder extends hxd.App {
 			trace("Error: rcRasterizeTriangles Filed.");
 			return;
 		}
-
+		trace(triareas[0]);
 
 		// -------------------------------------------------------------------------------------
 		// Step 3. Filter walkables surfaces.
@@ -173,7 +173,7 @@ class Pathfinder extends hxd.App {
 			trace("Error: rcBuildCompactHeightfield Filed.");
 			return;
 		}
-	
+		
 		// Erode the walkable area by agent radius.
 		if (!ctx.rcErodeWalkableArea(cfg.walkableRadius, chf)){
 			trace("Error: rcErodeWalkableArea Filed.");
@@ -192,20 +192,51 @@ class Pathfinder extends hxd.App {
 			trace("Error: rcBuildRegions Filed.");
 			return;
 		}
+		
+		trace('chf.spanCount: ${chf.spanCount}'); 
 
+		
 		// -------------------------------------------------------------------------------------
 		// Step 5. Trace and simplify region contours.
 		// -------------------------------------------------------------------------------------
 		// Create contours.
 		var cset = new recast.Native.ContourSet();
 		
-		if (!ctx.rcBuildContours(chf, cfg.maxSimplificationError, cfg.maxEdgeLen, cset))
+		if (!ctx.rcBuildContours(chf, cfg.maxSimplificationError, cfg.maxEdgeLen, cset, 1))
 		{
 			trace("Error: rcBuildContours Filed.");
 			return;
 		}
+		trace('cset.nconts: ${cset.nconts}');
+		
 
-		return;
+		// -------------------------------------------------------------------------------------
+		// Step 6. Build polygons mesh from contours.
+		// -------------------------------------------------------------------------------------
+		// Build polygon navmesh from the contours.
+		var pmesh = new recast.Native.PolyMesh();
+		if (!ctx.rcBuildPolyMesh(cset, cfg.maxVertsPerPoly, pmesh)){
+			trace("Error: rcBuildPolyMesh Filed.");
+			return;
+		}
+
+
+		// -------------------------------------------------------------------------------------
+		// Step 7. Create detail mesh which allows to access approximate height on each polygon.
+		// -------------------------------------------------------------------------------------
+		var dmesh = new recast.Native.PolyMeshDetail();
+		if (!ctx.rcBuildPolyMeshDetail(pmesh, chf, cfg.detailSampleDist, cfg.detailSampleMaxError, dmesh)){
+			trace("Error: rcBuildPolyMeshDetail Filed.");
+			return;
+		}
+
+		recast.Native.Recast.rcFreeCompactHeightfield(chf);
+		recast.Native.Recast.rcFreeContourSet(cset);
+
+		trace("Done");
+		// At this point the navigation mesh data is ready, you can access it from m_pmesh.
+		// See duDebugDrawPolyMesh or dtCreateNavMeshData as examples how to access the data.
+
 		// hxd.Res.initEmbed();
 
 		// var cache = new h3d.prim.ModelCache();
