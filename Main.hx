@@ -156,8 +156,8 @@ class Main {
 		var cellSize:Float = 1.5;
 		var cellHeight:Float = 2.0;
 
-		var width = new NativeArray<Int>(0);
-		var height = new NativeArray<Int>(0);
+		var width = new NativeArray<Int>(1);
+		var height = new NativeArray<Int>(1);
 
 		recast.Native.Recast.rcCalcGridSize(bmin, bmax, cellSize, width, height);
 		test = test && width[0] != 0;
