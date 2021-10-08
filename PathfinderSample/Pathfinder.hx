@@ -1,3 +1,4 @@
+import hl.NativeArray;
 import recast.Native;
 import h3d.scene.*;
 import Float3.NativeArrayFloat3;
@@ -10,6 +11,26 @@ class RawMeshData {
 }
 
 class Pathfinder extends hxd.App {
+
+	public static var RC_WALKABLE_AREA:hl.UI8 = 63;
+
+	public static var SAMPLE_POLYAREA_GROUND:hl.UI8 = 0;
+	public static var SAMPLE_POLYAREA_WATER:hl.UI8 = 1;
+	public static var SAMPLE_POLYAREA_ROAD:hl.UI8 = 2;
+	public static var SAMPLE_POLYAREA_DOOR:hl.UI8 = 3;
+	public static var SAMPLE_POLYAREA_GRASS:hl.UI8 = 4;
+	public static var SAMPLE_POLYAREA_JUMP:hl.UI8 = 5;
+
+	public static var SAMPLE_POLYFLAGS_WALK:hl.UI8 = 0x01;		// Ability to walk (ground, grass, road)
+	public static var SAMPLE_POLYFLAGS_SWIM:hl.UI8 = 0x02;		// Ability to swim (water).
+	public static var SAMPLE_POLYFLAGS_DOOR:hl.UI8 = 0x04;		// Ability to move through doors.
+	public static var SAMPLE_POLYFLAGS_JUMP:hl.UI8 = 0x08;		// Ability to jump.
+	public static var SAMPLE_POLYFLAGS_DISABLED:hl.UI8 = 0x10;		// Disabled polygon
+	public static var SAMPLE_POLYFLAGS_ALL:hl.UI8 = 0xffff;	// All abilities.
+
+	public static var MAX_OFFMESH_CONNECTIONS:Int = 256;
+
+	public static var DT_TILE_FREE_DATA:hl.UI8 = 0x01;
 
 	function FloatArrayToNativeArray(array : Array<Float>){
 		var out = new hl.NativeArray<Single>(array.length);
@@ -60,22 +81,6 @@ class Pathfinder extends hxd.App {
 		}
 
 		return rawMesh;
-
-		// trace(vertices);
-	
-		// var ctx = new recast.Native.RCContext(true);
-
-		// var bmin = vec3(0., 0., 0.);
-		// var bmax = vec3(0., 0., 0.);
-		// var nativeVertices = ArrayToNativeArray(rawMesh.vertices);
-		// var verticesCount = cast (rawMesh.vertices.length / 3, Int);
-		// recast.Native.Recast.rcCalcBounds(nativeVertices, verticesCount, bmin, bmax);
-		
-	    // // Vec3(4999.105957031, -4.054780006, 4999.551757813) bmin
-		// // Vec3(5098.000000000, 6.813776016, 5098.796875000) bmax
-		// trace(bmin);
-		// trace(bmax);
-
 	}
 
     override function init() {
@@ -102,7 +107,8 @@ class Pathfinder extends hxd.App {
 		// bmax: ec3(5098.000000000, 6.813776016, 5098.796875000)
 		trace('Mesh bounds: ${bmin}    ${bmax}');
 
-
+	
+		trace("Processing Recast...");
 		// -------------------------------------------------------------------------------------
 		// Step 1. Initialize build config.
 		// -------------------------------------------------------------------------------------
@@ -233,9 +239,96 @@ class Pathfinder extends hxd.App {
 		recast.Native.Recast.rcFreeCompactHeightfield(chf);
 		recast.Native.Recast.rcFreeContourSet(cset);
 
-		trace("Done");
+		trace("Recast done");
 		// At this point the navigation mesh data is ready, you can access it from m_pmesh.
 		// See duDebugDrawPolyMesh or dtCreateNavMeshData as examples how to access the data.
+
+
+		trace("Processing Detour...");
+		// -------------------------------------------------------------------------------------
+		//  (Optional) Step 8. Create Detour data from Recast poly mesh.
+		// -------------------------------------------------------------------------------------
+
+		// Update poly flags from areas.
+		for (i in 0 ... pmesh.npolys){
+			if (pmesh.areas[i] == RC_WALKABLE_AREA)
+				pmesh.areas[i] = SAMPLE_POLYAREA_GROUND;
+
+			if (pmesh.areas[i] == SAMPLE_POLYAREA_GROUND ||
+				pmesh.areas[i] == SAMPLE_POLYAREA_GRASS ||
+				pmesh.areas[i] == SAMPLE_POLYAREA_ROAD)
+			{
+				pmesh.flags[i] = SAMPLE_POLYFLAGS_WALK;
+			}
+
+			else if (pmesh.areas[i] == SAMPLE_POLYAREA_WATER)
+			{
+				pmesh.flags[i] = SAMPLE_POLYFLAGS_SWIM;
+			}
+
+			else if (pmesh.areas[i] == SAMPLE_POLYAREA_DOOR)
+			{
+				pmesh.flags[i] = SAMPLE_POLYFLAGS_WALK | SAMPLE_POLYFLAGS_DOOR;
+			}
+		}
+
+		
+		var params = new recast.Native.DtNavMeshCreateParams();
+		params.verts = pmesh.verts;
+		params.vertCount = pmesh.nverts;
+		params.polys = pmesh.polys;
+		params.polyAreas = pmesh.areas;
+		params.polyFlags = pmesh.flags;
+		params.polyCount = pmesh.npolys;
+		params.nvp = pmesh.nvp;
+		params.detailMeshes = dmesh.meshes;
+		params.detailVerts = dmesh.verts;
+		params.detailVertsCount = dmesh.nverts;
+		params.detailTris = dmesh.tris;
+		params.detailTriCount = dmesh.ntris;
+		// params.offMeshConVerts = m_geom->getOffMeshConnectionVerts();
+		// params.offMeshConRad = m_geom->getOffMeshConnectionRads();
+		// params.offMeshConDir = m_geom->getOffMeshConnectionDirs();
+		// params.offMeshConAreas = m_geom->getOffMeshConnectionAreas();
+		// params.offMeshConFlags = m_geom->getOffMeshConnectionFlags();
+		// params.offMeshConUserID = m_geom->getOffMeshConnectionId();
+		// params.offMeshConCount = m_geom->getOffMeshConnectionCount();
+		params.walkableHeight = 2;
+		params.walkableRadius = 0.6;
+		params.walkableClimb = 0.9;
+		params.bmin = pmesh.bmin;
+		params.bmax = pmesh.bmax;
+		params.cs = cfg.cs;
+		params.ch = cfg.ch;
+		params.buildBvTree = true;
+		
+		var navData = new hl.NativeArray<hl.UI8>(0);
+		var navDataSize:Int = 0;
+		// First char** needs to be resolved
+		// if (!recast.Native.DetourNavMeshBuilder.dtCreateNavMeshData(params, navData, navDataSize))
+		// {
+		// 	trace("Error: DetourNavMeshBuilder.dtCreateNavMeshData Filed.");
+		// 	return;
+		// }
+		
+		var navMesh = new recast.Native.DtNavMesh();
+		var status = navMesh.init(navData, navDataSize, DT_TILE_FREE_DATA);
+		if (recast.Native.DetourStatus.dtStatusFailed(status)){
+			trace("Error: Could not init Detour navmes");
+			return;
+		}
+		
+		var navQuery = new recast.Native.DtNavMeshQuery();
+		status = navQuery.init(navMesh, 2048);
+		if (recast.Native.DetourStatus.dtStatusFailed(status)){
+			trace("Error: Could not init Detour navmesh query");
+			return;
+		}
+
+		trace("Detour done");
+
+		// Check NavMesh data extraction in CPP sample: 
+		// Sample_SoloMesh::handleRender()
 
 		// hxd.Res.initEmbed();
 

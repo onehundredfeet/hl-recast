@@ -330,7 +330,7 @@ interface rcPolyMesh
 interface rcPolyMeshDetail
 {
 	void rcPolyMeshDetail();
-	//attribute int * meshes;
+	attribute uint * meshes;
 	attribute float* verts;		
 	attribute char* tris;
 	attribute long nmeshes;			
@@ -612,7 +612,7 @@ interface dtNavMesh
 
 	void dtNavMesh();
 
-	dtStatus init([Const] dtNavMeshParams params);
+	[Internal="init"] dtStatus initParams([Const] dtNavMeshParams params);
 
 	dtStatus init(char[] data, [Const] int dataSize, [Const] int flags);
 
