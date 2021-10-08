@@ -143,6 +143,15 @@ interface RCContext
 	[CObject] bool rcBuildRegionsMonotone([Deref] rcCompactHeightfield chf, 
 							[Const]  int borderSize, [Const]  int minRegionArea, [Const]  int mergeRegionArea);
 
+	[CObject] bool rcBuildContours([Ref] rcCompactHeightfield chf,
+					 [Const] float maxError, [Const] int maxEdgeLen,
+					 [Ref] rcContourSet cset, [Const] int buildFlags);
+
+	[CObject] bool rcBuildPolyMesh([Ref] rcContourSet cset, [Const] int nvp, [Ref] rcPolyMesh mesh);
+
+	[CObject] bool rcBuildPolyMeshDetail([Const, Ref] rcPolyMesh mesh, [Const, Ref] rcCompactHeightfield chf,
+						   [Const] float sampleDist, [Const] float sampleMaxError,
+						   [Ref] rcPolyMeshDetail dmesh);
 };
 
 interface rcScopedTimer 
@@ -320,7 +329,8 @@ interface rcPolyMesh
 
 interface rcPolyMeshDetail
 {
-	//attribute int * meshes;
+	void rcPolyMeshDetail();
+	attribute uint * meshes;
 	attribute float* verts;		
 	attribute char* tris;
 	attribute long nmeshes;			
@@ -602,7 +612,7 @@ interface dtNavMesh
 
 	void dtNavMesh();
 
-	dtStatus init([Const] dtNavMeshParams params);
+	[Internal="init"] dtStatus initParams([Const] dtNavMeshParams params);
 
 	dtStatus init(char[] data, [Const] int dataSize, [Const] int flags);
 
