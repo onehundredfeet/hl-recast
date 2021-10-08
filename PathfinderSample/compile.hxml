@@ -1,0 +1,8 @@
+-lib hl-idl
+-lib heaps
+-lib hldx
+-lib hvector
+-lib recast
+-cp .
+-main Pathfinder
+-hl pathfinder.hl
