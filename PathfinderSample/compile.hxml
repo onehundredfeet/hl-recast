@@ -1,6 +1,6 @@
 -lib hl-idl
 -lib heaps
--lib hldx
+-lib hlsdl
 -lib hvector
 -lib recast
 -cp .

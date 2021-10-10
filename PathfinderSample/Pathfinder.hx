@@ -12,25 +12,25 @@ class RawMeshData {
 
 class Pathfinder extends hxd.App {
 
-	public static var RC_WALKABLE_AREA:hl.UI8 = 63;
+	public static final RC_WALKABLE_AREA = 63;
 
-	public static var SAMPLE_POLYAREA_GROUND:hl.UI8 = 0;
-	public static var SAMPLE_POLYAREA_WATER:hl.UI8 = 1;
-	public static var SAMPLE_POLYAREA_ROAD:hl.UI8 = 2;
-	public static var SAMPLE_POLYAREA_DOOR:hl.UI8 = 3;
-	public static var SAMPLE_POLYAREA_GRASS:hl.UI8 = 4;
-	public static var SAMPLE_POLYAREA_JUMP:hl.UI8 = 5;
+	public static final SAMPLE_POLYAREA_GROUND = 0;
+	public static final SAMPLE_POLYAREA_WATER = 1;
+	public static final SAMPLE_POLYAREA_ROAD = 2;
+	public static final SAMPLE_POLYAREA_DOOR = 3;
+	public static final SAMPLE_POLYAREA_GRASS = 4;
+	public static final SAMPLE_POLYAREA_JUMP = 5;
 
-	public static var SAMPLE_POLYFLAGS_WALK:hl.UI8 = 0x01;		// Ability to walk (ground, grass, road)
-	public static var SAMPLE_POLYFLAGS_SWIM:hl.UI8 = 0x02;		// Ability to swim (water).
-	public static var SAMPLE_POLYFLAGS_DOOR:hl.UI8 = 0x04;		// Ability to move through doors.
-	public static var SAMPLE_POLYFLAGS_JUMP:hl.UI8 = 0x08;		// Ability to jump.
-	public static var SAMPLE_POLYFLAGS_DISABLED:hl.UI8 = 0x10;		// Disabled polygon
-	public static var SAMPLE_POLYFLAGS_ALL:hl.UI8 = 0xffff;	// All abilities.
+	public static final SAMPLE_POLYFLAGS_WALK = 0x01;		// Ability to walk (ground, grass, road)
+	public static final SAMPLE_POLYFLAGS_SWIM = 0x02;		// Ability to swim (water).
+	public static final SAMPLE_POLYFLAGS_DOOR = 0x04;		// Ability to move through doors.
+	public static final SAMPLE_POLYFLAGS_JUMP = 0x08;		// Ability to jump.
+	public static final SAMPLE_POLYFLAGS_DISABLED = 0x10;		// Disabled polygon
+	public static final SAMPLE_POLYFLAGS_ALL = 0xffff;	// All abilities.
 
 	public static var MAX_OFFMESH_CONNECTIONS:Int = 256;
 
-	public static var DT_TILE_FREE_DATA:hl.UI8 = 0x01;
+	public static var DT_TILE_FREE_DATA = 0x01;
 
 	function FloatArrayToNativeArray(array : Array<Float>){
 		var out = new hl.NativeArray<Single>(array.length);
@@ -84,7 +84,6 @@ class Pathfinder extends hxd.App {
 	}
 
     override function init() {
-
 		var rawMesh = loadObj("undulating.obj");
 		var verticesCount = cast (rawMesh.vertices.length / 3, Int);
 		var trianglesCount = cast (rawMesh.indices.length / 3, Int);
@@ -174,12 +173,13 @@ class Pathfinder extends hxd.App {
 		// -------------------------------------------------------------------------------------
 		// Step 4. Partition walkable surface to simple regions.
 		// -------------------------------------------------------------------------------------
+		trace ("Step 4. Partition walkable surface to simple regions.");
 		var chf = new recast.Native.CompactHeightfield();
 		if (!ctx.rcBuildCompactHeightfield(cfg.walkableHeight, cfg.walkableClimb, solid, chf)){
 			trace("Error: rcBuildCompactHeightfield Filed.");
 			return;
 		}
-		
+
 		// Erode the walkable area by agent radius.
 		if (!ctx.rcErodeWalkableArea(cfg.walkableRadius, chf)){
 			trace("Error: rcErodeWalkableArea Filed.");
@@ -193,6 +193,8 @@ class Pathfinder extends hxd.App {
 			return;
 		}
 		
+
+		trace("Partition the walkable surface into simple regions without holes.");
 		// Partition the walkable surface into simple regions without holes.
 		if (!ctx.rcBuildRegions(chf, 0, cfg.minRegionArea, cfg.mergeRegionArea)){
 			trace("Error: rcBuildRegions Filed.");
@@ -200,7 +202,7 @@ class Pathfinder extends hxd.App {
 		}
 		
 		trace('chf.spanCount: ${chf.spanCount}'); 
-
+	
 		
 		// -------------------------------------------------------------------------------------
 		// Step 5. Trace and simplify region contours.
@@ -220,12 +222,12 @@ class Pathfinder extends hxd.App {
 		// Step 6. Build polygons mesh from contours.
 		// -------------------------------------------------------------------------------------
 		// Build polygon navmesh from the contours.
+		trace("Step 6. Build polygons mesh from contours.");
 		var pmesh = new recast.Native.PolyMesh();
 		if (!ctx.rcBuildPolyMesh(cset, cfg.maxVertsPerPoly, pmesh)){
 			trace("Error: rcBuildPolyMesh Filed.");
 			return;
 		}
-
 
 		// -------------------------------------------------------------------------------------
 		// Step 7. Create detail mesh which allows to access approximate height on each polygon.
@@ -249,10 +251,12 @@ class Pathfinder extends hxd.App {
 		//  (Optional) Step 8. Create Detour data from Recast poly mesh.
 		// -------------------------------------------------------------------------------------
 
+		var pareasBytes : hl.Bytes = pmesh.areas;
 		// Update poly flags from areas.
 		for (i in 0 ... pmesh.npolys){
-			if (pmesh.areas[i] == RC_WALKABLE_AREA)
-				pmesh.areas[i] = SAMPLE_POLYAREA_GROUND;
+			if (pareasBytes[i] == RC_WALKABLE_AREA)
+				//pareasBytes.setUI8(i, SAMPLE_POLYAREA_GROUND); // This causes a jit error
+				pareasBytes[i]= SAMPLE_POLYAREA_GROUND; // This causes a jit error
 
 			if (pmesh.areas[i] == SAMPLE_POLYAREA_GROUND ||
 				pmesh.areas[i] == SAMPLE_POLYAREA_GRASS ||
@@ -270,7 +274,9 @@ class Pathfinder extends hxd.App {
 			{
 				pmesh.flags[i] = SAMPLE_POLYFLAGS_WALK | SAMPLE_POLYFLAGS_DOOR;
 			}
+			
 		}
+
 
 		
 		var params = new recast.Native.DtNavMeshCreateParams();
@@ -302,19 +308,21 @@ class Pathfinder extends hxd.App {
 		params.ch = cfg.ch;
 		params.buildBvTree = true;
 		
-		var navData = new hl.NativeArray<hl.UI8>(0);
 		var navDataSize:Int = 0;
 		// First char** needs to be resolved
-		// if (!recast.Native.DetourNavMeshBuilder.dtCreateNavMeshData(params, navData, navDataSize))
-		// {
-		// 	trace("Error: DetourNavMeshBuilder.dtCreateNavMeshData Filed.");
-		// 	return;
-		// }
+		var navData = recast.Native.DetourNavMeshBuilder.dtCreateNavMeshData(params,  navDataSize);
+
+		if (navDataSize <= 0)
+		{
+			trace("Error: DetourNavMeshBuilder.dtCreateNavMeshData Filed.");
+			return;
+		}
 		
 		var navMesh = new recast.Native.DtNavMesh();
 		var status = navMesh.init(navData, navDataSize, DT_TILE_FREE_DATA);
 		if (recast.Native.DetourStatus.dtStatusFailed(status)){
 			trace("Error: Could not init Detour navmes");
+			Detour.free(navData);
 			return;
 		}
 		
@@ -322,9 +330,10 @@ class Pathfinder extends hxd.App {
 		status = navQuery.init(navMesh, 2048);
 		if (recast.Native.DetourStatus.dtStatusFailed(status)){
 			trace("Error: Could not init Detour navmesh query");
+			Detour.free(navData);
 			return;
 		}
-
+	
 		trace("Detour done");
     }
 

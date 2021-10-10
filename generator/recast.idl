@@ -614,7 +614,7 @@ interface dtNavMesh
 
 	[Internal="init"] dtStatus initParams([Const] dtNavMeshParams params);
 
-	dtStatus init(char[] data, [Const] int dataSize, [Const] int flags);
+	dtStatus init([Cast="unsigned char *"]VoidPtr data, [Const] int dataSize, [Const] int flags);
 
 	[Const] dtNavMeshParams getParams();
 
@@ -781,7 +781,8 @@ interface dtNavMeshCreateParams
 [NoDelete]
 interface DetourNavMeshBuilder
 {
-	//bool dtCreateNavMeshData(dtNavMeshCreateParams* params, char** outData, int* outDataSize); // TODO resolve unsigned char**
+
+	[Static,ReturnArray=(outPtr,aLength)] VoidPointer dtCreateNavMeshData(dtNavMeshCreateParams params, [Virtual] byte* outPtr, [Out] int aLength ); 
 	[Static] bool dtNavMeshHeaderSwapEndian(CharArray data, [Const] int dataSize);
 	[Static] bool dtNavMeshDataSwapEndian(CharArray data, [Const] int dataSize);
 };
@@ -932,4 +933,9 @@ interface DetourNavMeshQuery
 {
 	[Static] dtNavMeshQuery dtAllocNavMeshQuery();
 	[Static] void dtFreeNavMeshQuery(dtNavMeshQuery query);
+};
+
+[NoDelete]
+interface Detour {
+		[Static, Internal="dtFree"] void free(VoidPointer ptr);
 };
