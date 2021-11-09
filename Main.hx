@@ -1,6 +1,8 @@
-import Float3.NativeArrayFloat3;
+import hvector.Float3.NativeArrayFloat3;
 import hl.NativeArray;
-import ShaderMath;
+import hvector.*;
+import hvector.ShaderMath;
+import hvector.ShaderMathF;
 
 class Main {
 	
@@ -16,15 +18,14 @@ class Main {
 		test_rasterizeTriangle();
 	}
 
-	public static function approxEqual(a : Float, b : Float){
+	public inline static function approxEqual(a : Float, b : Float) : Bool{
 		if (Math.abs(a - b) < 0.001) {
 			return true;
-		} else {
-			return false;
-		}
+		} 
+		return false;
 	}
 
-	public static function approxEqualVec3(a : Vec3, b : Vec3){
+	public static function approxEqualVec3(a : Vec3, b : Vec3) : Bool{
 		return approxEqual(a.x, b.x) && approxEqual(a.y, b.y) && approxEqual(a.z, b.z);
 	}
 

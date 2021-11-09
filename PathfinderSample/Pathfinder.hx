@@ -1,8 +1,10 @@
 import hl.NativeArray;
 import recast.Native;
 import h3d.scene.*;
-import Float3.NativeArrayFloat3;
-import ShaderMath;
+import hvector.*;
+
+import hvector.Float3.NativeArrayFloat3;
+//import ShaderMath;
 
 class RawMeshData {
 	public function new(){}
@@ -309,7 +311,6 @@ class Pathfinder extends hxd.App {
 		params.buildBvTree = true;
 		
 		var navDataSize:Int = 0;
-		// First char** needs to be resolved
 		var navData = recast.Native.DetourNavMeshBuilder.dtCreateNavMeshData(params,  navDataSize);
 
 		if (navDataSize <= 0)

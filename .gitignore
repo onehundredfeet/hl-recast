@@ -2,3 +2,5 @@ Build/
 sample.hl
 .vscode/
 src/recast.cpp
+PathfinderSample/pathfinder.hl
+.DS_Store
