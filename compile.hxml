@@ -2,4 +2,4 @@
 -lib hvector
 -cp .
 -main Main
--hl sample.hl
+-hl bin/sample.hl

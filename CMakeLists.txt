@@ -44,8 +44,6 @@ ${RECAST_SRC_DIR}/Source/RecastMesh.cpp
 ${RECAST_SRC_DIR}/Source/RecastMeshDetail.cpp
 ${RECAST_SRC_DIR}/Source/RecastRasterization.cpp
 ${RECAST_SRC_DIR}/Source/RecastRegion.cpp
-src/recast.cpp
-src/hl-idl-helpers.cpp
 ${DETOUR_SRC_DIR}/Source/DetourAlloc.cpp
 ${DETOUR_SRC_DIR}/Source/DetourAssert.cpp
 ${DETOUR_SRC_DIR}/Source/DetourCommon.cpp
@@ -53,6 +51,8 @@ ${DETOUR_SRC_DIR}/Source/DetourNavMesh.cpp
 ${DETOUR_SRC_DIR}/Source/DetourNavMeshBuilder.cpp
 ${DETOUR_SRC_DIR}/Source/DetourNavMeshQuery.cpp
 ${DETOUR_SRC_DIR}/Source/DetourNode.cpp
+src/hl-idl-helpers.cpp
+src/recast.cpp
 )
 
 set_target_properties(recast.hdll

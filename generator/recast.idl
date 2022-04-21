@@ -338,34 +338,20 @@ interface rcPolyMeshDetail
 	attribute long ntris;			
 };
 
-interface FloatArray 
+
+
+enum rcAllocHint
 {
-	void FloatArray(int size);
-	float Get(int index);
-	void Set(int index, float value);
+	"RC_ALLOC_PERM",		///< Memory will persist after a function call.
+	"RC_ALLOC_TEMP"		///< Memory used temporarily within a function.
 };
 
-interface IntArray 
-{
-	void IntArray(int size);
-	int Get(int index);
-	void Set(int index, int value);
+[NoDelete]
+interface RcAlloc {
+	[Static, Internal="rcAlloc", Cast="vbyte *"] short * allocShortArray(int length, rcAllocHint hint);
+	[Static, Internal="rcFree"] void freeArray(short *array);
+	
 };
-
-interface CharArray 
-{
-	void CharArray(int size);
-	char Get(int index);
-	void Set(int index, char value);
-};
-
-interface ShortArray 
-{
-	void ShortArray(int size);
-	int Get(int index);
-	void Set(int index, int value);
-};
-
 
 [NoDelete]
 interface Recast{
@@ -471,7 +457,7 @@ interface DetourCommon {
 
 	[Static] float dtDistancePtSegSqr2D([Const] float3 pt, [Const] float3 p, [Const] float3 q, [Ref] float t);
 
-	[Static] void dtCalcPolyCenter(float3 tc, [Const] ShortArray idx, int nidx, [Const] float3 verts);
+	[Static] void dtCalcPolyCenter(float3 tc, [Const, Cast="unsigned short *"] short *idx, int nidx, [Const] float3 verts);
 
 	[Static] bool dtOverlapPolyPoly2D([Const] float3 polya, [Const] int npolya,
 							[Const] float3 polyb, [Const] int npolyb);
@@ -783,8 +769,8 @@ interface DetourNavMeshBuilder
 {
 
 	[Static,ReturnArray=(outPtr,aLength)] VoidPointer dtCreateNavMeshData(dtNavMeshCreateParams params, [Virtual] byte* outPtr, [Out] int aLength ); 
-	[Static] bool dtNavMeshHeaderSwapEndian(CharArray data, [Const] int dataSize);
-	[Static] bool dtNavMeshDataSwapEndian(CharArray data, [Const] int dataSize);
+	[Static] bool dtNavMeshHeaderSwapEndian(byte * data, [Const] int dataSize);
+	[Static] bool dtNavMeshDataSwapEndian(byte * data, [Const] int dataSize);
 };
 
 
@@ -840,7 +826,7 @@ interface dtNavMeshQuery
 
 	dtStatus findStraightPath([Const] float[] startPos, [Const] float[] endPos,
 							  [Const, Out] dtPolyRef path, [Const] int pathSize,
-							  float[] straightPath, CharArray straightPathFlags, [Out] dtPolyRef straightPathRefs,
+							  float[] straightPath, byte * straightPathFlags, [Out] dtPolyRef straightPathRefs,
 							  int[] straightPathCount, [Const] int maxStraightPath, [Const] int options);
 
 	dtStatus initSlicedFindPath(dtPolyRef startRef, dtPolyRef endRef,

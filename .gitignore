@@ -4,3 +4,4 @@ sample.hl
 src/recast.cpp
 PathfinderSample/pathfinder.hl
 .DS_Store
+recast.hdll
