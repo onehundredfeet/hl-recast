@@ -14,6 +14,14 @@ if (NOT DETOUR_SRC_DIR)
 set(DETOUR_SRC_DIR "${RECAST_ROOT}/Detour")
 endif()
 
+if (NOT DETOUR_TILE_CACHE_ROOT) 
+set(DETOUR_TILE_CACHE_ROOT "${RECAST_ROOT}/DetourTileCache")
+endif()
+
+if (NOT RECAST_DEMO_ROOT) 
+set(RECAST_DEMO_ROOT "${RECAST_ROOT}/RecastDemo")
+endif()
+
 if (NOT HL_INCLUDE_DIR) 
     set(HL_INCLUDE_DIR "/usr/local/include")
 endif()
@@ -51,6 +59,9 @@ ${DETOUR_SRC_DIR}/Source/DetourNavMesh.cpp
 ${DETOUR_SRC_DIR}/Source/DetourNavMeshBuilder.cpp
 ${DETOUR_SRC_DIR}/Source/DetourNavMeshQuery.cpp
 ${DETOUR_SRC_DIR}/Source/DetourNode.cpp
+${DETOUR_TILE_CACHE_ROOT}/Source/DetourTileCache.cpp
+${DETOUR_TILE_CACHE_ROOT}/Source/DetourTileCacheBuilder.cpp
+${RECAST_DEMO_ROOT}/Source/ChunkyTriMesh.cpp
 src/hl-idl-helpers.cpp
 src/recast.cpp
 )
@@ -68,6 +79,9 @@ target_include_directories(recast.hdll
 PRIVATE
 ${RECAST_SRC_DIR}/Include
 ${DETOUR_SRC_DIR}/Include
+${DETOUR_SRC_DIR}/Include
+${DETOUR_TILE_CACHE_ROOT}/Include
+${RECAST_DEMO_ROOT}/Include
 ${HL_INCLUDE_DIR}
 )
 

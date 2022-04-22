@@ -71,6 +71,14 @@ enum rcTimerLabel
 	"RC_MAX_TIMERS"
 };
 
+
+[Internal="rcChunkyTriMesh"]
+interface ChunkyTriMesh {
+
+};
+
+
+
 [Internal="rcContext"]
 interface Context 
 {
@@ -147,11 +155,11 @@ interface Context
 					 [Const] float maxError, [Const] int maxEdgeLen,
 					 [Ref] rcContourSet cset, [Const] int buildFlags);
 
-	[CObject] bool rcBuildPolyMesh([Ref] rcContourSet cset, [Const] int nvp, [Ref] rcPolyMesh mesh);
+	[CObject] bool rcBuildPolyMesh([Ref] rcContourSet cset, [Const] int nvp, [Ref] PolyMesh mesh);
 
-	[CObject] bool rcBuildPolyMeshDetail([Const, Ref] rcPolyMesh mesh, [Const, Ref] rcCompactHeightfield chf,
+	[CObject] bool rcBuildPolyMeshDetail([Const, Ref] PolyMesh mesh, [Const, Ref] rcCompactHeightfield chf,
 						   [Const] float sampleDist, [Const] float sampleMaxError,
-						   [Ref] rcPolyMeshDetail dmesh);
+						   [Ref] PolyMeshDetail dmesh);
 };
 
 interface rcScopedTimer 
@@ -307,9 +315,10 @@ interface rcContourSet
 	attribute float maxError;	
 };
 
-interface rcPolyMesh
+[Internal="rcPolyMesh"]
+interface PolyMesh
 {
-	void rcPolyMesh();
+	void PolyMesh();
 	attribute short* verts;	
 	attribute short* polys;	
 	attribute short* regs;	
@@ -326,10 +335,10 @@ interface rcPolyMesh
 	attribute int borderSize;
 	attribute float maxEdgeError;
 };
-
-interface rcPolyMeshDetail
+[Internal="rcPolyMeshDetail"]
+interface PolyMeshDetail
 {
-	void rcPolyMeshDetail();
+	void PolyMeshDetail();
 	attribute uint * meshes;
 	attribute float* verts;		
 	attribute char* tris;
@@ -363,10 +372,10 @@ interface Recast{
 	[Static] void rcFreeHeightfieldLayerSet(rcHeightfieldLayerSet lset);
 	[Static] rcContourSet rcAllocContourSet();
 	[Static] void rcFreeContourSet(rcContourSet cset);
-	[Static] rcPolyMesh rcAllocPolyMesh();
-	[Static] void rcFreePolyMesh(rcPolyMesh pmesh);
-	[Static] rcPolyMeshDetail rcAllocPolyMeshDetail();
-	[Static] void rcFreePolyMeshDetail(rcPolyMeshDetail dmesh);
+//	[Static] PolyMesh rcAllocPolyMesh();
+//	[Static] void rcFreePolyMesh(PolyMesh pmesh);
+//	[Static] PolyMeshDetail rcAllocPolyMeshDetail();
+//	[Static] void rcFreePolyMeshDetail(PolyMeshDetail dmesh);
 
 	// UPDATED TO NEW METHOD
 	[Static, Internal="rcCalcBounds"] void calcBounds(float[] verts, int nv, float3 bmin, float3 bmax);
@@ -468,6 +477,57 @@ interface DetourCommon {
 
 	[Static, Internal="dtRandomPointInConvexPoly"] void randomPointInConvexPoly([Const] float[] pts, [Const] int npts, float[] areas,
 								[Const] float s, [Const] float t, float[] out);
+};
+
+
+[Internal="dtTileCache"]
+interface TileCache {
+
+};
+[Internal="dtCompressedTile"]
+interface CompressedTile {
+
+};
+
+[Internal="dtTileCacheCompressor"]
+interface TileCacheCompressor {
+
+
+};
+
+[Internal="dtTileCacheLayerHeader"]
+interface TileCacheLayerHeader {
+
+};
+
+[Internal="dtTileCacheLayer"]
+interface TileCacheLayer {
+
+};
+
+[Internal="dtTileCacheLayer"]
+interface TileCacheContour {
+
+};
+
+[Internal="dtTileCacheContourSet"]
+interface TileCacheContourSet {
+
+};
+
+[Internal="dtTileCachePolyMesh"]
+interface TileCachePolyMesh {
+
+};
+
+[Internal="dtTileCacheObstacle"]
+interface TileCacheObstacle {
+
+};
+
+[Internal="dtTileCacheParams"]
+interface TileCacheParams {
+
 };
 
 //--------------------------------------------------------------------------------------------

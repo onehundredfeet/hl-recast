@@ -267,12 +267,10 @@ class Pathfinder extends hxd.App {
 			{
 				pmesh.flags[i] = SAMPLE_POLYFLAGS_WALK;
 			}
-
 			else if (pmesh.areas[i] == SAMPLE_POLYAREA_WATER)
 			{
 				pmesh.flags[i] = SAMPLE_POLYFLAGS_SWIM;
 			}
-
 			else if (pmesh.areas[i] == SAMPLE_POLYAREA_DOOR)
 			{
 				pmesh.flags[i] = SAMPLE_POLYFLAGS_WALK | SAMPLE_POLYFLAGS_DOOR;

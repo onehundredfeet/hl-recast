@@ -1,0 +1,6 @@
+-lib hl-idl
+-lib hvector
+-cp .
+-cp examples/complete
+-main Complete
+-hl bin/complete.hl
