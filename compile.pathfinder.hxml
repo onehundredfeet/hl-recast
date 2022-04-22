@@ -2,7 +2,7 @@
 -lib heaps
 -lib hlsdl
 -lib hvector
--lib recast
 -cp .
+-cp PathfinderSample
 -main Pathfinder
--hl pathfinder.hl
+-hl bin/pathfinder.hl

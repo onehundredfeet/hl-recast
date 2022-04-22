@@ -2,6 +2,7 @@ import hl.NativeArray;
 import recast.Native;
 import h3d.scene.*;
 import hvector.*;
+import hvector.ShaderMath;
 
 import hvector.Float3.NativeArrayFloat3;
 //import ShaderMath;
@@ -86,7 +87,7 @@ class Pathfinder extends hxd.App {
 	}
 
     override function init() {
-		var rawMesh = loadObj("undulating.obj");
+		var rawMesh = loadObj("PathfinderSample/undulating.obj");
 		var verticesCount = cast (rawMesh.vertices.length / 3, Int);
 		var trianglesCount = cast (rawMesh.indices.length / 3, Int);
 
@@ -94,14 +95,14 @@ class Pathfinder extends hxd.App {
 		var nativeIndices = IntArrayToNativeArray(rawMesh.indices);
 
 		// Init context
-		var ctx = new recast.Native.RCContext(true);
+		var ctx = new recast.Native.Context(true);
 
 		// Get bounds 
         var bmin = vec3(0., 0., 0.);
 		var bmax = vec3(0., 0., 0.);
 		
 		
-		recast.Native.Recast.rcCalcBounds(nativeVertices, verticesCount, bmin, bmax);	
+		recast.Native.Recast.calcBounds(nativeVertices, verticesCount, bmin, bmax);	
 		
 		// Expected:
 		// bmin: Vec3(4999.105957031, -4.054780006, 4999.551757813)
@@ -134,7 +135,7 @@ class Pathfinder extends hxd.App {
 
 		var widthBuffer = new hl.NativeArray<Int>(1);
 		var heightBuffer = new hl.NativeArray<Int>(1);
-		recast.Native.Recast.rcCalcGridSize(cfg.bmin, cfg.bmax, cfg.cs, widthBuffer, heightBuffer);
+		recast.Native.Recast.calcGridSize(cfg.bmin, cfg.bmax, cfg.cs, widthBuffer, heightBuffer);
 		cfg.width = widthBuffer[0];
 		cfg.height = heightBuffer[0];
 		trace('Grid size: ${cfg.width} x ${cfg.height}'); // Expected 330 x 331
@@ -146,13 +147,13 @@ class Pathfinder extends hxd.App {
 		// Allocate voxel heightfield where we rasterize our input data to.
 		var solid = new recast.Native.Heightfield();
 
-		if (!ctx.rcCreateHeightfield(solid, cfg.width, cfg.height, cfg.bmin, cfg.bmax, cfg.cs, cfg.ch)){
+		if (!ctx.createHeightfield(solid, cfg.width, cfg.height, cfg.bmin, cfg.bmax, cfg.cs, cfg.ch)){
 			trace("Error: rcCreateHeightfield Filed.");
 			return;
 		}
 
 		var triareas = new hl.NativeArray<hl.UI8>(trianglesCount);
-		ctx.rcMarkWalkableTriangles(cfg.walkableSlopeAngle, nativeVertices, verticesCount, nativeIndices, trianglesCount, triareas);
+		ctx.markWalkableTriangles(cfg.walkableSlopeAngle, nativeVertices, verticesCount, nativeIndices, trianglesCount, triareas);
 
 		if (!ctx.rcRasterizeTriangles(nativeVertices, verticesCount, nativeIndices, triareas, trianglesCount, solid, cfg.walkableClimb)){
 			trace("Error: rcRasterizeTriangles Filed.");
@@ -281,7 +282,7 @@ class Pathfinder extends hxd.App {
 
 
 		
-		var params = new recast.Native.DtNavMeshCreateParams();
+		var params = new recast.Native.NavMeshCreateParams();
 		params.verts = pmesh.verts;
 		params.vertCount = pmesh.nverts;
 		params.polys = pmesh.polys;
@@ -319,19 +320,19 @@ class Pathfinder extends hxd.App {
 			return;
 		}
 		
-		var navMesh = new recast.Native.DtNavMesh();
+		var navMesh = new recast.Native.NavMesh();
 		var status = navMesh.init(navData, navDataSize, DT_TILE_FREE_DATA);
 		if (recast.Native.DetourStatus.dtStatusFailed(status)){
 			trace("Error: Could not init Detour navmes");
-			Detour.free(navData);
+//			Detour.free(navData);
 			return;
 		}
 		
-		var navQuery = new recast.Native.DtNavMeshQuery();
+		var navQuery = new recast.Native.NavMeshQuery();
 		status = navQuery.init(navMesh, 2048);
 		if (recast.Native.DetourStatus.dtStatusFailed(status)){
 			trace("Error: Could not init Detour navmesh query");
-			Detour.free(navData);
+//			Detour.free(navData);
 			return;
 		}
 	

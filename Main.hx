@@ -1,3 +1,4 @@
+import recast.Native;
 import hvector.Float3.NativeArrayFloat3;
 import hl.NativeArray;
 import hvector.*;
@@ -13,8 +14,8 @@ class Main {
 		test_rcCalcBounds_0();
 		test_rcCalcBounds_1();
 		test_detourRandomPointInConvexPoly();
-		test_rcCreateHeightfield();
-		test_rcMarkWalkableTriangles();
+		test_createHeightfield();
+		test_markWalkableTriangles();
 		test_rasterizeTriangle();
 	}
 
@@ -30,17 +31,16 @@ class Main {
 	}
 
 	public static function test_pointer(){
-		var verts16 = new hl.NativeArray<hl.UI16>(3);
-		var x = new recast.Native.DtNavMeshCreateParams();
-		var bb = new hl.Bytes( 100 );	// need to make sure that there's enough bytes
-		var bs : hl.BytesAccess<hl.UI16> = bb;
-		bs[0] = 1;
-		verts16[0] = 1;
-		x.verts = bs;
+		var x = new recast.Native.NavMeshCreateParams();
+		var bs2 = recast.Native.RcAlloc.allocShortArray(3, AllocHint.RC_ALLOC_TEMP);
+		bs2[0] = 1;
+		x.verts = bs2;
 		var xy = x.verts;
 
 		var test = approxEqual(xy[0], 1);
 		trace('test_pointer: $test');
+
+		recast.Native.RcAlloc.freeArray( bs2 );
 	}
 
 	public static function test_detourMath_0(){
@@ -50,8 +50,8 @@ class Main {
 		var x : Float = -10.0;
 		var y : Float = 10.0;
 
-		var abs_x = recast.Native.DetourMath.dtMathFabsf(x);
-		var abs_y = recast.Native.DetourMath.dtMathFabsf(y);
+		var abs_x = recast.Native.Math.fabsf(x);
+		var abs_y = recast.Native.Math.fabsf(y);
 
 		test = test && approxEqual(10, abs_x);
 		test = test && approxEqual(10, abs_y);
@@ -65,7 +65,7 @@ class Main {
 		var bmax = vec3(0., 0., 0.);
 		verts[0] = vec3(1.,2.,3.);
 
-		recast.Native.Recast.rcCalcBounds(verts, 1, bmin, bmax);
+		recast.Native.Recast.calcBounds(verts, 1, bmin, bmax);
 		
 		var test = true;
 
@@ -85,7 +85,7 @@ class Main {
 		verts[3] =  0;
 		verts[4] =  2;
 		verts[5] =  5;
-		recast.Native.Recast.rcCalcBounds(verts, 2, bmin, bmax);
+		recast.Native.Recast.calcBounds(verts, 2, bmin, bmax);
 
 		var test = true;
 
@@ -118,17 +118,17 @@ class Main {
 		var areas =  new NativeArray<Single>(6);
 		var out =  new NativeArray<Single>(3);
 
-		recast.Native.DetourCommon.dtRandomPointInConvexPoly(pts, npts, areas, 0.0, 1.0, out);
+		recast.Native.DetourCommon.randomPointInConvexPoly(pts, npts, areas, 0.0, 1.0, out);
 		test = test && approxEqual(out[0], 0.0);
 		test = test && approxEqual(out[1], 0.0);
 		test = test && approxEqual(out[2], 1.0);
 
-		recast.Native.DetourCommon.dtRandomPointInConvexPoly(pts, npts, areas, 0.5, 1.0, out);
+		recast.Native.DetourCommon.randomPointInConvexPoly(pts, npts, areas, 0.5, 1.0, out);
 		test = test && approxEqual(out[0], 1.0 / 2.0);
 		test = test && approxEqual(out[1], 0.0);
 		test = test && approxEqual(out[2], 1.0 / 2.0);
 
-		recast.Native.DetourCommon.dtRandomPointInConvexPoly(pts, npts, areas, 1.0, 1.0, out);
+		recast.Native.DetourCommon.randomPointInConvexPoly(pts, npts, areas, 1.0, 1.0, out);
 		test = test && approxEqual(out[0], 1.0);
 		test = test && approxEqual(out[1], 0.0);
 		test = test && approxEqual(out[2], 0.0);
@@ -136,10 +136,10 @@ class Main {
 		trace('test_detourRandomPointInConvexPoly: $test');
 	}
 
-	public static function test_rcCreateHeightfield(){	
+	public static function test_createHeightfield(){	
 		var test = true;
 		
-		var ctx = new recast.Native.RCContext(true);
+		var ctx = new recast.Native.Context(true);
 
 		var verts = new NativeArray<Single>(6);
 		verts[0] = 1;
@@ -152,7 +152,7 @@ class Main {
 		var bmin = vec3(0., 0., 0.);
 		var bmax = vec3(0., 0., 0.);
 
-		recast.Native.Recast.rcCalcBounds(verts, 2, bmin, bmax);
+		recast.Native.Recast.calcBounds(verts, 2, bmin, bmax);
 
 		var cellSize:Float = 1.5;
 		var cellHeight:Float = 2.0;
@@ -160,13 +160,13 @@ class Main {
 		var width = new NativeArray<Int>(1);
 		var height = new NativeArray<Int>(1);
 
-		recast.Native.Recast.rcCalcGridSize(bmin, bmax, cellSize, width, height);
+		recast.Native.Recast.calcGridSize(bmin, bmax, cellSize, width, height);
 		test = test && width[0] != 0;
 		test = test && height[0] != 0;
 
 		var heightfield = new recast.Native.Heightfield();
 
-		test = test && ctx.rcCreateHeightfield(heightfield, width[0], height[0], bmin, bmax, cellSize, cellHeight);
+		test = test && ctx.createHeightfield(heightfield, width[0], height[0], bmin, bmax, cellSize, cellHeight);
 
 		test = test && approxEqual(heightfield.width, width[0]);
 		test = test && approxEqual(heightfield.height, height[0]);
@@ -178,15 +178,15 @@ class Main {
 		test = test && heightfield.pools == null;
 		test = test && heightfield.freelist == null;
 
-		trace('test_rcCreateHeightfield: $test');
+		trace('test_createHeightfield: $test');
 	}
 
 	
-	public static function test_rcMarkWalkableTriangles(){
+	public static function test_markWalkableTriangles(){
 		var RC_NULL_AREA = 0;
 		var RC_WALKABLE_AREA:hl.UI8 = 63;
 		
-		var ctx = new recast.Native.RCContext(false);
+		var ctx = new recast.Native.Context(false);
 
 		var verts = new NativeArray<Single>(9);
 		verts[0] = 0;
@@ -218,34 +218,34 @@ class Main {
 		
 		// One walkable triangle
 		areas[0] = RC_NULL_AREA;
-		ctx.rcMarkWalkableTriangles(walkableSlopeAngle, verts, nv, walkable_tri, nt, areas);
+		ctx.markWalkableTriangles(walkableSlopeAngle, verts, nv, walkable_tri, nt, areas);
 		var test = areas[0] == RC_WALKABLE_AREA;
-		trace('test_rcMarkWalkableTriangles. One walkable triangle : $test');
+		trace('test_markWalkableTriangles. One walkable triangle : $test');
 
 		// One non-walkable triangle
 		areas[0] = RC_NULL_AREA;
-		ctx.rcMarkWalkableTriangles(walkableSlopeAngle, verts, nv, unwalkable_tri, nt, areas);
+		ctx.markWalkableTriangles(walkableSlopeAngle, verts, nv, unwalkable_tri, nt, areas);
 		test = areas[0] == RC_NULL_AREA;
-		trace('test_rcMarkWalkableTriangles. One non-walkable triangle : $test');
+		trace('test_markWalkableTriangles. One non-walkable triangle : $test');
 
 		// Non-walkable triangle area id's are not modified
 		areas[0] = 42;
-		ctx.rcMarkWalkableTriangles(walkableSlopeAngle, verts, nv, unwalkable_tri, nt, areas);
+		ctx.markWalkableTriangles(walkableSlopeAngle, verts, nv, unwalkable_tri, nt, areas);
 		test = areas[0] == 42;
-		trace('test_rcMarkWalkableTriangles. Non-walkable triangle area ids are not modified : $test');
+		trace('test_markWalkableTriangles. Non-walkable triangle area ids are not modified : $test');
 
 		// Slopes equal to the max slope are considered unwalkable.
 		walkableSlopeAngle = 0;
 		areas[0] = RC_NULL_AREA;
-		ctx.rcMarkWalkableTriangles(walkableSlopeAngle, verts, nv, walkable_tri, nt, areas);
+		ctx.markWalkableTriangles(walkableSlopeAngle, verts, nv, walkable_tri, nt, areas);
 		test = areas[0] == RC_NULL_AREA;
-		trace('test_rcMarkWalkableTriangles. Slopes equal to the max slope are considered unwalkable : $test');
+		trace('test_markWalkableTriangles. Slopes equal to the max slope are considered unwalkable : $test');
 	}
 
 	public static function test_rasterizeTriangle(){
 		var test = true;
 
-		var ctx = new recast.Native.RCContext(true);
+		var ctx = new recast.Native.Context(true);
 
 		var verts = new hl.NativeArray<Single>(9);
 		verts[0] = 0;
@@ -261,47 +261,47 @@ class Main {
 		var bmin = vec3(0., 0., 0.);
 		var bmax = vec3(0., 0., 0.);
 		
-		recast.Native.Recast.rcCalcBounds(verts, 3, bmin, bmax);
+		recast.Native.Recast.calcBounds(verts, 3, bmin, bmax);
 		var cellSize:Float = 0.5;
 		var cellHeight:Float = 0.5;
 		var width = new NativeArray<Int>(0);
 		var height = new NativeArray<Int>(0);
 	
-		recast.Native.Recast.rcCalcGridSize(bmin, bmax, cellSize, width, height);
+		recast.Native.Recast.calcGridSize(bmin, bmax, cellSize, width, height);
 		test = test && width[0] != 0;
 		test = test && height[0] != 0;
 
 		var solid = new recast.Native.Heightfield();
-		test = test && ctx.rcCreateHeightfield(solid, width[0], height[0], bmin, bmax, cellSize, cellHeight);
+		test = test && ctx.createHeightfield(solid, width[0], height[0], bmin, bmax, cellSize, cellHeight);
 	
 		var area = 42;
 		var flagMergeThr = 1;
-		test = test && ctx.rcRasterizeTriangle(
+		test = test && ctx.rasterizeTriangle(
 			vec3(verts[0], verts[1], verts[2]), 
 			vec3(verts[3], verts[4], verts[5]), 
 			vec3(verts[6], verts[7], verts[8]), 
 			area, solid, flagMergeThr);
 
-		test = test && solid.rcSpanIsValidAt(0 + 0 * width[0]);
-		test = test && !solid.rcSpanIsValidAt(1 + 0 * width[0]);
-		test = test && solid.rcSpanIsValidAt(0 + 1 * width[0]);
-		test = test && solid.rcSpanIsValidAt(0 + 0 * width[0]);
-		test = test && solid.rcSpanIsValidAt(1 + 1 * width[0]);
+		test = test && solid.spanIsValidAt(0 + 0 * width[0]);
+		test = test && !solid.spanIsValidAt(1 + 0 * width[0]);
+		test = test && solid.spanIsValidAt(0 + 1 * width[0]);
+		test = test && solid.spanIsValidAt(0 + 0 * width[0]);
+		test = test && solid.spanIsValidAt(1 + 1 * width[0]);
 
-		test = test && solid.rcSpanAt(0 + 0 * width[0]).smin == 0;
-		test = test && solid.rcSpanAt(0 + 0 * width[0]).smax == 1;
-		test = test && solid.rcSpanAt(0 + 0 * width[0]).area == area;
-		test = test && solid.rcSpanAt(0 + 0 * width[0]).next == null;
+		test = test && solid.spanAt(0 + 0 * width[0]).smin == 0;
+		test = test && solid.spanAt(0 + 0 * width[0]).smax == 1;
+		test = test && solid.spanAt(0 + 0 * width[0]).area == area;
+		test = test && solid.spanAt(0 + 0 * width[0]).next == null;
 	
-		test = test && solid.rcSpanAt(0 + 1 * width[0]).smin == 0;
-		test = test && solid.rcSpanAt(0 + 1 * width[0]).smax == 1;
-		test = test && solid.rcSpanAt(0 + 1 * width[0]).area == area;
-		test = test && solid.rcSpanAt(0 + 1 * width[0]).next == null;
+		test = test && solid.spanAt(0 + 1 * width[0]).smin == 0;
+		test = test && solid.spanAt(0 + 1 * width[0]).smax == 1;
+		test = test && solid.spanAt(0 + 1 * width[0]).area == area;
+		test = test && solid.spanAt(0 + 1 * width[0]).next == null;
 
-		test = test && solid.rcSpanAt(1 + 1 * width[0]).smin == 0;
-		test = test && solid.rcSpanAt(1 + 1 * width[0]).smax == 1;
-		test = test && solid.rcSpanAt(1 + 1 * width[0]).area == area;
-		test = test && solid.rcSpanAt(1 + 1 * width[0]).next == null;
+		test = test && solid.spanAt(1 + 1 * width[0]).smin == 0;
+		test = test && solid.spanAt(1 + 1 * width[0]).smax == 1;
+		test = test && solid.spanAt(1 + 1 * width[0]).area == area;
+		test = test && solid.spanAt(1 + 1 * width[0]).next == null;
 
 		trace ('test_rasterizeTriangle $test');
 	}

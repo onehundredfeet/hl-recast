@@ -72,9 +72,9 @@ enum rcTimerLabel
 };
 
 [Internal="rcContext"]
-interface RCContext 
+interface Context 
 {
-    void RCContext(boolean state);
+    void Context(boolean state);
     void enableLog(boolean state);
 	void resetLog();
 	void enableTimer(boolean state);
@@ -82,10 +82,10 @@ interface RCContext
 	void startTimer([Const] rcTimerLabel label);
 
 
-	[CObject] bool rcCreateHeightfield([Deref] rcHeightfield hf, int width, int height, 
+	[CObject, Internal="rcCreateHeightfield"] bool createHeightfield([Deref] rcHeightfield hf, int width, int height, 
 							[Const] float3 bmin, [Const] float3 bmax, float cs, float ch);
 
-	[CObject] void rcMarkWalkableTriangles([Const] float walkableSlopeAngle, 
+	[CObject, Internal="rcMarkWalkableTriangles"] void markWalkableTriangles([Const] float walkableSlopeAngle, 
 							[Const] float[] verts, int nv,[Const] int[] tris, int nt, char[] areas); 
 
 	[CObject] void rcClearUnwalkableTriangles([Const] float walkableSlopeAngle, 
@@ -94,7 +94,7 @@ interface RCContext
 	[CObject] bool rcAddSpan([Ref] rcHeightfield hf, [Const] int x, [Const] int y, 
 							[Const] int smin, [Const] int smax, [Const] int area, [Const] int flagMergeThr);
 
-	[CObject] bool rcRasterizeTriangle([Const] float3 v0, [Const] float3 v1, 
+	[CObject, Internal="rcRasterizeTriangle"] bool rasterizeTriangle([Const] float3 v0, [Const] float3 v1, 
 							[Const] float3 v2, [Const] int area, [Ref] rcHeightfield solid, [Const] int flagMergeThr);
 
 	[CObject] bool rcRasterizeTriangles([Const]  float[] verts, [Const]  int nv,
@@ -156,7 +156,7 @@ interface RCContext
 
 interface rcScopedTimer 
 {
-	void rcScopedTimer(RCContext ctx, [Const] rcTimerLabel label);
+	void rcScopedTimer(Context ctx, [Const] rcTimerLabel label);
 };
 
 interface rcConfig {
@@ -213,8 +213,8 @@ interface rcHeightfield
 	attribute rcSpan freelist;
 
 	// Workaround for rcSpan **spans;
-	[CObject, Internal="rcHeightfield_rcSpanIsValidAt"] bool rcSpanIsValidAt(int pos);
-	[CObject, Internal="rcHeightfield_rcSpanAt"] rcSpan rcSpanAt(int pos);
+	[CObject, Internal="rcHeightfield_rcSpanIsValidAt"] bool spanIsValidAt(int pos);
+	[CObject, Internal="rcHeightfield_rcSpanAt"] rcSpan spanAt(int pos);
 };
 
 interface rcCompactCell
@@ -369,15 +369,13 @@ interface Recast{
 	[Static] void rcFreePolyMeshDetail(rcPolyMeshDetail dmesh);
 
 	// UPDATED TO NEW METHOD
-	[Static] void rcCalcBounds(float[] verts, int nv, float3 bmin, float3 bmax);
+	[Static, Internal="rcCalcBounds"] void calcBounds(float[] verts, int nv, float3 bmin, float3 bmax);
 
-	[Static] void rcCalcGridSize([Const] float3 bmin, [Const] float3 bmax, float cs,
-							int[] w, int[] h);
+	[Static, Internal="rcCalcGridSize"] void calcGridSize([Const] float3 bmin, [Const] float3 bmax, float cs,int[] w, int[] h);
 
 	
 
-								[Static] int rcOffsetPoly([Const] float3 verts, [Const]  int nverts, [Const]  float offset,
-							float3 outVerts, [Const]  int maxOutVerts);
+	[Static] int rcOffsetPoly([Const] float3 verts, [Const]  int nverts, [Const]  float offset,float3 outVerts, [Const]  int maxOutVerts);
 
 };
 
@@ -386,15 +384,15 @@ interface Recast{
 // DetourMath.h
 //--------------------------------------------------------------------------------------------
 [NoDelete]
-interface DetourMath {
-	[Static] float dtMathFabsf(float x);
-	[Static] float dtMathSqrtf(float x);
-	[Static] float dtMathFloorf(float x);
-	[Static] float dtMathCeilf(float x);
-	[Static] float dtMathCosf(float x);
-	[Static] float dtMathSinf(float x);
-	[Static] float dtMathAtan2f(float y, float x);
-	[Static] bool dtMathIsfinite(float x);
+interface Math {
+	[Static] float fabsf(float x);
+	[Static] float sqrtf(float x);
+	[Static] float floorf(float x);
+	[Static] float ceilf(float x);
+	[Static] float cosf(float x);
+	[Static] float sinf(float x);
+	[Static] float atan2f(float y, float x);
+	[Static] bool isfinite(float x);
 };
 
 //--------------------------------------------------------------------------------------------
@@ -468,7 +466,7 @@ interface DetourCommon {
 	[Static] int dtOppositeTile(int side);
 	[Static] void dtSwapByte(char[] a, char[] b);	
 
-	[Static] void dtRandomPointInConvexPoly([Const] float[] pts, [Const] int npts, float[] areas,
+	[Static, Internal="dtRandomPointInConvexPoly"] void randomPointInConvexPoly([Const] float[] pts, [Const] int npts, float[] areas,
 								[Const] float s, [Const] float t, float[] out);
 };
 
@@ -584,7 +582,8 @@ interface dtMeshTile
 	attribute dtMeshTile next;			
 };
 
-interface dtNavMeshParams 
+[Internal="dtNavMeshParams"]
+interface NavMeshParams 
 {
 	attribute float3 orig;		
 	attribute float tileWidth;	
@@ -593,16 +592,17 @@ interface dtNavMeshParams
 	attribute int maxPolys;		
 };
 
-interface dtNavMesh
+[Internal="dtNavMesh"]
+interface NavMesh
 {
 
-	void dtNavMesh();
+	void NavMesh();
 
-	[Internal="init"] dtStatus initParams([Const] dtNavMeshParams params);
+	[Internal="init"] dtStatus initParams([Const] NavMeshParams params);
 
 	dtStatus init([Cast="unsigned char *"]VoidPtr data, [Const] int dataSize, [Const] int flags);
 
-	[Const] dtNavMeshParams getParams();
+	[Const] NavMeshParams getParams();
 
 	//dtStatus addTile(char[] data, int dataSize, int flags, dtTileRef lastRef, dtTileRef result); TODO
 
@@ -665,8 +665,8 @@ interface dtNavMesh
 interface DetourNavMesh 
 {
 	[Static] int dtGetDetailTriEdgeFlags(char triFlags, int edgeIndex);
-	[Static] dtNavMesh dtAllocNavMesh();
-	[Static] void dtFreeNavMesh(dtNavMesh navmesh);
+	[Static] NavMesh dtAllocNavMesh();
+	[Static] void dtFreeNavMesh(NavMesh navmesh);
 };
 
 //--------------------------------------------------------------------------------------------
@@ -721,9 +721,10 @@ interface dtNodeQueue
 //--------------------------------------------------------------------------------------------
 // DetourNavMeshBuilder.h
 //--------------------------------------------------------------------------------------------
-interface dtNavMeshCreateParams 
+[Internal="dtNavMeshCreateParams"]
+interface NavMeshCreateParams 
 {
-	void dtNavMeshCreateParams();
+	void NavMeshCreateParams();
 
 	// Option 1 - Arrays that get coppied and will use the member variable as size	
 	// Currently, setting this will likely leak memory. Unless it's disposed by the dtNavMeshCreateParams class
@@ -768,7 +769,7 @@ interface dtNavMeshCreateParams
 interface DetourNavMeshBuilder
 {
 
-	[Static,ReturnArray=(outPtr,aLength)] VoidPointer dtCreateNavMeshData(dtNavMeshCreateParams params, [Virtual] byte* outPtr, [Out] int aLength ); 
+	[Static,ReturnArray=(outPtr,aLength)] VoidPointer dtCreateNavMeshData(NavMeshCreateParams params, [Virtual] byte* outPtr, [Out] int aLength ); 
 	[Static] bool dtNavMeshHeaderSwapEndian(byte * data, [Const] int dataSize);
 	[Static] bool dtNavMeshDataSwapEndian(byte * data, [Const] int dataSize);
 };
@@ -814,11 +815,12 @@ interface dtPolyQuery
 	// void process([Const]] dtMeshTile tile, dtPoly** polys, dtPolyRef refs, int count); //TODO
 };
 
-interface dtNavMeshQuery
+[Internal="dtNavMeshQuery"]
+interface NavMeshQuery
 {
-	void dtNavMeshQuery();
+	void NavMeshQuery();
 
-	dtStatus init([Const] dtNavMesh nav, [Const] int maxNodes);
+	dtStatus init([Const] NavMesh nav, [Const] int maxNodes);
 	
 	dtStatus findPath(dtPolyRef startRef, dtPolyRef endRef, [Const] float[] startPos, 
 					[Const] float[] endPos, [Const] dtQueryFilter filter,
@@ -911,14 +913,16 @@ interface dtNavMeshQuery
 
     dtNodePool getNodePool();
 
-	[Const] dtNavMesh getAttachedNavMesh();
+	[Const] NavMesh getAttachedNavMesh();
+
+	//[CObject, Internal="dtFreeNavMeshQuery"] void free();
 };
 
 [NoDelete]
 interface DetourNavMeshQuery
 {
-	[Static] dtNavMeshQuery dtAllocNavMeshQuery();
-	[Static] void dtFreeNavMeshQuery(dtNavMeshQuery query);
+//	[Static] NavMeshQuery dtAllocNavMeshQuery();
+//	[Static] void dtFreeNavMeshQuery(NavMeshQuery query);
 };
 
 [NoDelete]
