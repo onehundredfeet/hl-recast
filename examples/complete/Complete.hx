@@ -226,8 +226,6 @@ class Complete {
 
 	static function rasterizeTileLayers(chunkyMesh:ChunkyTriMesh, verts:NativeArray<Single>, nverts:Int, tx:Int, ty:Int, rasterCfg:RasterConfig,
 			tiles:Array<TileCacheData>, maxTiles:Int):Int {
-		if (tx % 16 == 0 && ty % 16 == 0) 
-				trace('rasterizeTileLayers...${tx} ${ty}');
 		var rc = new RasterContext(false);
 
 		// Tile bounds.
@@ -257,20 +255,20 @@ class Complete {
 		// If you have multiple meshes you need to process, allocate
 		// and array which can hold the max number of triangles you need to process.
 		var triareas = RcAlloc.allocByteArray(chunkyMesh.maxTrisPerChunk, AllocHint.RC_ALLOC_PERM); // new NativeArray<>(chunkyMesh.maxTrisPerChunk);
-		trace('Tri areas ${triareas} is ${chunkyMesh.maxTrisPerChunk}');
+		//trace('Tri areas ${triareas} is ${chunkyMesh.maxTrisPerChunk}');
 		var tbmin = new Vec2(tempRasterCfg.bmin[0], tempRasterCfg.bmin[2]);
 		var tbmax = new Vec2(tempRasterCfg.bmax[0], tempRasterCfg.bmax[2]);
 
-		trace('temp array');
+		//trace('temp array');
 		var cid = new NativeArray<Int>(MAX_IDS);
 
-		trace('overlapping');
+		//trace('overlapping');
 		var ncid = chunkyMesh.getOverlappingRect(tbmin, tbmax, cid, MAX_IDS);
 		if (ncid == 0) {
 			return 0; // empty
 		}
 
-		trace('looping over ${ncid}');
+		//trace('looping over ${ncid}');
 		for (i in 0...ncid) {
 			var nodeTriIndex = chunkyMesh.getNodeTriIndex(cid[i]);
 			var tris = chunkyMesh.getTriVertIndices(nodeTriIndex * 3);
@@ -280,12 +278,12 @@ class Complete {
 
 			rc.markWalkableTriangles(tempRasterCfg.walkableSlopeAngle, verts, nverts, tris, ntris, triareas);
 
-			trace('Marked and now raster ${i} of ${ncid}\n');
+//			trace('Marked and now raster ${i} of ${ncid}\n');
 			if (!rc.rasterizeTriangles(verts, nverts, tris, triareas, ntris, solid, tempRasterCfg.walkableClimb)) {
 				trace('Failed raster ${i}');
 				return 0;
 			} 
-			trace('Done raster ${i}');
+//			trace('Done raster ${i}');
 		}
 
 		// Once all geometry is rasterized, we do initial pass of filtering to
@@ -524,7 +522,7 @@ class Complete {
 	static function preprocessTiles(chunkyTriMesh, verts:NativeArray<Single>, nverts:Int, tileCache:TileCache, tw : Int, th : Int, rasterCfg:RasterConfig,
 			tcparams:TileCacheParams) {
 		// Preprocess tiles.
-		trace('preprocessTiles... ${tw} by ${th}');
+		//trace('preprocessTiles... ${tw} by ${th}');
 		_cacheLayerCount = 0;
 		_cacheCompressedSize = 0;
 		_cacheRawSize = 0;
@@ -532,7 +530,7 @@ class Complete {
 		var tiles = [for (i in 0...MAX_LAYERS) new TileCacheData()];
 
 		for (y in 0...th) {
-			trace('Starting row ${y}');
+			//trace('Starting row ${y}');
 			for (x in 0...tw) {
 				var ntiles = rasterizeTileLayers(chunkyTriMesh, verts, nverts, x, y, rasterCfg, tiles, MAX_LAYERS);
 
@@ -549,13 +547,12 @@ class Complete {
 	}
 
 	static function buildInitialMeshes(tw : Int, th : Int, tileCache:TileCache, navMesh:NavMesh) {
-		trace('buildInitialMeshes... ${tw} by ${th} on ${tileCache} nav ${navMesh}');
+		//trace('buildInitialMeshes... ${tw} by ${th} on ${tileCache} nav ${navMesh}');
 
 		for (y in 0...th)
 			for (x in 0...tw)
 				tileCache.buildNavMeshTilesAt(x, y, navMesh);
 
-		trace("done...");
 		/*
 				// Build initial meshes
 			m_ctx->startTimer(RC_TIMER_TOTAL);
@@ -594,6 +591,10 @@ class Complete {
 
 		// need to build chunkyTriMesh
 
+		var pt = new PerformanceTimer();
+
+		
+
 		var bounds = getBounds(nativeVertices, verticesCount);
 		var gridwh = getGridSize(bounds.min, bounds.max);
 		var rasterCfg = getRasterConfig(gridwh.width, gridwh.height, bounds.min, bounds.max);
@@ -604,9 +605,20 @@ class Complete {
 		var navMeshCfg = getNavMeshParameters(bounds.min, tileCounts.tileWidthCount, tileCounts.tileHeightCount);
 		var navMesh = new NavMesh();
 		navMesh.setParams(navMeshCfg);
+		pt.start();
 		chunkyTriMesh.build(nativeVertices, nativeIndices,  trianglesCount, TRIANGLES_PER_CHUNK);
+		pt.stop();
+		trace('Chunky ${pt.deltaMilliseconds()}ms');
+
+		pt.start();
 		preprocessTiles(chunkyTriMesh, nativeVertices, verticesCount, configuredCache.cache, tileCounts.tileWidthCount, tileCounts.tileHeightCount, rasterCfg, cacheCfg);
+		pt.stop();
+		trace('Preprocessing ${pt.deltaMilliseconds()}ms');
+		pt.start();
 		buildInitialMeshes(tileCounts.tileWidthCount, tileCounts.tileHeightCount, configuredCache.cache, navMesh);
+		pt.stop();
+		trace('Building ${pt.deltaMilliseconds()}ms');
+
 
 		var navQuery = new NavMeshQuery();
 		navQuery.init(navMesh, MAX_NAV_QUERY_NODES);

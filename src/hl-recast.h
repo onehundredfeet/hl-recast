@@ -3,6 +3,7 @@
 
 #include <DetourTileCacheBuilder.h>
 #include "fastlz/fastlz.h"
+#include "PerfTimer.h"
 struct FastLZCompressor : public dtTileCacheCompressor
 {
 	inline dtTileCacheCompressor *asSuper() {
@@ -59,7 +60,6 @@ struct LinearAllocator : public dtTileCacheAlloc
 	
 	virtual void reset()
 	{
-		printf("Resetting internal\n");
 		high = dtMax(high, top);
 		top = 0;
 	}
@@ -134,7 +134,7 @@ inline static unsigned short *rcAllocShort( int length, rcAllocHint hint ) {
 
 template<class T>
 inline void rcClear(T *ptr, int length ) {
-	printf("Clearing %p of %d x %d\n", ptr, (int)sizeof(T), length);
+	//printf("Clearing %p of %d x %d\n", ptr, (int)sizeof(T), length);
 	memset(ptr, 0, sizeof(T) * length);
 }
 
@@ -160,4 +160,39 @@ enum TileCacheLayerHeaderConstants {
 	TILECACHE_VERSION = DT_TILECACHE_VERSION
 };
 
+
+
+
+
+class PerformanceTimer {
+	TimeVal _start;
+	TimeVal _stop;
+
+public:
+	PerformanceTimer(){}
+	~PerformanceTimer(){}
+	void start() {
+		_start = getPerfTime();
+	}
+	void stop(){ 
+		_stop = getPerfTime();
+	}
+	double deltaSeconds() {
+		int microSeconds = getPerfTimeUsec(_stop - _start);
+
+		return (double)microSeconds / 1000000;
+	}
+
+	double deltaMilliseconds() {
+		int microSeconds = getPerfTimeUsec(_stop - _start);
+
+		return (double)microSeconds / 1000;
+	}
+
+	double deltaMicroseconds() {
+		int microSeconds = getPerfTimeUsec(_stop - _start);
+
+		return (double)microSeconds;
+	}
+};
 #endif

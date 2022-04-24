@@ -61,6 +61,7 @@ ${DETOUR_SRC_DIR}/Source/DetourNavMeshQuery.cpp
 ${DETOUR_SRC_DIR}/Source/DetourNode.cpp
 ${DETOUR_TILE_CACHE_ROOT}/Source/DetourTileCache.cpp
 ${DETOUR_TILE_CACHE_ROOT}/Source/DetourTileCacheBuilder.cpp
+${RECAST_DEMO_ROOT}/Source/PerfTimer.cpp
 src/ChunkyTriMesh.cpp
 src/hl-idl-helpers.cpp
 src/recast.cpp

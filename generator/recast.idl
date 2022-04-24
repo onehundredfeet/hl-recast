@@ -1124,3 +1124,12 @@ interface DetourNavMeshQuery
 interface Detour {
 		[Static, Internal="dtFree"] void free(VoidPointer ptr);
 };
+
+interface PerformanceTimer {
+	void PerformanceTimer();
+	void start();
+	void stop();
+	double deltaSeconds();
+	double deltaMilliseconds();
+	double deltaMicroseconds();
+};
