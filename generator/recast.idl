@@ -75,6 +75,12 @@ enum rcTimerLabel
 [Internal="rcChunkyTriMesh"]
 interface ChunkyTriMesh {
 
+	[CObject,Internal="rcCreateChunkyTriMesh"]
+	boolean build([Const] float [] verts, [Const] int [] tris, int ntris, int trisPerChunk);
+
+	[CObject,Internal="rcCreateChunkyTriMesh"]
+	boolean buildNative([Const] float *verts, [Const] int *tris, int ntris, int trisPerChunk);
+
 };
 
 
@@ -89,8 +95,7 @@ interface Context
 	void resetTimers();
 	void startTimer([Const] rcTimerLabel label);
 
-
-	[CObject, Internal="rcCreateHeightfield"] bool createHeightfield([Deref] rcHeightfield hf, int width, int height, 
+	[CObject, Internal="rcCreateHeightfield"] bool createHeightfield([Deref] Heightfield hf, int width, int height, 
 							[Const] float3 bmin, [Const] float3 bmax, float cs, float ch);
 
 	[CObject, Internal="rcMarkWalkableTriangles"] void markWalkableTriangles([Const] float walkableSlopeAngle, 
@@ -99,30 +104,30 @@ interface Context
 	[CObject] void rcClearUnwalkableTriangles([Const] float walkableSlopeAngle, 
 							[Const] float[] verts, int nv,[Const] int[] tris, int nt, char[] areas); 
 
-	[CObject] bool rcAddSpan([Ref] rcHeightfield hf, [Const] int x, [Const] int y, 
+	[CObject] bool rcAddSpan([Ref] Heightfield hf, [Const] int x, [Const] int y, 
 							[Const] int smin, [Const] int smax, [Const] int area, [Const] int flagMergeThr);
 
 	[CObject, Internal="rcRasterizeTriangle"] bool rasterizeTriangle([Const] float3 v0, [Const] float3 v1, 
-							[Const] float3 v2, [Const] int area, [Ref] rcHeightfield solid, [Const] int flagMergeThr);
+							[Const] float3 v2, [Const] int area, [Ref] Heightfield solid, [Const] int flagMergeThr);
 
 	[CObject] bool rcRasterizeTriangles([Const]  float[] verts, [Const]  int nv,
 							[Const]  int[] tris, [Const]  char[] areas, [Const]  int nt,
-							[Deref] rcHeightfield solid, [Const]  int flagMergeThr);
+							[Deref] Heightfield solid, [Const]  int flagMergeThr);
 
 	[CObject] bool rcRasterizeTriangles([Const]  float[] verts, [Const] char[] areas, [Const]  int nt,
-							[Deref] rcHeightfield solid, [Const]  int flagMergeThr);
+							[Deref] Heightfield solid, [Const]  int flagMergeThr);
 
-	[CObject] void rcFilterLowHangingWalkableObstacles([Const]  int walkableClimb, [Ref] rcHeightfield solid);
+	[CObject] void rcFilterLowHangingWalkableObstacles([Const]  int walkableClimb, [Ref] Heightfield solid);
 
 	[CObject] void rcFilterLedgeSpans([Const]  int walkableHeight,
-							[Const]  int walkableClimb, [Deref] rcHeightfield solid);
+							[Const]  int walkableClimb, [Deref] Heightfield solid);
 
-	[CObject] void rcFilterWalkableLowHeightSpans(int walkableHeight, [Deref] rcHeightfield solid);
+	[CObject] void rcFilterWalkableLowHeightSpans(int walkableHeight, [Deref] Heightfield solid);
 
-	[CObject] int rcGetHeightFieldSpanCount([Deref] rcHeightfield hf);
+	[CObject] int rcGetHeightFieldSpanCount([Deref] Heightfield hf);
 
 	[CObject] bool rcBuildCompactHeightfield([Const]  int walkableHeight, [Const]  int walkableClimb,
-							[Deref] rcHeightfield hf, [Deref] rcCompactHeightfield chf);
+							[Deref] Heightfield hf, [Deref] rcCompactHeightfield chf);
 
 	[CObject] bool rcErodeWalkableArea(int radius, [Deref] rcCompactHeightfield chf);
 
@@ -167,12 +172,19 @@ interface rcScopedTimer
 	void rcScopedTimer(Context ctx, [Const] rcTimerLabel label);
 };
 
-interface rcConfig {
-	void rcConfig();
+[Internal="rcConfig"]
+interface RasterConfig {
+	void RasterConfig();
+
+	[CObject, Internal="rcConfigCopy"]
+	void copy(RasterConfig b);
+
 	attribute long width;
 	attribute long height;
 	attribute long tileSize;
 	attribute long borderSize;
+
+	/// The xz-plane cell size to use for fields. [Limit: > 0] [Units: wu] 
 	attribute float cs;
 	attribute float ch;
 	attribute float3 bmin;
@@ -190,26 +202,29 @@ interface rcConfig {
 	attribute float detailSampleMaxError;
 };
 
-interface rcSpan 
+[Internal="rcSpan"]
+interface Span 
 {
 	attribute long smin;
 	attribute long smax;
 	attribute long area; 
 
 	// Who is managing this memory?
-	attribute rcSpan next; 
+	attribute Span next; 
 };
 
-interface rcSpanPool 
+[Internal="rcSpanPool"]
+interface SpanPool 
 {
-	attribute rcSpanPool next;					
+	attribute SpanPool next;					
 	// How should this get translated?
-	//rcSpan items[RC_SPANS_PER_POOL]; //TODO 
+	//Span items[RC_SPANS_PER_POOL]; //TODO 
 };
 
-interface rcHeightfield
+[Internal="rcHeightfield"]
+interface Heightfield
 {
-	void rcHeightfield();
+	void Heightfield();
 
 	attribute int width;		
 	attribute int height;		
@@ -217,12 +232,12 @@ interface rcHeightfield
 	attribute float3 bmax;		
 	attribute float cs;			
 	attribute float ch;	
-	attribute rcSpanPool pools;
-	attribute rcSpan freelist;
+	attribute SpanPool pools;
+	attribute Span freelist;
 
-	// Workaround for rcSpan **spans;
+	// Workaround for Span **spans;
 	[CObject, Internal="rcHeightfield_rcSpanIsValidAt"] bool spanIsValidAt(int pos);
-	[CObject, Internal="rcHeightfield_rcSpanAt"] rcSpan spanAt(int pos);
+	[CObject, Internal="rcHeightfield_rcSpanAt"] Span spanAt(int pos);
 };
 
 interface rcCompactCell
@@ -260,7 +275,8 @@ interface rcCompactHeightfield
 	attribute char * areas;		
 };
 
-interface rcHeightfieldLayer
+[Internal="rcHeightfieldLayer"]
+interface HeightfieldLayer
 {
 	attribute float3 bmin;
 	attribute float3 bmax;
@@ -281,10 +297,11 @@ interface rcHeightfieldLayer
 	attribute char * cons;
 };
 
-interface rcHeightfieldLayerSet
+[Internal="rcHeightfieldLayerSet"]
+interface HeightfieldLayerSet
 {
-	void rcHeightfieldLayerSet();
-	attribute rcHeightfieldLayer layers;
+	void HeightfieldLayerSet();
+	attribute HeightfieldLayer layers;
 	attribute int nlayers;
 };
 
@@ -364,12 +381,12 @@ interface RcAlloc {
 
 [NoDelete]
 interface Recast{
-	[Static] void rcFreeHeightField(rcHeightfield hf);
-	[Static] rcHeightfield rcAllocHeightfield();
+	[Static] void rcFreeHeightField(Heightfield hf);
+	[Static] Heightfield rcAllocHeightfield();
 	[Static] rcCompactHeightfield rcAllocCompactHeightfield();
 	[Static] void rcFreeCompactHeightfield(rcCompactHeightfield chf);
-	[Static] rcHeightfieldLayerSet rcAllocHeightfieldLayerSet();
-	[Static] void rcFreeHeightfieldLayerSet(rcHeightfieldLayerSet lset);
+	[Static] HeightfieldLayerSet rcAllocHeightfieldLayerSet();
+	[Static] void rcFreeHeightfieldLayerSet(HeightfieldLayerSet lset);
 	[Static] rcContourSet rcAllocContourSet();
 	[Static] void rcFreeContourSet(rcContourSet cset);
 //	[Static] PolyMesh rcAllocPolyMesh();
@@ -469,9 +486,9 @@ interface DetourCommon {
 	[Static] bool dtOverlapPolyPoly2D([Const] float3 polya, [Const] int npolya,
 							[Const] float3 polyb, [Const] int npolyb);
 
-	[Static] int dtNextPow2(int v);
-	[Static] int dtIlog2(int v);
-	[Static] int dtAlign4(int x);
+	[Static, Internal="dtNextPow2"] int nextPow2(int v);
+	[Static, Internal="dtIlog2"] int ilog2(int v);
+	[Static, Internal="dtAlign4"] int align4(int x);
 	[Static] int dtOppositeTile(int side);
 	[Static] void dtSwapByte(char[] a, char[] b);	
 
@@ -479,13 +496,28 @@ interface DetourCommon {
 								[Const] float s, [Const] float t, float[] out);
 };
 
-
+//--------------------------------------------------------------------------------------------
+// DetourTileCache.h / DetourTileCacheBuilder.h
+//--------------------------------------------------------------------------------------------
 [Internal="dtTileCache"]
 interface TileCache {
+	void TileCache();
 
+	void init([Const] TileCacheParams params,TileCacheAlloc talloc,TileCacheCompressor tcomp,TileCacheMeshProcess tmproc);
+	long addTile([ Cast="unsigned char *"] VoidPointer data, long dataSize, long flags, [Return, Cast="unsigned int *"]long result);
 };
+
 [Internal="dtCompressedTile"]
 interface CompressedTile {
+
+};
+[Internal="dtTileCacheMeshProcess"] 
+interface TileCacheMeshProcess {
+
+};
+
+[Internal="dtTileCacheAlloc"]
+interface TileCacheAlloc {
 
 };
 
@@ -497,7 +529,7 @@ interface TileCacheCompressor {
 
 [Internal="dtTileCacheLayerHeader"]
 interface TileCacheLayerHeader {
-
+	[Static] int sizeof([Virtual] VoidPointer  dtTileCacheLayerHeader );
 };
 
 [Internal="dtTileCacheLayer"]
@@ -527,8 +559,52 @@ interface TileCacheObstacle {
 
 [Internal="dtTileCacheParams"]
 interface TileCacheParams {
+	void TileCacheParams();
 
+	attribute float3 orig;
+	attribute float cs;
+	attribute float ch;
+	attribute long width;
+	attribute long height;
+	attribute float walkableHeight;
+	attribute float walkableRadius;
+	attribute float walkableClimb;
+	attribute float maxSimplificationError;
+	attribute long maxTiles;
+	attribute long maxObstacles;
 };
+
+interface TileCacheData {
+	void TileCacheData();
+
+	attribute long dataSize;
+	[Cast="unsigned char *"] attribute VoidPointer data;
+};
+
+interface FastLZCompressor {
+	void FastLZCompressor();
+};
+
+FastLZCompressor implements TileCacheCompressor;
+
+interface LinearAllocator {
+	void LinearAllocator(long capacity);
+};
+
+LinearAllocator implements TileCacheAlloc;
+
+interface RemapProcessor {
+	void RemapProcessor();
+};
+
+RemapProcessor implements TileCacheMeshProcess;
+
+/// Flags for addTile
+enum dtCompressedTileFlags
+{
+	"DT_COMPRESSEDTILE_FREE_DATA"	///< Navmesh owns the tile memory and should free it.
+};
+
 
 //--------------------------------------------------------------------------------------------
 // DetourStatus.h
@@ -645,6 +721,7 @@ interface dtMeshTile
 [Internal="dtNavMeshParams"]
 interface NavMeshParams 
 {
+	void NavMeshParams();
 	attribute float3 orig;		
 	attribute float tileWidth;	
 	attribute float tileHeight;	
@@ -658,7 +735,7 @@ interface NavMesh
 
 	void NavMesh();
 
-	[Internal="init"] dtStatus initParams([Const] NavMeshParams params);
+	[Internal="init"] dtStatus setParams([Const] NavMeshParams params);
 
 	dtStatus init([Cast="unsigned char *"]VoidPtr data, [Const] int dataSize, [Const] int flags);
 

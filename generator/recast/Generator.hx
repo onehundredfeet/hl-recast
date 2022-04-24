@@ -13,7 +13,7 @@ class Generator {
 #include <Recast.h>
 #include <RecastAlloc.h>
 #include <RecastAssert.h>
-#include <ChunkyTriMesh.h>
+#include \"ChunkyTriMesh.h\"
 
 #include <DetourAlloc.h>
 #include <DetourAssert.h>
@@ -26,6 +26,7 @@ class Generator {
 #include <DetourStatus.h>
 #include <DetourTileCache.h>
 #include <DetourTileCacheBuilder.h>
+#include \"hl-recast.h\"
 
 // Dummy decalration to fix some build errors.
 class Recast;
