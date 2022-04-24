@@ -5,6 +5,9 @@
 #include "fastlz/fastlz.h"
 struct FastLZCompressor : public dtTileCacheCompressor
 {
+	inline dtTileCacheCompressor *asSuper() {
+		return this;
+	}
 	virtual int maxCompressedSize(const int bufferSize)
 	{
 		return (int)(bufferSize* 1.05f);
@@ -33,12 +36,16 @@ struct LinearAllocator : public dtTileCacheAlloc
 	size_t top;
 	size_t high;
 	
+	inline dtTileCacheAlloc *asSuper() {
+		return this;
+	}
+
 	LinearAllocator(const size_t cap) : buffer(0), capacity(0), top(0), high(0)
 	{
 		resize(cap);
 	}
 	
-	~LinearAllocator()
+	virtual ~LinearAllocator()
 	{
 		dtFree(buffer);
 	}
@@ -52,6 +59,7 @@ struct LinearAllocator : public dtTileCacheAlloc
 	
 	virtual void reset()
 	{
+		printf("Resetting internal\n");
 		high = dtMax(high, top);
 		top = 0;
 	}
@@ -79,6 +87,9 @@ struct RemapProcessor : public dtTileCacheMeshProcess{
 	{
 	}
 
+	inline dtTileCacheMeshProcess *asSuper() {
+		return this;
+	}
 	virtual void process(struct dtNavMeshCreateParams* params,unsigned char* polyAreas, unsigned short* polyFlags)
 	{
         /*
@@ -117,5 +128,36 @@ inline static void rcConfigCopy( rcConfig *b, rcConfig * a) {
 	memcpy(b, a, sizeof(rcConfig));
 }
 
+inline static unsigned short *rcAllocShort( int length, rcAllocHint hint ) {
+	return (unsigned short *)rcAlloc( length * sizeof(unsigned short), hint);
+}
+
+template<class T>
+inline void rcClear(T *ptr, int length ) {
+	printf("Clearing %p of %d x %d\n", ptr, (int)sizeof(T), length);
+	memset(ptr, 0, sizeof(T) * length);
+}
+
+template<class T>
+inline T *rcOffset( T *ptr, int length ) {
+	return ptr + length;
+}
+
+inline int getNodeTriIndex( rcChunkyTriMesh *_this , int nodeIdx) {
+	return _this->nodes[nodeIdx].i;
+}
+
+inline int getNodeTriCount( rcChunkyTriMesh *_this , int nodeIdx) {
+	return _this->nodes[nodeIdx].n;
+}
+
+inline int *getTriVertIndices( rcChunkyTriMesh *_this , int triIndex) {
+	return &_this->tris[triIndex];
+}
+
+enum TileCacheLayerHeaderConstants {
+	TILECACHE_MAGIC = DT_TILECACHE_MAGIC,
+	TILECACHE_VERSION = DT_TILECACHE_VERSION
+};
 
 #endif

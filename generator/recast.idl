@@ -75,20 +75,32 @@ enum rcTimerLabel
 [Internal="rcChunkyTriMesh"]
 interface ChunkyTriMesh {
 
-	[CObject,Internal="rcCreateChunkyTriMesh"]
-	boolean build([Const] float [] verts, [Const] int [] tris, int ntris, int trisPerChunk);
+	void ChunkyTriMesh();
+
+	attribute int maxTrisPerChunk;
+
+	[CObject]
+	int getNodeTriIndex(int nodeIdx);
+
+	[CObject]
+	int getNodeTriCount(int nodeIdx);
+
+	[CObject, Cast="vbyte *"]
+	int *getTriVertIndices(int nodeTriIndex);
 
 	[CObject,Internal="rcCreateChunkyTriMesh"]
-	boolean buildNative([Const] float *verts, [Const] int *tris, int ntris, int trisPerChunk);
+	boolean build([Const] float [] verts, [Const] int [] tris, int ntris, int trisPerChunk); 	// Native Array
 
+	[CObject,Internal="rcGetChunksOverlappingRect"]
+	int getOverlappingRect(float2 bmin, float2 bmax, int[] ids, int maxIds);
 };
 
 
 
 [Internal="rcContext"]
-interface Context 
+interface RasterContext 
 {
-    void Context(boolean state);
+    void RasterContext(boolean state);
     void enableLog(boolean state);
 	void resetLog();
 	void enableTimer(boolean state);
@@ -99,10 +111,10 @@ interface Context
 							[Const] float3 bmin, [Const] float3 bmax, float cs, float ch);
 
 	[CObject, Internal="rcMarkWalkableTriangles"] void markWalkableTriangles([Const] float walkableSlopeAngle, 
-							[Const] float[] verts, int nv,[Const] int[] tris, int nt, char[] areas); 
+							[Const] float[] verts, int nv,[Const] int* tris, int nt, char* areas); 
 
 	[CObject] void rcClearUnwalkableTriangles([Const] float walkableSlopeAngle, 
-							[Const] float[] verts, int nv,[Const] int[] tris, int nt, char[] areas); 
+							[Const] float[] verts, int nv,[Const] int* tris, int nt, char* areas); 
 
 	[CObject] bool rcAddSpan([Ref] Heightfield hf, [Const] int x, [Const] int y, 
 							[Const] int smin, [Const] int smax, [Const] int area, [Const] int flagMergeThr);
@@ -110,66 +122,74 @@ interface Context
 	[CObject, Internal="rcRasterizeTriangle"] bool rasterizeTriangle([Const] float3 v0, [Const] float3 v1, 
 							[Const] float3 v2, [Const] int area, [Ref] Heightfield solid, [Const] int flagMergeThr);
 
-	[CObject] bool rcRasterizeTriangles([Const]  float[] verts, [Const]  int nv,
-							[Const]  int[] tris, [Const]  char[] areas, [Const]  int nt,
+	[CObject,Internal="rcRasterizeTriangles"] 
+	bool rasterizeTriangles([Const]  float[] verts, [Const]  int nv,
+							[Const]  int* tris, [Const]  char* areas, [Const]  int nt,
 							[Deref] Heightfield solid, [Const]  int flagMergeThr);
 
-	[CObject] bool rcRasterizeTriangles([Const]  float[] verts, [Const] char[] areas, [Const]  int nt,
+	[CObject,Internal="rcRasterizeTriangles"] 
+	bool rasterizeTriangles([Const]  float[] verts, [Const] char[] areas, [Const]  int nt,
 							[Deref] Heightfield solid, [Const]  int flagMergeThr);
 
-	[CObject] void rcFilterLowHangingWalkableObstacles([Const]  int walkableClimb, [Ref] Heightfield solid);
+	[CObject, Internal="rcFilterLowHangingWalkableObstacles"] 
+	void filterLowHangingWalkableObstacles([Const]  int walkableClimb, [Ref] Heightfield solid);
 
-	[CObject] void rcFilterLedgeSpans([Const]  int walkableHeight,
+	[CObject, Internal="rcFilterLedgeSpans"]
+	void filterLedgeSpans([Const]  int walkableHeight,
 							[Const]  int walkableClimb, [Deref] Heightfield solid);
 
-	[CObject] void rcFilterWalkableLowHeightSpans(int walkableHeight, [Deref] Heightfield solid);
+	[CObject, Internal="rcFilterWalkableLowHeightSpans"]
+	void filterWalkableLowHeightSpans(int walkableHeight, [Deref] Heightfield solid);
 
 	[CObject] int rcGetHeightFieldSpanCount([Deref] Heightfield hf);
 
-	[CObject] bool rcBuildCompactHeightfield([Const]  int walkableHeight, [Const]  int walkableClimb,
-							[Deref] Heightfield hf, [Deref] rcCompactHeightfield chf);
+	[CObject, Internal="rcBuildCompactHeightfield"] 
+	bool buildCompactHeightfield([Const]  int walkableHeight, [Const]  int walkableClimb, [Deref] Heightfield hf, [Deref] CompactHeightfield chf);
 
-	[CObject] bool rcErodeWalkableArea(int radius, [Deref] rcCompactHeightfield chf);
+	[CObject, Internal="rcErodeWalkableArea"] 
+	bool erodeWalkableArea(int radius, [Deref] CompactHeightfield chf);
 
-	[CObject] bool rcMedianFilterWalkableArea([Deref] rcCompactHeightfield chf);
+	[CObject] bool rcMedianFilterWalkableArea([Deref] CompactHeightfield chf);
 
 	[CObject] void rcMarkBoxArea([Const]  float3 bmin, [Const] float3 bmax, char areaId,
-							[Deref] rcCompactHeightfield chf);
+							[Deref] CompactHeightfield chf);
 
 	[CObject] void rcMarkConvexPolyArea([Const] float3 verts, [Const]  int nverts,
 							[Const]  float hmin, [Const]  float hmax, char areaId,
-							[Deref] rcCompactHeightfield chf);
+							[Deref] CompactHeightfield chf);
 
 
 	[CObject] void rcMarkCylinderArea([Const]  float3 pos,
 							[Const]  float r, [Const]  float h, char areaId,
-							[Deref] rcCompactHeightfield chf);
+							[Deref] CompactHeightfield chf);
 
-	[CObject] bool rcBuildDistanceField([Deref] rcCompactHeightfield chf);
+	[CObject] bool rcBuildDistanceField([Deref] CompactHeightfield chf);
 
-	[CObject] bool rcBuildRegions([Deref] rcCompactHeightfield chf,
+	[CObject] bool rcBuildRegions([Deref] CompactHeightfield chf,
 							[Const]  int borderSize, [Const]  int minRegionArea, [Const]  int mergeRegionArea);
 
-	[CObject] bool rcBuildLayerRegions([Deref] rcCompactHeightfield chf, 
+	[CObject] bool rcBuildLayerRegions([Deref] CompactHeightfield chf, 
 							[Const]  int borderSize, [Const]  int minRegionArea);
 
-	[CObject] bool rcBuildRegionsMonotone([Deref] rcCompactHeightfield chf, 
+	[CObject] bool rcBuildRegionsMonotone([Deref] CompactHeightfield chf, 
 							[Const]  int borderSize, [Const]  int minRegionArea, [Const]  int mergeRegionArea);
 
-	[CObject] bool rcBuildContours([Ref] rcCompactHeightfield chf,
+	[CObject] bool rcBuildContours([Ref] CompactHeightfield chf,
 					 [Const] float maxError, [Const] int maxEdgeLen,
 					 [Ref] rcContourSet cset, [Const] int buildFlags);
 
 	[CObject] bool rcBuildPolyMesh([Ref] rcContourSet cset, [Const] int nvp, [Ref] PolyMesh mesh);
 
-	[CObject] bool rcBuildPolyMeshDetail([Const, Ref] PolyMesh mesh, [Const, Ref] rcCompactHeightfield chf,
+	[CObject] bool rcBuildPolyMeshDetail([Const, Ref] PolyMesh mesh, [Const, Ref] CompactHeightfield chf,
 						   [Const] float sampleDist, [Const] float sampleMaxError,
 						   [Ref] PolyMeshDetail dmesh);
+
+	[CObject, Internal="rcBuildHeightfieldLayers"] bool buildHeightfieldLayers([Deref] CompactHeightfield chf, int borderSize, int walkableHeight, [Deref] HeightfieldLayerSet lset);
 };
 
 interface rcScopedTimer 
 {
-	void rcScopedTimer(Context ctx, [Const] rcTimerLabel label);
+	void rcScopedTimer(RasterContext ctx, [Const] rcTimerLabel label);
 };
 
 [Internal="rcConfig"]
@@ -254,9 +274,10 @@ interface rcCompactSpan
 	attribute int h;	
 };
 
-interface rcCompactHeightfield
+[Internal="rcCompactHeightfield"]
+interface CompactHeightfield
 {
-	void rcCompactHeightfield();
+	void CompactHeightfield();
 	attribute int width;			
 	attribute int height;			
 	attribute int spanCount;		
@@ -301,7 +322,7 @@ interface HeightfieldLayer
 interface HeightfieldLayerSet
 {
 	void HeightfieldLayerSet();
-	attribute HeightfieldLayer layers;
+	[Const, Indexed, Ref] HeightfieldLayer layers(int idx);
 	attribute int nlayers;
 };
 
@@ -374,8 +395,11 @@ enum rcAllocHint
 
 [NoDelete]
 interface RcAlloc {
-	[Static, Internal="rcAlloc", Cast="vbyte *"] short * allocShortArray(int length, rcAllocHint hint);
+	[Static, Internal="rcAllocShort", Cast="vbyte *"] short * allocShortArray(int length, rcAllocHint hint);
+	[Static, Internal="rcAlloc", Cast="vbyte *"] byte * allocByteArray(int length, rcAllocHint hint);
 	[Static, Internal="rcFree"] void freeArray(short *array);
+	[Static, Internal="rcClear"] void clearByteArray(byte *array, int length);
+	[Static, Internal="rcOffset"] byte *offsetByteArray(byte *array, int offset);
 	
 };
 
@@ -383,10 +407,10 @@ interface RcAlloc {
 interface Recast{
 	[Static] void rcFreeHeightField(Heightfield hf);
 	[Static] Heightfield rcAllocHeightfield();
-	[Static] rcCompactHeightfield rcAllocCompactHeightfield();
-	[Static] void rcFreeCompactHeightfield(rcCompactHeightfield chf);
-	[Static] HeightfieldLayerSet rcAllocHeightfieldLayerSet();
-	[Static] void rcFreeHeightfieldLayerSet(HeightfieldLayerSet lset);
+//	[Static] CompactHeightfield rcAllocCompactHeightfield();
+//	[Static] void rcFreeCompactHeightfield(rcCompactHeightfield chf);
+//	[Static] HeightfieldLayerSet rcAllocHeightfieldLayerSet();
+//	[Static] void rcFreeHeightfieldLayerSet(HeightfieldLayerSet lset);
 	[Static] rcContourSet rcAllocContourSet();
 	[Static] void rcFreeContourSet(rcContourSet cset);
 //	[Static] PolyMesh rcAllocPolyMesh();
@@ -504,7 +528,9 @@ interface TileCache {
 	void TileCache();
 
 	void init([Const] TileCacheParams params,TileCacheAlloc talloc,TileCacheCompressor tcomp,TileCacheMeshProcess tmproc);
-	long addTile([ Cast="unsigned char *"] VoidPointer data, long dataSize, long flags, [Return, Cast="unsigned int *"]long result);
+	long addTile(byte * data, long dataSize, long flags, [Return, Cast="unsigned int *"]long result);
+	void buildNavMeshTilesAt(int tx, int ty, NavMesh navmesh);
+
 };
 
 [Internal="dtCompressedTile"]
@@ -524,11 +550,42 @@ interface TileCacheAlloc {
 [Internal="dtTileCacheCompressor"]
 interface TileCacheCompressor {
 
+	[CObject, Internal="dtBuildTileCacheLayer"] byte *buildTileCacheLayer(
+							   TileCacheLayerHeader header,
+							   [Const] byte* heights,
+							   [Const] byte* areas,
+							   [Const] byte* cons,
+								[Return, Cast="unsigned char **"] byte* outData, int[] outDataSize); 
+// unsigned char** outData
 
+};
+
+enum TileCacheLayerHeaderConstants {
+	"TILECACHE_MAGIC",
+	"TILECACHE_VERSION"
 };
 
 [Internal="dtTileCacheLayerHeader"]
 interface TileCacheLayerHeader {
+	void TileCacheLayerHeader();
+	attribute int magic;
+	attribute int version;
+	attribute int tx;
+	attribute int ty;
+	attribute int tlayer;
+	attribute float3 bmin;
+	attribute float3 bmax;
+
+	attribute int width;	
+	attribute int height;	
+	attribute int minx;		
+	attribute int maxx;		
+	attribute int miny;		
+	attribute int maxy;		
+	attribute int hmin;		
+	attribute int hmax;	
+
+
 	[Static] int sizeof([Virtual] VoidPointer  dtTileCacheLayerHeader );
 };
 
@@ -578,26 +635,27 @@ interface TileCacheData {
 	void TileCacheData();
 
 	attribute long dataSize;
-	[Cast="unsigned char *"] attribute VoidPointer data;
+	attribute byte *data; //[Cast="unsigned char *"] 
 };
 
 interface FastLZCompressor {
 	void FastLZCompressor();
+	[Const] TileCacheCompressor asSuper();
 };
-
-FastLZCompressor implements TileCacheCompressor;
 
 interface LinearAllocator {
 	void LinearAllocator(long capacity);
+	[Const] TileCacheAlloc asSuper();
 };
 
-LinearAllocator implements TileCacheAlloc;
 
 interface RemapProcessor {
 	void RemapProcessor();
+
+	[Const] TileCacheMeshProcess asSuper();
 };
 
-RemapProcessor implements TileCacheMeshProcess;
+
 
 /// Flags for addTile
 enum dtCompressedTileFlags
@@ -741,7 +799,7 @@ interface NavMesh
 
 	[Const] NavMeshParams getParams();
 
-	//dtStatus addTile(char[] data, int dataSize, int flags, dtTileRef lastRef, dtTileRef result); TODO
+	//dtStatus addTile(char* data, int dataSize, int flags, dtTileRef lastRef, dtTileRef result); TODO
 
 	//dtStatus removeTile(dtTileRef ref, unsigned char** data, int* dataSize); //TODO
 
