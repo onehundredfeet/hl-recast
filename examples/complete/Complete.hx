@@ -224,8 +224,18 @@ class Complete {
 		return headerSize + gridSize * 4;
 	}
 
+	static var rasterizedTris = 0;
+
+	static var _pt = new PerformanceTimer();
+	static var _filterTime = 0.;
+	static var _heightfieldTime = 0.;
+	static var _cacheTime = 0.;
+	
 	static function rasterizeTileLayers(chunkyMesh:ChunkyTriMesh, verts:NativeArray<Single>, nverts:Int, tx:Int, ty:Int, rasterCfg:RasterConfig,
 			tiles:Array<TileCacheData>, maxTiles:Int):Int {
+
+		_pt.start();
+
 		var rc = new RasterContext(false);
 
 		// Tile bounds.
@@ -274,6 +284,8 @@ class Complete {
 			var tris = chunkyMesh.getTriVertIndices(nodeTriIndex * 3);
 			var ntris = chunkyMesh.getNodeTriCount(cid[i]);
 
+			rasterizedTris += ntris;
+
 			RcAlloc.clearByteArray(triareas, ntris);
 
 			rc.markWalkableTriangles(tempRasterCfg.walkableSlopeAngle, verts, nverts, tris, ntris, triareas);
@@ -285,27 +297,45 @@ class Complete {
 			} 
 //			trace('Done raster ${i}');
 		}
-
+		_pt.stop();
+		_heightfieldTime += _pt.deltaMilliseconds();
+		_pt.start();
 		// Once all geometry is rasterized, we do initial pass of filtering to
 		// remove unwanted overhangs caused by the conservative rasterization
-		// as well as filter spans where the character cannot possibly stand.
+		// as well as filter spans where the character cannot possibly stand. // 37ms
 		if (_filterLowHangingObstacles)
 			rc.filterLowHangingWalkableObstacles(tempRasterCfg.walkableClimb, solid);
 		if (_filterLedgeSpans)
 			rc.filterLedgeSpans(tempRasterCfg.walkableHeight, tempRasterCfg.walkableClimb, solid);
 		if (_filterWalkableLowHeightSpans)
 			rc.filterWalkableLowHeightSpans(tempRasterCfg.walkableHeight, solid);
+		
+		_pt.stop();
+		_filterTime +=  _pt.deltaMilliseconds();
+		_pt.start();
 
 		var chf = new CompactHeightfield();
 		rc.buildCompactHeightfield(tempRasterCfg.walkableHeight, tempRasterCfg.walkableClimb, solid, chf);
 
+		_pt.stop();
+		_heightfieldTime +=  _pt.deltaMilliseconds();
+		_pt.start();
+
 		// Erode the walkable area by agent radius.
 		rc.erodeWalkableArea(tempRasterCfg.walkableRadius, chf);
 
+		_pt.stop();
+		_filterTime +=  _pt.deltaMilliseconds();
+		_pt.start();
+		
 		// Layer set?
 		var lset = new HeightfieldLayerSet();
 
 		rc.buildHeightfieldLayers(chf, tempRasterCfg.borderSize, tempRasterCfg.walkableHeight, lset);
+
+		_pt.stop();
+		_heightfieldTime +=  _pt.deltaMilliseconds();
+		_pt.start();
 
 		var ntiles = 0;
 		var icount = Std.int(min(lset.nlayers, maxTiles));
@@ -314,13 +344,15 @@ class Complete {
 
 		var tint = new NativeArray<Int>(1);
 
+		var header = new TileCacheLayerHeader();
+		// Store header
+		header.magic = TILECACHE_MAGIC.toValue();
+		header.version = TILECACHE_VERSION.toValue();
+
+
 		for (i in 0...icount) {
 			var tile = tiles[ntiles++];
 			var layer = lset.layers(i);
-			// Store header
-			var header = new TileCacheLayerHeader();
-			header.magic = TILECACHE_MAGIC.toValue();
-			header.version = TILECACHE_VERSION.toValue();
 
 			// Tile layer location in the navmesh.
 			header.tx = tx;
@@ -343,6 +375,10 @@ class Complete {
 			tile.dataSize = tint[0]; // multi-return values suck
 		}
 
+		_pt.stop();
+		_cacheTime +=  _pt.deltaMilliseconds();
+		
+		RcAlloc.freeArray(triareas);
 		return icount;
 
 		/*
@@ -533,7 +569,6 @@ class Complete {
 			//trace('Starting row ${y}');
 			for (x in 0...tw) {
 				var ntiles = rasterizeTileLayers(chunkyTriMesh, verts, nverts, x, y, rasterCfg, tiles, MAX_LAYERS);
-
 				for (i in 0...ntiles) {
 					var tile = tiles[i];
 					var result = tileCache.addTile(tile.data, tile.dataSize, DT_COMPRESSEDTILE_FREE_DATA.toValue());
@@ -613,7 +648,7 @@ class Complete {
 		pt.start();
 		preprocessTiles(chunkyTriMesh, nativeVertices, verticesCount, configuredCache.cache, tileCounts.tileWidthCount, tileCounts.tileHeightCount, rasterCfg, cacheCfg);
 		pt.stop();
-		trace('Preprocessing ${pt.deltaMilliseconds()}ms');
+		trace('Preprocessing ${pt.deltaMilliseconds()}ms : rasterizedTris ${rasterizedTris} heightfield ${_heightfieldTime}ms filter ${_filterTime}ms cache ${_cacheTime}ms');
 		pt.start();
 		buildInitialMeshes(tileCounts.tileWidthCount, tileCounts.tileHeightCount, configuredCache.cache, navMesh);
 		pt.stop();
