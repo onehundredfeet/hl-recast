@@ -99,13 +99,12 @@ class Complete {
 		//		const float* bmin = m_geom->getNavMeshBoundsMin();
 		//		const float* bmax = m_geom->getNavMeshBoundsMax();
 		//		int gw = 0, gh = 0;
-		var gwa = new hl.NativeArray<Int>(1);
-		var gha = new hl.NativeArray<Int>(1);
-		recast.Native.Recast.calcGridSize(bmin, bmax, _cellSize, gwa, gha);
-		var gw = gwa[0];
-		var gh = gha[0];
 
-		return {width: gw, height: gh};
+		var gwa = 0;
+		var gha =0;
+		recast.Native.Recast.calcGridSize(bmin, bmax, _cellSize, hl.Ref.make(gwa),hl.Ref.make(gha));
+
+		return {width: gwa, height: gha};
 	}
 
 	static function getRasterConfig(gw, gh, bmin, bmax) {
@@ -327,7 +326,7 @@ class Complete {
 		_pt.stop();
 		_filterTime +=  _pt.deltaMilliseconds();
 		_pt.start();
-		
+
 		// Layer set?
 		var lset = new HeightfieldLayerSet();
 
@@ -609,9 +608,22 @@ class Complete {
 		 */
 	}
 
+	static function testIDL() {
+		var a = 1;
+		var b : Single = 1.;
+		var c = 1.;
+		var d = true;
+		Tests.setToZero(a, b, c, d);
+
+		trace('a : ${a} b : ${b} c : ${c} d : ${d}');
+		Tests.setToOne(a, b, c, d);
+
+		trace('a : ${a} b : ${b} c : ${c} d : ${d}');
+	}
+
 	public static function main() {
 		trace("main()");
-
+		
 		//
 		/////////////////////////////// Phase 1 - Load mesh
 		//
@@ -657,6 +669,15 @@ class Complete {
 
 		var navQuery = new NavMeshQuery();
 		navQuery.init(navMesh, MAX_NAV_QUERY_NODES);
+
+		var queryFilter = new QueryFilter();
+
+		var spos = new Vec3(0., 0., 0.);
+		var polyPickExt = new Vec3(0., 0., 0.);
+		var startRef = 0;
+		var nearestPoint = new Vec3(0., 0., 0.);
+		var isOverPoly = false;
+		navQuery.findNearestPoly(spos, polyPickExt, queryFilter, startRef, nearestPoint, isOverPoly);
 
 		trace("--- Done");
 		// nav mesh is now built

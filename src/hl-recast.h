@@ -195,4 +195,17 @@ public:
 		return (double)microSeconds;
 	}
 };
+
+inline void setToZero( int *a, float *b,  double *c, bool *d) {
+	*a = 0;
+	*b = 0.0f;
+	*c = 0.0f;
+	*d = false;
+}
+inline void setToOne( int *a, float *b,  double *c, bool *d) {
+	*a = 1;
+	*b = 1.0f;
+	*c = 1.0f;
+	*d = true;
+}
 #endif

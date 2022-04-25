@@ -421,11 +421,11 @@ interface Recast{
 	// UPDATED TO NEW METHOD
 	[Static, Internal="rcCalcBounds"] void calcBounds(float[] verts, int nv, float3 bmin, float3 bmax);
 
-	[Static, Internal="rcCalcGridSize"] void calcGridSize([Const] float3 bmin, [Const] float3 bmax, float cs,int[] w, int[] h);
+	[Static, Internal="rcCalcGridSize"] void calcGridSize([Const] float3 bmin, [Const] float3 bmax, float cs,[Out] int w, [Out] int h);
 
 	
 
-	[Static] int rcOffsetPoly([Const] float3 verts, [Const]  int nverts, [Const]  float offset,float3 outVerts, [Const]  int maxOutVerts);
+	[Static, Internal="rcOffsetPoly"] int offsetPoly([Const] float3 verts, [Const]  int nverts, [Const]  float offset,float3 outVerts, [Const]  int maxOutVerts);
 
 };
 
@@ -973,18 +973,10 @@ interface DetourNavMeshBuilder
 //--------------------------------------------------------------------------------------------
 // DetourNavMeshQuery.h
 //--------------------------------------------------------------------------------------------
-interface dtQueryFilter
+[Internal="dtQueryFilter"]
+interface QueryFilter
 {
-	void dtQueryFilter();	
-
-	// TODO unresolved externals in C++
-	// bool passFilter([Const] dtPolyRef ref, [Const] dtMeshTile tile, [Const] dtPoly poly);
-	
-	// TODO unresolved externals in C++
-	// float getCost([Const] float[] pa, [Const] float[] pb,
-	// 		[Const] dtPolyRef prevRef, [Const] dtMeshTile prevTile, [Const] dtPoly prevPoly,
-	// 		[Const] dtPolyRef curRef, [Const] dtMeshTile curTile, [Const] dtPoly curPoly,
-	// 		[Const] dtPolyRef nextRef, [Const] dtMeshTile nextTile, [Const] dtPoly nextPoly);
+	void QueryFilter();	
 
 	float getAreaCost([Const] int i);
 	void setAreaCost([Const] int i, [Const] float cost);
@@ -992,6 +984,7 @@ interface dtQueryFilter
 	void setIncludeFlags([Const] short flags);
 	short getExcludeFlags();
 	void setExcludeFlags([Const] short flags);
+	
 };
 
 interface dtRaycastHit
@@ -1018,7 +1011,7 @@ interface NavMeshQuery
 	dtStatus init([Const] NavMesh nav, [Const] int maxNodes);
 	
 	dtStatus findPath(dtPolyRef startRef, dtPolyRef endRef, [Const] float[] startPos, 
-					[Const] float[] endPos, [Const] dtQueryFilter filter,
+					[Const] float[] endPos, [Const] QueryFilter filter,
 					[Out] dtPolyRef path, int[] pathCount, [Const] int maxPath);
 
 	dtStatus findStraightPath([Const] float[] startPos, [Const] float[] endPos,
@@ -1028,7 +1021,7 @@ interface NavMeshQuery
 
 	dtStatus initSlicedFindPath(dtPolyRef startRef, dtPolyRef endRef,
 								[Const] float[] startPos, [Const] float[] endPos,
-								[Const] dtQueryFilter filter, [Const] uint options);
+								[Const] QueryFilter filter, [Const] uint options);
 
 	dtStatus updateSlicedFindPath([Const] int maxIter, int[] doneIters);
 
@@ -1038,62 +1031,62 @@ interface NavMeshQuery
 										   [Out] dtPolyRef path, int[] pathCount, [Const] int maxPath);
 
 	dtStatus findPolysAroundCircle(dtPolyRef startRef, [Const] float[] centerPos, [Const] float radius,
-								   [Const] dtQueryFilter filter,
+								   [Const] QueryFilter filter,
 								   [Out] dtPolyRef resultRef, [Out] dtPolyRef resultParent, float[] resultCost,
 								   int[] resultCount, [Const] int maxResult);
 
 	dtStatus findPolysAroundShape(dtPolyRef startRef, [Const] float[] verts, [Const] int nverts,
-								  [Const] dtQueryFilter filter,
+								  [Const] QueryFilter filter,
 								  [Out] dtPolyRef resultRef, [Out] dtPolyRef resultParent, float[] resultCost,
 								  int[] resultCount, [Const] int maxResult);
 	
 	dtStatus getPathFromDijkstraSearch(dtPolyRef endRef, [Out] dtPolyRef path, int[] pathCount, int maxPath);
 
-	dtStatus findNearestPoly([Const] float[] center, [Const] float[] halfExtents,
-							 [Const] dtQueryFilter filter,
-							 [Out] dtPolyRef nearestRef, float[] nearestPt);
+	dtStatus findNearestPoly([Const] float3 center, [Const] float3 halfExtents,
+							 [Const] QueryFilter filter,
+							 [Out] dtPolyRef nearestRef, float3 nearestPt);
 
-	dtStatus findNearestPoly([Const] float[] center, [Const] float[] halfExtents,
-							 [Const] dtQueryFilter filter,
-							 [Out] dtPolyRef nearestRef, float[] nearestPt, bool[] isOverPoly);
+	dtStatus findNearestPoly([Const] float3 center, [Const] float3 halfExtents,
+							 [Const] QueryFilter filter,
+							 [Out] dtPolyRef nearestRef, float3 nearestPt, [Out] bool isOverPoly);
 
-	dtStatus queryPolygons([Const] float[] center, [Const] float[] halfExtents,
-						   [Const] dtQueryFilter filter,
+	dtStatus queryPolygons([Const] float3 center, [Const] float3 halfExtents,
+						   [Const] QueryFilter filter,
 						   [Out] dtPolyRef polys, int[] polyCount, [Const] int maxPolys);
 
-	dtStatus queryPolygons([Const] float[] center, [Const] float[] halfExtents,
-						   [Const] dtQueryFilter filter, dtPolyQuery query);
+	dtStatus queryPolygons([Const] float3 center, [Const] float3 halfExtents,
+						   [Const] QueryFilter filter, dtPolyQuery query);
 
-	dtStatus findLocalNeighbourhood(dtPolyRef startRef, [Const] float[] centerPos, [Const] float radius,
-									[Const] dtQueryFilter filter,
+	dtStatus findLocalNeighbourhood(dtPolyRef startRef, [Const] float3 centerPos, [Const] float radius,
+									[Const] QueryFilter filter,
 									[Out] dtPolyRef resultRef, [Out] dtPolyRef resultParent,
 									int[] resultCount, [Const] int maxResult);
 
-	dtStatus moveAlongSurface(dtPolyRef startRef, [Const] float[] startPos, [Const] float[] endPos,
-							  [Const] dtQueryFilter filter, float[] resultPos, [Out] dtPolyRef visited, 
+	dtStatus moveAlongSurface(dtPolyRef startRef, [Const] float3 startPos, [Const] float3 endPos,
+							  [Const] QueryFilter filter, float3 resultPos, [Out] dtPolyRef visited, 
 							  int[] visitedCount, [Const] int maxVisitedSize);
 	
-	dtStatus raycast(dtPolyRef startRef, [Const] float[] startPos, [Const] float[] endPos,
-					 [Const] dtQueryFilter filter,
+	dtStatus raycast(dtPolyRef startRef, [Const] float3 startPos, [Const] float3 endPos,
+					 [Const] QueryFilter filter,
 					 float[] t, float[] hitNormal, [Out] dtPolyRef path, int[] pathCount, [Const] int maxPath);
 	
 	dtStatus raycast(dtPolyRef startRef, [Const] float[] startPos, [Const] float[] endPos,
-					 [Const] dtQueryFilter filter, [Const] int options,
+					 [Const] QueryFilter filter, [Const] int options,
 					 dtRaycastHit hit, dtPolyRef prevRef);
 
 	dtStatus findDistanceToWall(dtPolyRef startRef, [Const] float[] centerPos, [Const] float maxRadius,
-								[Const] dtQueryFilter filter,
+								[Const] QueryFilter filter,
 								float[] hitDist, float[] hitPos, float[] hitNormal);
 
-	dtStatus getPolyWallSegments(dtPolyRef ref, [Const] dtQueryFilter filter,
+	dtStatus getPolyWallSegments(dtPolyRef ref, [Const] QueryFilter filter,
 								 float[] segmentVerts, [Out] dtPolyRef segmentRefs, int[] segmentCount,
 								 [Const] int maxSegments);
 
-	// dtStatus findRandomPoint([Const] dtQueryFilter filter, float (*frand)(),
+	// dtStatus findRandomPoint([Const] QueryFilter filter, float (*frand)(),
 	// 						 dtPolyRef randomRef, float[] randomPt) [Const];
 
 	// dtStatus findRandomPointAroundCircle(dtPolyRef startRef, [Const] float[] centerPos, [Const] float maxRadius,
-	// 									 [Const] dtQueryFilter filter, float (*frand)(),
+	// 									 [Const] QueryFilter filter, float (*frand)(),
 	// 									 dtPolyRef randomRef, float[] randomPt); //TODO
 
 	dtStatus closestPointOnPoly(dtPolyRef ref, [Const] float[] pos, float[] closest, bool[] posOverPoly);
@@ -1102,7 +1095,7 @@ interface NavMeshQuery
 
 	dtStatus getPolyHeight(dtPolyRef ref, [Const] float[] pos, float[] height);
 
-	bool isValidPolyRef(dtPolyRef ref, [Const] dtQueryFilter filter);
+	bool isValidPolyRef(dtPolyRef ref, [Const] QueryFilter filter);
 
 	bool isInClosedList(dtPolyRef ref);
 
@@ -1132,4 +1125,12 @@ interface PerformanceTimer {
 	double deltaSeconds();
 	double deltaMilliseconds();
 	double deltaMicroseconds();
+};
+
+[NoDelete]
+interface Tests {
+	[Static, Internal="setToZero"]
+	void setToZero( [Out] int a, [Out] float b, [Out] double c, [Out] bool d);
+	[Static, Internal="setToOne"]
+	void setToOne( [Out] int a, [Out] float b, [Out] double c, [Out] bool d);
 };
