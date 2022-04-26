@@ -92,6 +92,10 @@ struct RemapProcessor : public dtTileCacheMeshProcess{
 	}
 	virtual void process(struct dtNavMeshCreateParams* params,unsigned char* polyAreas, unsigned short* polyFlags)
 	{
+		for (int i = 0; i < params->polyCount; ++i)
+		{
+			polyFlags[i] = 0xffff;
+		}
         /*
 		// Update poly flags from areas.
 		for (int i = 0; i < params->polyCount; ++i)
@@ -160,7 +164,11 @@ enum TileCacheLayerHeaderConstants {
 	TILECACHE_VERSION = DT_TILECACHE_VERSION
 };
 
-
+enum EStatus {
+	SUCCESS = DT_SUCCESS,
+	FAILURE = DT_FAILURE,
+	IN_PROGRESS = DT_IN_PROGRESS
+};
 
 
 
@@ -196,6 +204,7 @@ public:
 	}
 };
 
+
 inline void setToZero( int *a, float *b,  double *c, bool *d) {
 	*a = 0;
 	*b = 0.0f;
@@ -208,4 +217,5 @@ inline void setToOne( int *a, float *b,  double *c, bool *d) {
 	*c = 1.0f;
 	*d = true;
 }
+
 #endif

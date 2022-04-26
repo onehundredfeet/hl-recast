@@ -555,7 +555,7 @@ interface TileCacheCompressor {
 							   [Const] byte* heights,
 							   [Const] byte* areas,
 							   [Const] byte* cons,
-								[Return, Cast="unsigned char **"] byte* outData, int[] outDataSize); 
+								[Return, Cast="unsigned char **"] byte* outData, [Out] int outDataSize); 
 // unsigned char** outData
 
 };
@@ -667,16 +667,9 @@ enum dtCompressedTileFlags
 //--------------------------------------------------------------------------------------------
 // DetourStatus.h
 //--------------------------------------------------------------------------------------------
-typedef dtStatus uint;
 
-[NoDelete]
-interface DetourStatus 
-{
-	[Static] bool dtStatusSucceed(dtStatus status);
-	[Static] bool dtStatusFailed(dtStatus status);
-	[Static] bool dtStatusInProgress(dtStatus status);
-	[Static] bool dtStatusDetail(dtStatus status, int detail);
-};
+typedef StatusCode uint;
+
 
 //--------------------------------------------------------------------------------------------
 // DetourNavMesh.h
@@ -790,18 +783,17 @@ interface NavMeshParams
 [Internal="dtNavMesh"]
 interface NavMesh
 {
-
 	void NavMesh();
 
-	[Internal="init"] dtStatus setParams([Const] NavMeshParams params);
+	[Internal="init"] StatusCode setParams([Const] NavMeshParams params);
 
-	dtStatus init([Cast="unsigned char *"]VoidPtr data, [Const] int dataSize, [Const] int flags);
+	StatusCode init([Cast="unsigned char *"]VoidPtr data, [Const] int dataSize, [Const] int flags);
 
 	[Const] NavMeshParams getParams();
 
-	//dtStatus addTile(char* data, int dataSize, int flags, dtTileRef lastRef, dtTileRef result); TODO
+	//StatusCode addTile(char* data, int dataSize, int flags, dtTileRef lastRef, dtTileRef result); TODO
 
-	//dtStatus removeTile(dtTileRef ref, unsigned char** data, int* dataSize); //TODO
+	//StatusCode removeTile(dtTileRef ref, unsigned char** data, int* dataSize); //TODO
 
 	void calcTileLoc([Const] float[] pos, int[] tx, int[] ty);
 
@@ -819,7 +811,7 @@ interface NavMesh
 	
 	//[Const] dtMeshTile getTile(int i); // TODO  Public and private duplicate in C++.
 
-	// dtStatus getTileAndPolyByRef([Const] dtPolyRef ref, [Const] dtMeshTile** tile, [Const] dtPoly** poly); //TODO
+	// StatusCode getTileAndPolyByRef([Const] dtPolyRef ref, [Const] dtMeshTile** tile, [Const] dtPoly** poly); //TODO
 	
 	// void getTileAndPolyByRefUnsafe([Const] dtPolyRef ref, [Const] dtMeshTile** tile, [Const] dtPoly** poly); //TODO
 
@@ -827,23 +819,23 @@ interface NavMesh
 	
 	dtPolyRef getPolyRefBase([Const] dtMeshTile tile);
 	
-	dtStatus getOffMeshConnectionPolyEndPoints(dtPolyRef prevRef, dtPolyRef polyRef, float[] startPos, float[] endPos);
+	StatusCode getOffMeshConnectionPolyEndPoints(dtPolyRef prevRef, dtPolyRef polyRef, float[] startPos, float[] endPos);
 
 	[Const] dtOffMeshConnection getOffMeshConnectionByRef(dtPolyRef ref);
 	
-	dtStatus setPolyFlags(dtPolyRef ref, short flags);
+	StatusCode setPolyFlags(dtPolyRef ref, short flags);
 
-	dtStatus getPolyFlags(dtPolyRef ref, short[] resultFlags);
+	StatusCode getPolyFlags(dtPolyRef ref, short[] resultFlags);
 
-	dtStatus setPolyArea(dtPolyRef ref, char area);
+	StatusCode setPolyArea(dtPolyRef ref, char area);
 
-	dtStatus getPolyArea(dtPolyRef ref, char[] resultArea);
+	StatusCode getPolyArea(dtPolyRef ref, char[] resultArea);
 
 	int getTileStateSize([Const] dtMeshTile tile);
 
-	dtStatus storeTileState([Const] dtMeshTile tile, char[] data, [Const] int maxDataSize);
+	StatusCode storeTileState([Const] dtMeshTile tile, char[] data, [Const] int maxDataSize);
 	
-	dtStatus restoreTileState(dtMeshTile tile, [Const] char[] data, [Const] int maxDataSize);
+	StatusCode restoreTileState(dtMeshTile tile, [Const] char[] data, [Const] int maxDataSize);
 	
 	dtPolyRef encodePolyId(int salt, int it, int ip);
 
@@ -1008,92 +1000,92 @@ interface NavMeshQuery
 {
 	void NavMeshQuery();
 
-	dtStatus init([Const] NavMesh nav, [Const] int maxNodes);
+	StatusCode init([Const] NavMesh nav, [Const] int maxNodes);
 	
-	dtStatus findPath(dtPolyRef startRef, dtPolyRef endRef, [Const] float[] startPos, 
+	StatusCode findPath(dtPolyRef startRef, dtPolyRef endRef, [Const] float[] startPos, 
 					[Const] float[] endPos, [Const] QueryFilter filter,
 					[Out] dtPolyRef path, int[] pathCount, [Const] int maxPath);
 
-	dtStatus findStraightPath([Const] float[] startPos, [Const] float[] endPos,
+	StatusCode findStraightPath([Const] float[] startPos, [Const] float[] endPos,
 							  [Const, Out] dtPolyRef path, [Const] int pathSize,
 							  float[] straightPath, byte * straightPathFlags, [Out] dtPolyRef straightPathRefs,
 							  int[] straightPathCount, [Const] int maxStraightPath, [Const] int options);
 
-	dtStatus initSlicedFindPath(dtPolyRef startRef, dtPolyRef endRef,
+	StatusCode initSlicedFindPath(dtPolyRef startRef, dtPolyRef endRef,
 								[Const] float[] startPos, [Const] float[] endPos,
 								[Const] QueryFilter filter, [Const] uint options);
 
-	dtStatus updateSlicedFindPath([Const] int maxIter, int[] doneIters);
+	StatusCode updateSlicedFindPath([Const] int maxIter, int[] doneIters);
 
-	dtStatus finalizeSlicedFindPath([Out] dtPolyRef path, int[] pathCount, [Const] int maxPath);
+	StatusCode finalizeSlicedFindPath([Out] dtPolyRef path, int[] pathCount, [Const] int maxPath);
 	
-	dtStatus finalizeSlicedFindPathPartial([Const, Out] dtPolyRef existing, [Const] int existingSize,
+	StatusCode finalizeSlicedFindPathPartial([Const, Out] dtPolyRef existing, [Const] int existingSize,
 										   [Out] dtPolyRef path, int[] pathCount, [Const] int maxPath);
 
-	dtStatus findPolysAroundCircle(dtPolyRef startRef, [Const] float[] centerPos, [Const] float radius,
+	StatusCode findPolysAroundCircle(dtPolyRef startRef, [Const] float[] centerPos, [Const] float radius,
 								   [Const] QueryFilter filter,
 								   [Out] dtPolyRef resultRef, [Out] dtPolyRef resultParent, float[] resultCost,
 								   int[] resultCount, [Const] int maxResult);
 
-	dtStatus findPolysAroundShape(dtPolyRef startRef, [Const] float[] verts, [Const] int nverts,
+	StatusCode findPolysAroundShape(dtPolyRef startRef, [Const] float[] verts, [Const] int nverts,
 								  [Const] QueryFilter filter,
 								  [Out] dtPolyRef resultRef, [Out] dtPolyRef resultParent, float[] resultCost,
 								  int[] resultCount, [Const] int maxResult);
 	
-	dtStatus getPathFromDijkstraSearch(dtPolyRef endRef, [Out] dtPolyRef path, int[] pathCount, int maxPath);
+	StatusCode getPathFromDijkstraSearch(dtPolyRef endRef, [Out] dtPolyRef path, int[] pathCount, int maxPath);
 
-	dtStatus findNearestPoly([Const] float3 center, [Const] float3 halfExtents,
+	StatusCode findNearestPoly([Const] float3 center, [Const] float3 halfExtents,
 							 [Const] QueryFilter filter,
 							 [Out] dtPolyRef nearestRef, float3 nearestPt);
 
-	dtStatus findNearestPoly([Const] float3 center, [Const] float3 halfExtents,
+	StatusCode findNearestPoly([Const] float3 center, [Const] float3 halfExtents,
 							 [Const] QueryFilter filter,
 							 [Out] dtPolyRef nearestRef, float3 nearestPt, [Out] bool isOverPoly);
 
-	dtStatus queryPolygons([Const] float3 center, [Const] float3 halfExtents,
+	StatusCode queryPolygons([Const] float3 center, [Const] float3 halfExtents,
 						   [Const] QueryFilter filter,
 						   [Out] dtPolyRef polys, int[] polyCount, [Const] int maxPolys);
 
-	dtStatus queryPolygons([Const] float3 center, [Const] float3 halfExtents,
+	StatusCode queryPolygons([Const] float3 center, [Const] float3 halfExtents,
 						   [Const] QueryFilter filter, dtPolyQuery query);
 
-	dtStatus findLocalNeighbourhood(dtPolyRef startRef, [Const] float3 centerPos, [Const] float radius,
+	StatusCode findLocalNeighbourhood(dtPolyRef startRef, [Const] float3 centerPos, [Const] float radius,
 									[Const] QueryFilter filter,
 									[Out] dtPolyRef resultRef, [Out] dtPolyRef resultParent,
 									int[] resultCount, [Const] int maxResult);
 
-	dtStatus moveAlongSurface(dtPolyRef startRef, [Const] float3 startPos, [Const] float3 endPos,
+	StatusCode moveAlongSurface(dtPolyRef startRef, [Const] float3 startPos, [Const] float3 endPos,
 							  [Const] QueryFilter filter, float3 resultPos, [Out] dtPolyRef visited, 
 							  int[] visitedCount, [Const] int maxVisitedSize);
 	
-	dtStatus raycast(dtPolyRef startRef, [Const] float3 startPos, [Const] float3 endPos,
+	StatusCode raycast(dtPolyRef startRef, [Const] float3 startPos, [Const] float3 endPos,
 					 [Const] QueryFilter filter,
 					 float[] t, float[] hitNormal, [Out] dtPolyRef path, int[] pathCount, [Const] int maxPath);
 	
-	dtStatus raycast(dtPolyRef startRef, [Const] float[] startPos, [Const] float[] endPos,
+	StatusCode raycast(dtPolyRef startRef, [Const] float[] startPos, [Const] float[] endPos,
 					 [Const] QueryFilter filter, [Const] int options,
 					 dtRaycastHit hit, dtPolyRef prevRef);
 
-	dtStatus findDistanceToWall(dtPolyRef startRef, [Const] float[] centerPos, [Const] float maxRadius,
+	StatusCode findDistanceToWall(dtPolyRef startRef, [Const] float[] centerPos, [Const] float maxRadius,
 								[Const] QueryFilter filter,
 								float[] hitDist, float[] hitPos, float[] hitNormal);
 
-	dtStatus getPolyWallSegments(dtPolyRef ref, [Const] QueryFilter filter,
+	StatusCode getPolyWallSegments(dtPolyRef ref, [Const] QueryFilter filter,
 								 float[] segmentVerts, [Out] dtPolyRef segmentRefs, int[] segmentCount,
 								 [Const] int maxSegments);
 
-	// dtStatus findRandomPoint([Const] QueryFilter filter, float (*frand)(),
+	// StatusCode findRandomPoint([Const] QueryFilter filter, float (*frand)(),
 	// 						 dtPolyRef randomRef, float[] randomPt) [Const];
 
-	// dtStatus findRandomPointAroundCircle(dtPolyRef startRef, [Const] float[] centerPos, [Const] float maxRadius,
+	// StatusCode findRandomPointAroundCircle(dtPolyRef startRef, [Const] float[] centerPos, [Const] float maxRadius,
 	// 									 [Const] QueryFilter filter, float (*frand)(),
 	// 									 dtPolyRef randomRef, float[] randomPt); //TODO
 
-	dtStatus closestPointOnPoly(dtPolyRef ref, [Const] float[] pos, float[] closest, bool[] posOverPoly);
+	StatusCode closestPointOnPoly(dtPolyRef ref, [Const] float[] pos, float[] closest, bool[] posOverPoly);
 
-	dtStatus closestPointOnPolyBoundary(dtPolyRef ref, [Const] float[] pos, float[] closest);
+	StatusCode closestPointOnPolyBoundary(dtPolyRef ref, [Const] float[] pos, float[] closest);
 
-	dtStatus getPolyHeight(dtPolyRef ref, [Const] float[] pos, float[] height);
+	StatusCode getPolyHeight(dtPolyRef ref, [Const] float[] pos, float[] height);
 
 	bool isValidPolyRef(dtPolyRef ref, [Const] QueryFilter filter);
 

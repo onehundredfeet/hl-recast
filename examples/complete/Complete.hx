@@ -136,11 +136,13 @@ class Complete {
 		cfg.bmin = bmin;
 		cfg.bmax = bmax;
 
-		var widthBuffer = new hl.NativeArray<Int>(1);
-		var heightBuffer = new hl.NativeArray<Int>(1);
-		recast.Native.Recast.calcGridSize(cfg.bmin, cfg.bmax, cfg.cs, widthBuffer, heightBuffer);
-		cfg.width = widthBuffer[0];
-		cfg.height = heightBuffer[0];
+		var width = 0;
+		var height = 0;
+
+		recast.Native.Recast.calcGridSize(cfg.bmin, cfg.bmax, cfg.cs, width, height);
+
+		cfg.width = width;
+		cfg.height = height;
 		trace('Grid size: ${cfg.width} x ${cfg.height}'); // Expected 330 x 331
 
 		return cfg;
@@ -341,8 +343,6 @@ class Complete {
 		var lzCompressor = new FastLZCompressor();
 		var compressor = lzCompressor.asSuper();
 
-		var tint = new NativeArray<Int>(1);
-
 		var header = new TileCacheLayerHeader();
 		// Store header
 		header.magic = TILECACHE_MAGIC.toValue();
@@ -370,8 +370,9 @@ class Complete {
 			header.hmin = layer.hmin;
 			header.hmax = layer.hmax;
 
+			var tint = 0;
 			tile.data = compressor.buildTileCacheLayer(header, layer.heights, layer.areas, layer.cons, tint);
-			tile.dataSize = tint[0]; // multi-return values suck
+			tile.dataSize = tint;
 		}
 
 		_pt.stop();
@@ -608,6 +609,8 @@ class Complete {
 		 */
 	}
 
+	
+
 	static function testIDL() {
 		var a = 1;
 		var b : Single = 1.;
@@ -619,11 +622,25 @@ class Complete {
 		Tests.setToOne(a, b, c, d);
 
 		trace('a : ${a} b : ${b} c : ${c} d : ${d}');
+
+		var x = {
+			a : a,
+			b : b,
+			c : c,
+			d : d
+		};
+		Tests.setToZero(x.a, x.b, x.c, x.d);
+		Tests.setToZero(a, b, c, d);
+		trace('a : ${x.a} b : ${x.b} c : ${x.c} d : ${x.d}');
+		trace('a : ${a} b : ${b} c : ${c} d : ${d}');
+
 	}
 
 	public static function main() {
 		trace("main()");
-		
+
+		//testIDL();
+		//return;
 		//
 		/////////////////////////////// Phase 1 - Load mesh
 		//
@@ -672,13 +689,30 @@ class Complete {
 
 		var queryFilter = new QueryFilter();
 
-		var spos = new Vec3(0., 0., 0.);
-		var polyPickExt = new Vec3(0., 0., 0.);
-		var startRef = 0;
-		var nearestPoint = new Vec3(0., 0., 0.);
+		/*
+	m_polyPickExt[0] = 2;
+	m_polyPickExt[1] = 4;
+	m_polyPickExt[2] = 2;
+	
+	m_neighbourhoodRadius = 2.5f;
+	m_randomRadius = 5.0f;
+		*/
+		var spos = new Vec3(5020., 0., 5050.);
+		var polyPickExt = new Vec3(2., 4., 2.);
+		var startRef = -1;
+		var nearestPoint = new Vec3(-1., -1., -1.);
 		var isOverPoly = false;
-		navQuery.findNearestPoly(spos, polyPickExt, queryFilter, startRef, nearestPoint, isOverPoly);
+		var status = navQuery.findNearestPoly(spos, polyPickExt, queryFilter, startRef, nearestPoint, isOverPoly);
+		if (startRef == 0) {
+			trace('--- Didn\'t find failure ${status}');
+			status = recast.Status.setFailure(status);
+		} else if (startRef == -1) {
+			// Odd
+			trace('--- Failure did not call ${status}');
+			status = recast.Status.setFailure(status);
+		}
 
+		trace('Nearest isSuccess ${recast.Status.isSuccess(status)} isOverPoly ${isOverPoly} nearestPoint ${nearestPoint} startRef ${startRef}');
 		trace("--- Done");
 		// nav mesh is now built
 	}
