@@ -4,6 +4,8 @@
 #include <DetourTileCacheBuilder.h>
 #include "fastlz/fastlz.h"
 #include "PerfTimer.h"
+#include <map>
+  
 struct FastLZCompressor : public dtTileCacheCompressor
 {
 	inline dtTileCacheCompressor *asSuper() {
@@ -82,44 +84,55 @@ struct LinearAllocator : public dtTileCacheAlloc
 };
 
 struct RemapProcessor : public dtTileCacheMeshProcess{
+private:
+	std::map<int, int> _areaMap;
+	std::map<int, int> _flagMap;
+	int _flagDefault;
 
-	inline RemapProcessor() 
+public:
+
+
+	inline RemapProcessor(int flagDefault = 0xffff) 
 	{
+		_flagDefault = flagDefault;
+	}
+
+	virtual ~RemapProcessor() {
+
 	}
 
 	inline dtTileCacheMeshProcess *asSuper() {
 		return this;
 	}
+
 	virtual void process(struct dtNavMeshCreateParams* params,unsigned char* polyAreas, unsigned short* polyFlags)
 	{
 		for (int i = 0; i < params->polyCount; ++i)
 		{
-			polyFlags[i] = 0xffff;
-		}
-        /*
-		// Update poly flags from areas.
-		for (int i = 0; i < params->polyCount; ++i)
-		{
-			if (polyAreas[i] == DT_TILECACHE_WALKABLE_AREA)
-				polyAreas[i] = SAMPLE_POLYAREA_GROUND;
+			auto x = _areaMap.find(polyAreas[i]);
 
-			if (polyAreas[i] == SAMPLE_POLYAREA_GROUND ||
-				polyAreas[i] == SAMPLE_POLYAREA_GRASS ||
-				polyAreas[i] == SAMPLE_POLYAREA_ROAD)
-			{
-				polyFlags[i] = SAMPLE_POLYFLAGS_WALK;
+			if (x != _areaMap.end()) {
+				polyAreas[i] = x->second;
 			}
-			else if (polyAreas[i] == SAMPLE_POLYAREA_WATER)
-			{
-				polyFlags[i] = SAMPLE_POLYFLAGS_SWIM;
-			}
-			else if (polyAreas[i] == SAMPLE_POLYAREA_DOOR)
-			{
-				polyFlags[i] = SAMPLE_POLYFLAGS_WALK | SAMPLE_POLYFLAGS_DOOR;
+
+			auto y = _flagMap.find(polyAreas[i]);
+
+			if (y != _flagMap.end()) {
+				polyAreas[i] = y->second;
+			} else {
+				polyAreas[i] = _flagDefault;
 			}
 		}
-        */
 	}
+
+	void mapArea(int dtType, int areaType) {
+		_areaMap[dtType] = areaType;
+	}
+
+	void mapFlags(int dtType, int flags) {
+		_flagMap[dtType] = flags;
+	}
+	
 };
 
 struct TileCacheData
