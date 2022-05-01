@@ -18,6 +18,10 @@ if (NOT DETOUR_TILE_CACHE_ROOT)
 set(DETOUR_TILE_CACHE_ROOT "${RECAST_ROOT}/DetourTileCache")
 endif()
 
+if (NOT DETOUR_DEBUG_UTIL_ROOT) 
+set(DETOUR_DEBUG_UTIL_ROOT "${RECAST_ROOT}/DebugUtils")
+endif()
+
 if (NOT RECAST_DEMO_ROOT) 
 set(RECAST_DEMO_ROOT "${RECAST_ROOT}/RecastDemo")
 endif()
@@ -62,8 +66,12 @@ ${DETOUR_SRC_DIR}/Source/DetourNode.cpp
 ${DETOUR_TILE_CACHE_ROOT}/Source/DetourTileCache.cpp
 ${DETOUR_TILE_CACHE_ROOT}/Source/DetourTileCacheBuilder.cpp
 ${RECAST_DEMO_ROOT}/Source/PerfTimer.cpp
+${DETOUR_DEBUG_UTIL_ROOT}/Source/DebugDraw.cpp
+${DETOUR_DEBUG_UTIL_ROOT}/Source/DetourDebugDraw.cpp
+${DETOUR_DEBUG_UTIL_ROOT}/Source/RecastDebugDraw.cpp
 src/ChunkyTriMesh.cpp
 src/hl-idl-helpers.cpp
+src/hl-recast.cpp
 src/recast.cpp
 src/fastlz/fastlz.c
 )
@@ -84,6 +92,7 @@ ${DETOUR_SRC_DIR}/Include
 ${DETOUR_SRC_DIR}/Include
 ${DETOUR_TILE_CACHE_ROOT}/Include
 ${RECAST_DEMO_ROOT}/Include
+${DETOUR_DEBUG_UTIL_ROOT}/Include
 ${HL_INCLUDE_DIR}
 )
 

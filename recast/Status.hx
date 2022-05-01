@@ -44,4 +44,26 @@ class Status {
 	public inline static function hasDetail(status:Int, detail: Int) :Bool{
 		return (status & detail) != 0;
 	}
+
+	public static function statusString(status:Int) :String {
+		var str = null;
+		if (status & SUCCESS != 0) {
+			str = "Success";
+		} else if (status & IN_PROGRESS != 0) {
+			str = "In Progress";
+		} else if (status & FAILURE != 0) {
+			str = "Failure";
+			if (status & WRONG_MAGIC != 0)str += " :Wrong magic number";
+			if (status & WRONG_VERSION != 0)str += " :Wrong version";
+			if (status & OUT_OF_MEMORY != 0)str += " :Out of memory";
+			if (status & INVALID_PARAM != 0)str += " :Invalid parameter";
+			if (status & BUFFER_TOO_SMALL != 0)str += " :Buffer too small";
+			if (status & OUT_OF_NODES != 0)str += " :Out of nodes";
+			if (status & PARTIAL_RESULT != 0)str += " :Partial result";
+			if (status & ALREADY_OCCUPIED != 0)str += " :Already occupied";
+		} else 
+			throw "unrecognized status code";
+
+		return str;
+	}
 }

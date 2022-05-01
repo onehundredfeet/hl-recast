@@ -1,5 +1,7 @@
 package;
 
+import recast.Status;
+import sys.io.File;
 import haxe.io.Bytes;
 import recast.Native;
 import hvector.Float3.NativeArrayFloat3;
@@ -16,7 +18,6 @@ class RawMeshData {
 }
 
 class Complete {
-
 	static inline final SAMPLE_POLYAREA_GROUND = 0;
 	static inline final SAMPLE_POLYAREA_WATER = 1;
 	static inline final SAMPLE_POLYAREA_ROAD = 2;
@@ -24,12 +25,12 @@ class Complete {
 	static inline final SAMPLE_POLYAREA_GRASS = 4;
 	static inline final SAMPLE_POLYAREA_JUMP = 5;
 
-	static inline final SAMPLE_POLYFLAGS_WALK		= 0x01;		// Ability to walk (ground, grass, road)
-	static inline final SAMPLE_POLYFLAGS_SWIM		= 0x02;		// Ability to swim (water).
-	static inline final SAMPLE_POLYFLAGS_DOOR		= 0x04;		// Ability to move through doors.
-	static inline final SAMPLE_POLYFLAGS_JUMP		= 0x08;		// Ability to jump.
-	static inline final SAMPLE_POLYFLAGS_DISABLED	= 0x10;		// Disabled polygon
-	static inline final SAMPLE_POLYFLAGS_ALL		= 0xffff;	// All abilities.
+	static inline final SAMPLE_POLYFLAGS_WALK = 0x01; // Ability to walk (ground, grass, road)
+	static inline final SAMPLE_POLYFLAGS_SWIM = 0x02; // Ability to swim (water).
+	static inline final SAMPLE_POLYFLAGS_DOOR = 0x04; // Ability to move through doors.
+	static inline final SAMPLE_POLYFLAGS_JUMP = 0x08; // Ability to jump.
+	static inline final SAMPLE_POLYFLAGS_DISABLED = 0x10; // Disabled polygon
+	static inline final SAMPLE_POLYFLAGS_ALL = 0xffff; // All abilities.
 
 	static function loadObj(filename:String) {
 		var rawMesh = new RawMeshData();
@@ -43,17 +44,27 @@ class Complete {
 					continue;
 
 				if (line.charAt(0) == 'v') {
+					if (line.charAt(1) == ' ') {
 					var splitted = line.split(" ");
 					rawMesh.vertices.push(Std.parseFloat(splitted[1]));
 					rawMesh.vertices.push(Std.parseFloat(splitted[2]));
 					rawMesh.vertices.push(Std.parseFloat(splitted[3]));
+					}
+					continue;
 				}
 
 				if (line.charAt(0) == 'f') {
 					var splitted = line.split(" ");
-					rawMesh.indices.push(Std.parseInt(splitted[1]));
-					rawMesh.indices.push(Std.parseInt(splitted[2]));
-					rawMesh.indices.push(Std.parseInt(splitted[3]));
+
+					var x = splitted[1].indexOf('/');
+					if (x > -1) splitted[1] = splitted[1].substr(0, x);
+					rawMesh.indices.push(Std.parseInt(splitted[1]) - 1);
+					x = splitted[2].indexOf('/');
+					if (x > -1) splitted[2] = splitted[2].substr(0, x);
+					rawMesh.indices.push(Std.parseInt(splitted[2]) - 1);
+					x = splitted[3].indexOf('/');
+					if (x > -1) splitted[3] = splitted[3].substr(0, x);
+					rawMesh.indices.push(Std.parseInt(splitted[3]) - 1);
 				}
 			}
 			fin.close();
@@ -80,25 +91,27 @@ class Complete {
 		return out;
 	}
 
-	static final _tileSize:Float = 32.;
+	static final _tileSizeDesired:Float = 10.; // # world space length of the tile
 	static final _cellSize = 0.3;
+	static final _tileCellCount = Std.int(_tileSizeDesired / _cellSize);
+	static final _tileSizeWS = _tileCellCount * _cellSize;
 	static final _cellHeight = 0.2;
 	static final _agentMaxSlope = 45.;
 	static final _agentHeight = 3.;
 	static final _agentRadius = 0.6;
-	static final _agentMaxClimb = 0.8;
-	static final _edgeMaxLen = 8.;
+	static final _agentMaxClimb = 0.9;
+	static final _edgeMaxLen = 6.;
 	static final _edgeMaxError = 1.3;
 	static final _regionMinSize = 8.;
-	static final _regionMergeSize = 20.;
+	static final _regionMergeSize = 15.;
 	static final _vertsPerPoly = 6;
 	static final _detailSampleDist = 6.;
 	static final _detailSampleMaxError = 1.;
 	static final EXPECTED_LAYERS_PER_TILE = 4;
-	static final LINEAR_BUFFER_SIZE = 1024 * 32;
+	static final LINEAR_BUFFER_SIZE = 1024 * 128;
 	static final MAX_NAV_QUERY_NODES = 2048;
 	static final MAX_LAYERS = 32;
-	static final TRIANGLES_PER_CHUNK = 256;
+	static final TRIANGLES_PER_CHUNK = 1024 * 10;
 	static final MAX_IDS = 512;
 
 	static final _filterLowHangingObstacles = true;
@@ -116,13 +129,13 @@ class Complete {
 		//		int gw = 0, gh = 0;
 
 		var gwa = 0;
-		var gha =0;
-		recast.Native.Recast.calcGridSize(bmin, bmax, _cellSize, hl.Ref.make(gwa),hl.Ref.make(gha));
+		var gha = 0;
+		recast.Native.Recast.calcGridSize(bmin, bmax, _cellSize, hl.Ref.make(gwa), hl.Ref.make(gha));
 
 		return {width: gwa, height: gha};
 	}
 
-	static function getRasterConfig(gw, gh, bmin, bmax) {
+	static function getRasterConfig(bmin, bmax) {
 		trace("Processing Recast...");
 		// -------------------------------------------------------------------------------------
 		// Step 1. Initialize build config.
@@ -141,46 +154,58 @@ class Complete {
 		cfg.minRegionArea = Std.int(_regionMinSize * _regionMinSize); // Note: area = size*size
 		cfg.mergeRegionArea = Std.int(_regionMergeSize * _regionMergeSize); // Note: area = size*size
 		cfg.maxVertsPerPoly = _vertsPerPoly;
-		cfg.tileSize = Std.int(_tileSize);
+		cfg.tileSize = Std.int(_tileCellCount);
 		cfg.borderSize = cfg.walkableRadius + 3; // Reserve enough padding.
 		cfg.width = cfg.tileSize + cfg.borderSize * 2;
 		cfg.height = cfg.tileSize + cfg.borderSize * 2;
 		cfg.detailSampleDist = _detailSampleDist < 0.9 ? 0 : _cellSize * _detailSampleDist;
 		cfg.detailSampleMaxError = _cellHeight * _detailSampleMaxError;
-
+		
+		
+		if (cfg.width > 255) throw 'tile width is beyond 255: ${cfg.width}';
+		if (cfg.height > 255) throw 'tile height is beyond 255: ${cfg.height}';
+		
 		cfg.bmin = bmin;
 		cfg.bmax = bmax;
 
-		var width = 0;
-		var height = 0;
+		var globalWidth = 0;
+		var globalHeight = 0;
 
-		recast.Native.Recast.calcGridSize(cfg.bmin, cfg.bmax, cfg.cs, width, height);
+		recast.Native.Recast.calcGridSize(cfg.bmin, cfg.bmax, cfg.cs, globalWidth, globalHeight);
+		
+		if (cfg.width > 255) throw 'tile width is beyond 255: ${cfg.width}';
+		if (cfg.height > 255) throw 'tile height is beyond 255: ${cfg.height}';
 
-		cfg.width = width;
-		cfg.height = height;
-		trace('Grid size: ${cfg.width} x ${cfg.height}'); // Expected 330 x 331
+		trace('Tile size: ${cfg.width} x ${cfg.height}'); // Expected 330 x 331
+		trace('Grid size: ${globalWidth} x ${globalHeight}'); // Expected 330 x 331
+
+		trace('CFG W ${cfg.width} H ${cfg.height}');
 
 		return cfg;
 	}
 
 	static function getTileCounts(gw, gh) {
-		trace("getTileCounts...");
-		final ts = Std.int(_tileSize);
+		final ts = Std.int(_tileSizeWS);
 		final tw = Std.int((gw + ts - 1) / ts);
 		final th = Std.int((gh + ts - 1) / ts);
+
+
+		trace('getTileCounts... gw ${gw} gh ${gh} tw ${tw} th ${th} tsws ${_tileSizeWS}');
+
+
 
 		return {tileSizeI: ts, tileWidthCount: tw, tileHeightCount: th};
 	}
 
-	static function getTileCacheParameters(gw, gh, tw, th, bmin:Vec3):TileCacheParams {
+	static function getTileCacheParameters( tw, th, bmin:Vec3):TileCacheParams {
 		trace("getTileCacheParameters...");
 		// Tile cache params.
 		var tcparams = new TileCacheParams();
 		tcparams.orig = bmin;
 		tcparams.cs = _cellSize;
 		tcparams.ch = _cellHeight;
-		tcparams.width = Std.int(_tileSize);
-		tcparams.height = Std.int(_tileSize);
+		tcparams.width = _tileCellCount;	// Odd units
+		tcparams.height = _tileCellCount;	// Odd units
 		tcparams.walkableHeight = _agentHeight;
 		tcparams.walkableRadius = _agentRadius;
 		tcparams.walkableClimb = _agentMaxClimb;
@@ -203,7 +228,6 @@ class Complete {
 		return {min: bmin, max: bmax};
 	}
 
-
 	static function getTileCache(cacheCfg) {
 		trace("getTileCache...");
 		var tileCache = new recast.Native.TileCache();
@@ -211,15 +235,20 @@ class Complete {
 		var allocator = new recast.Native.LinearAllocator(LINEAR_BUFFER_SIZE);
 		var processor = new recast.Native.RemapProcessor();
 		tileCache.init(cacheCfg, allocator.asSuper(), compressor.asSuper(), processor.asSuper());
-		return {cache: tileCache, compressor : compressor, allocator : allocator, processor : processor}; // need to hodl onto these references
+		return {
+			cache: tileCache,
+			compressor: compressor,
+			allocator: allocator,
+			processor: processor
+		}; // need to hodl onto these references
 	}
 
 	static function getNavMeshParameters(bmin, tw, th) {
 		trace("getNavMeshParameters...");
 		var params = new NavMeshParams();
 		params.orig = bmin;
-		params.tileWidth = _tileSize * _cellSize;
-		params.tileHeight = _tileSize * _cellSize;
+		params.tileWidth = _tileSizeWS;
+		params.tileHeight = _tileSizeWS;
 
 		// Max tiles and max polys affect how the tile IDs are caculated.
 		// There are 22 bits available for identifying a tile and a polygon.
@@ -246,10 +275,9 @@ class Complete {
 	static var _filterTime = 0.;
 	static var _heightfieldTime = 0.;
 	static var _cacheTime = 0.;
-	
+
 	static function rasterizeTileLayers(chunkyMesh:ChunkyTriMesh, verts:NativeArray<Single>, nverts:Int, tx:Int, ty:Int, rasterCfg:RasterConfig,
 			tiles:Array<TileCacheData>, maxTiles:Int):Int {
-
 		_pt.start();
 
 		var rc = new RasterContext(false);
@@ -257,20 +285,20 @@ class Complete {
 		// Tile bounds.
 		var tcs = rasterCfg.tileSize * rasterCfg.cs;
 
+		trace('TCS - Tile size ${tcs}');
+		
 		var tempRasterCfg = new RasterConfig();
 		tempRasterCfg.copy(rasterCfg);
 
-		tempRasterCfg.bmin[0] = rasterCfg.bmin[0] + tx * tcs;
-		tempRasterCfg.bmin[1] = rasterCfg.bmin[1];
-		tempRasterCfg.bmin[2] = rasterCfg.bmin[2] + ty * tcs;
-		tempRasterCfg.bmax[0] = rasterCfg.bmin[0] + (tx + 1) * tcs;
-		tempRasterCfg.bmax[1] = rasterCfg.bmax[1];
-		tempRasterCfg.bmax[2] = rasterCfg.bmin[2] + (ty + 1) * tcs;
-		tempRasterCfg.bmin[0] -= tempRasterCfg.borderSize * tempRasterCfg.cs;
-		tempRasterCfg.bmin[2] -= tempRasterCfg.borderSize * tempRasterCfg.cs;
-		tempRasterCfg.bmax[0] += tempRasterCfg.borderSize * tempRasterCfg.cs;
-		tempRasterCfg.bmax[2] += tempRasterCfg.borderSize * tempRasterCfg.cs;
+		var borderWS = tempRasterCfg.borderSize * tempRasterCfg.cs;
 
+		tempRasterCfg.bmin[0] = rasterCfg.bmin[0] + tx * tcs - borderWS;
+		tempRasterCfg.bmin[1] = rasterCfg.bmin[1];
+		tempRasterCfg.bmin[2] = rasterCfg.bmin[2] + ty * tcs - borderWS;
+		tempRasterCfg.bmax[0] = rasterCfg.bmin[0] + (tx + 1) * tcs + borderWS;
+		tempRasterCfg.bmax[1] = rasterCfg.bmax[1];
+		tempRasterCfg.bmax[2] = rasterCfg.bmin[2] + (ty + 1) * tcs + borderWS;
+	
 		// Allocate voxel heightfield where we rasterize our input data to.
 
 		var solid = new Heightfield();
@@ -281,20 +309,20 @@ class Complete {
 		// If you have multiple meshes you need to process, allocate
 		// and array which can hold the max number of triangles you need to process.
 		var triareas = RcAlloc.allocByteArray(chunkyMesh.maxTrisPerChunk, AllocHint.RC_ALLOC_PERM); // new NativeArray<>(chunkyMesh.maxTrisPerChunk);
-		//trace('Tri areas ${triareas} is ${chunkyMesh.maxTrisPerChunk}');
+		// trace('Tri areas ${triareas} is ${chunkyMesh.maxTrisPerChunk}');
 		var tbmin = new Vec2(tempRasterCfg.bmin[0], tempRasterCfg.bmin[2]);
 		var tbmax = new Vec2(tempRasterCfg.bmax[0], tempRasterCfg.bmax[2]);
 
-		//trace('temp array');
+		// trace('temp array');
 		var cid = new NativeArray<Int>(MAX_IDS);
 
-		//trace('overlapping');
+		// trace('overlapping');
 		var ncid = chunkyMesh.getOverlappingRect(tbmin, tbmax, cid, MAX_IDS);
 		if (ncid == 0) {
 			return 0; // empty
 		}
 
-		//trace('looping over ${ncid}');
+		// trace('looping over ${ncid}');
 		for (i in 0...ncid) {
 			var nodeTriIndex = chunkyMesh.getNodeTriIndex(cid[i]);
 			var tris = chunkyMesh.getTriVertIndices(nodeTriIndex * 3);
@@ -306,15 +334,24 @@ class Complete {
 
 			rc.markWalkableTriangles(tempRasterCfg.walkableSlopeAngle, verts, nverts, tris, ntris, triareas);
 
-//			trace('Marked and now raster ${i} of ${ncid}\n');
+			//			trace('Marked and now raster ${i} of ${ncid}\n');
 			if (!rc.rasterizeTriangles(verts, nverts, tris, triareas, ntris, solid, tempRasterCfg.walkableClimb)) {
 				trace('Failed raster ${i}');
 				return 0;
-			} 
-//			trace('Done raster ${i}');
+			}
+			//			trace('Done raster ${i}');
 		}
 		_pt.stop();
 		_heightfieldTime += _pt.deltaMilliseconds();
+
+		/*
+		trace('capturing HF ${tx} / ${ty}');
+		var hfc = new MeshCapture(true);
+		hfc.captureHeightField(solid);
+		trace('dumping');
+		dumpObj('hf_${tx}_${ty}.obj', hfc);
+		trace('done');
+*/
 		_pt.start();
 		// Once all geometry is rasterized, we do initial pass of filtering to
 		// remove unwanted overhangs caused by the conservative rasterization
@@ -325,32 +362,48 @@ class Complete {
 			rc.filterLedgeSpans(tempRasterCfg.walkableHeight, tempRasterCfg.walkableClimb, solid);
 		if (_filterWalkableLowHeightSpans)
 			rc.filterWalkableLowHeightSpans(tempRasterCfg.walkableHeight, solid);
-		
+
 		_pt.stop();
-		_filterTime +=  _pt.deltaMilliseconds();
+		_filterTime += _pt.deltaMilliseconds();
 		_pt.start();
 
 		var chf = new CompactHeightfield();
 		rc.buildCompactHeightfield(tempRasterCfg.walkableHeight, tempRasterCfg.walkableClimb, solid, chf);
 
 		_pt.stop();
-		_heightfieldTime +=  _pt.deltaMilliseconds();
+		_heightfieldTime += _pt.deltaMilliseconds();
+
+		
+
 		_pt.start();
 
 		// Erode the walkable area by agent radius.
 		rc.erodeWalkableArea(tempRasterCfg.walkableRadius, chf);
 
 		_pt.stop();
-		_filterTime +=  _pt.deltaMilliseconds();
+		
+		_filterTime += _pt.deltaMilliseconds();
 		_pt.start();
 
 		// Layer set?
 		var lset = new HeightfieldLayerSet();
 
-		rc.buildHeightfieldLayers(chf, tempRasterCfg.borderSize, tempRasterCfg.walkableHeight, lset);
+		if (!rc.buildHeightfieldLayers(chf, tempRasterCfg.borderSize, tempRasterCfg.walkableHeight, lset)) {
+			throw "Could not build heightfield layers";
+		}
 
 		_pt.stop();
-		_heightfieldTime +=  _pt.deltaMilliseconds();
+
+		/*
+		trace('capturing eroded HF ${tx} / ${ty}');
+		var hfc = new MeshCapture(true);
+		hfc.captureHeighfieldLayerSet(lset);
+		trace('dumping');
+		dumpObj('hfl_${tx}_${ty}.obj', hfc);
+		trace('done');
+*/
+		
+		_heightfieldTime += _pt.deltaMilliseconds();
 		_pt.start();
 
 		var ntiles = 0;
@@ -363,7 +416,6 @@ class Complete {
 		header.magic = TILECACHE_MAGIC.toValue();
 		header.version = TILECACHE_VERSION.toValue();
 
-
 		for (i in 0...icount) {
 			var tile = tiles[ntiles++];
 			var layer = lset.layers(i);
@@ -375,9 +427,13 @@ class Complete {
 			header.bmin = layer.bmin;
 			header.bmax = layer.bmax;
 
+			if (layer.width > 255) throw 'Layer width is beyond 255: ${layer.width}';
+			if (layer.height > 255) throw 'Layer height is beyond 255: ${layer.height}';
 			// Tile info.
 			header.width = layer.width;
 			header.height = layer.height;
+			trace('layer width ${layer.width} height ${ layer.height}');
+			trace('layer width ${header.width} height ${ header.height}');
 			header.minx = layer.minx;
 			header.maxx = layer.maxx;
 			header.miny = layer.miny;
@@ -391,8 +447,8 @@ class Complete {
 		}
 
 		_pt.stop();
-		_cacheTime +=  _pt.deltaMilliseconds();
-		
+		_cacheTime += _pt.deltaMilliseconds();
+
 		RcAlloc.freeArray(triareas);
 		return icount;
 
@@ -570,10 +626,10 @@ class Complete {
 		return 0;
 	}
 
-	static function preprocessTiles(chunkyTriMesh, verts:NativeArray<Single>, nverts:Int, tileCache:TileCache, tw : Int, th : Int, rasterCfg:RasterConfig,
+	static function preprocessTiles(chunkyTriMesh, verts:NativeArray<Single>, nverts:Int, tileCache:TileCache, tw:Int, th:Int, rasterCfg:RasterConfig,
 			tcparams:TileCacheParams) {
 		// Preprocess tiles.
-		//trace('preprocessTiles... ${tw} by ${th}');
+		// trace('preprocessTiles... ${tw} by ${th}');
 		_cacheLayerCount = 0;
 		_cacheCompressedSize = 0;
 		_cacheRawSize = 0;
@@ -581,27 +637,40 @@ class Complete {
 		var tiles = [for (i in 0...MAX_LAYERS) new TileCacheData()];
 
 		for (y in 0...th) {
-			//trace('Starting row ${y}');
+			// trace('Starting row ${y}');
 			for (x in 0...tw) {
 				var ntiles = rasterizeTileLayers(chunkyTriMesh, verts, nverts, x, y, rasterCfg, tiles, MAX_LAYERS);
 				for (i in 0...ntiles) {
 					var tile = tiles[i];
-					var result = tileCache.addTile(tile.data, tile.dataSize, DT_COMPRESSEDTILE_FREE_DATA.toValue());
+					var refID = -1;
+					var result = tileCache.addTile(tile.data, tile.dataSize, DT_COMPRESSEDTILE_FREE_DATA.toValue(), refID);
 
-					_cacheLayerCount++;
-					_cacheCompressedSize += tile.dataSize;
-					_cacheRawSize += calcLayerBufferSize(tcparams.width, tcparams.height); // I think this may be a bug, wrong height & width
+					if (recast.Status.isSuccess(result)) {
+						trace('added tile ${refID}');
+						_cacheLayerCount++;
+						_cacheCompressedSize += tile.dataSize;
+						_cacheRawSize += calcLayerBufferSize(tcparams.width, tcparams.height); // I think this may be a bug, wrong height & width
+					} else {
+						throw 'Unable to add tile ${result} ${recast.Status.isSuccess(result)} ${recast.Status.isFailure(result)} ${recast.Status.isInProgress(result)}';
+					}
 				}
 			}
 		}
 	}
 
-	static function buildInitialMeshes(tw : Int, th : Int, tileCache:TileCache, navMesh:NavMesh) {
-		//trace('buildInitialMeshes... ${tw} by ${th} on ${tileCache} nav ${navMesh}');
+
+
+	static function buildInitialMeshes(tw:Int, th:Int, tileCache:TileCache, navMesh:NavMesh) {
+		// trace('buildInitialMeshes... ${tw} by ${th} on ${tileCache} nav ${navMesh}');
 
 		for (y in 0...th)
-			for (x in 0...tw)
-				tileCache.buildNavMeshTilesAt(x, y, navMesh);
+			for (x in 0...tw) {
+				//trace('Building nav mesh tile at ${x} ${y}');
+				var res = tileCache.buildNavMeshTilesAt(x, y, navMesh);
+				if (!Status.isSuccess(res)) {
+					throw 'Failed to build nav mesh at ${x}, ${y} ${Status.isFailure(res)} ${Status.statusString(res)}';
+				}
+			}
 
 		/*
 				// Build initial meshes
@@ -624,11 +693,78 @@ class Complete {
 		 */
 	}
 
-	
+	/*
+	static function dumpObjRawMesh(path:String, mc:RawMeshData) {
+		trace('Dumping obj ${path}');
+		var vc = Std.int(mc.vertices.length / 3);
+		var nt:Int = Std.int(mc.indices.length / 3);
+
+		var fo = File.write(path, false);
+
+		var vert = new Vec3(0., 0., 0.);
+		trace('\t ${vc} verts ${nt} tris');
+		fo.writeString('# verts ${vc}\n');
+
+		for (i in 0...vc) {
+
+			var x = mc.vertices[i * 3 + 0];
+			var y = mc.vertices[i * 3 + 1];
+			var z = mc.vertices[i * 3 + 2];
+			fo.writeString('v ${x} ${y} ${z}\n');
+			if (i % 10000 == 0) {
+				trace('${i} verts');
+				fo.flush();
+			}
+		}
+
+		for (i in 0...nt) {
+			fo.writeString('f ${(i * 3) + 0 + 1} ${(i * 3) + 1 + 1} ${(i * 3) + 2 + 1}\n');
+			if (i % 10000 == 0) {
+				trace('${i} faces');
+				fo.flush();
+			}
+		}
+
+		fo.flush();
+		fo.close();
+	}
+	*/
+	static function dumpObj(path:String, mc:MeshCapture) {
+		trace('Dumping obj ${path}');
+		var vc = mc.numVerts();
+		var nt:Int = Std.int(vc / 3);
+
+		var fo = File.write(path, false);
+
+		var vert = new Vec3(0., 0., 0.);
+		trace('\t ${vc} verts ${nt} tris');
+		fo.writeString('# verts ${vc}\n');
+
+		for (i in 0...vc) {
+			mc.getVert(i, vert);
+
+			fo.writeString('v ${vert.x} ${vert.y} ${vert.z}\n');
+			if (i % 10000 == 0 && i > 0) {
+				trace('${i} verts');
+				fo.flush();
+			}
+		}
+
+		for (i in 0...nt) {
+			fo.writeString('f ${(i * 3) + 0 + 1} ${(i * 3) + 1 + 1} ${(i * 3) + 2 + 1}\n');
+			if (i % 10000 == 0 && i > 0) {
+				trace('${i} faces');
+				fo.flush();
+			}
+		}
+
+		fo.flush();
+		fo.close();
+	}
 
 	static function testIDL() {
 		var a = 1;
-		var b : Single = 1.;
+		var b:Single = 1.;
 		var c = 1.;
 		var d = true;
 		Tests.setToZero(a, b, c, d);
@@ -639,27 +775,26 @@ class Complete {
 		trace('a : ${a} b : ${b} c : ${c} d : ${d}');
 
 		var x = {
-			a : a,
-			b : b,
-			c : c,
-			d : d
+			a: a,
+			b: b,
+			c: c,
+			d: d
 		};
 		Tests.setToZero(x.a, x.b, x.c, x.d);
 		Tests.setToZero(a, b, c, d);
 		trace('a : ${x.a} b : ${x.b} c : ${x.c} d : ${x.d}');
 		trace('a : ${a} b : ${b} c : ${c} d : ${d}');
-
 	}
 
 	public static function main() {
 		trace("main()");
 
-		//testIDL();
-		//return;
+		// testIDL();
+		// return;
 		//
 		/////////////////////////////// Phase 1 - Load mesh
 		//
-		var rawMesh = loadObj("PathfinderSample/undulating.obj");
+		var rawMesh = loadObj("undulating_small.obj");
 		var verticesCount = cast(rawMesh.vertices.length / 3, Int);
 		var trianglesCount = cast(rawMesh.indices.length / 3, Int);
 
@@ -672,25 +807,24 @@ class Complete {
 
 		var pt = new PerformanceTimer();
 
-		
-
 		var bounds = getBounds(nativeVertices, verticesCount);
 		var gridwh = getGridSize(bounds.min, bounds.max);
-		var rasterCfg = getRasterConfig(gridwh.width, gridwh.height, bounds.min, bounds.max);
+		var rasterCfg = getRasterConfig( bounds.min, bounds.max);
 		var tileCounts = getTileCounts(gridwh.width, gridwh.height);
-		var cacheCfg = getTileCacheParameters(gridwh.width, gridwh.height, tileCounts.tileWidthCount, tileCounts.tileHeightCount, bounds.min);
+		var cacheCfg = getTileCacheParameters( tileCounts.tileWidthCount, tileCounts.tileHeightCount, bounds.min);
 		var configuredCache = getTileCache(cacheCfg);
 
 		var navMeshCfg = getNavMeshParameters(bounds.min, tileCounts.tileWidthCount, tileCounts.tileHeightCount);
 		var navMesh = new NavMesh();
 		navMesh.setParams(navMeshCfg);
 		pt.start();
-		chunkyTriMesh.build(nativeVertices, nativeIndices,  trianglesCount, TRIANGLES_PER_CHUNK);
+		chunkyTriMesh.build(nativeVertices, nativeIndices, trianglesCount, TRIANGLES_PER_CHUNK);
 		pt.stop();
-		trace('Chunky ${pt.deltaMilliseconds()}ms');
+		trace('Chunky ${pt.deltaMilliseconds()}ms tcx ${tileCounts.tileWidthCount} tcy ${tileCounts.tileHeightCount}');
 
 		pt.start();
-		preprocessTiles(chunkyTriMesh, nativeVertices, verticesCount, configuredCache.cache, tileCounts.tileWidthCount, tileCounts.tileHeightCount, rasterCfg, cacheCfg);
+		preprocessTiles(chunkyTriMesh, nativeVertices, verticesCount, configuredCache.cache, tileCounts.tileWidthCount, tileCounts.tileHeightCount, rasterCfg,
+			cacheCfg);
 		pt.stop();
 		trace('Preprocessing ${pt.deltaMilliseconds()}ms : rasterizedTris ${rasterizedTris} heightfield ${_heightfieldTime}ms filter ${_filterTime}ms cache ${_cacheTime}ms');
 		pt.start();
@@ -698,6 +832,9 @@ class Complete {
 		pt.stop();
 		trace('Building ${pt.deltaMilliseconds()}ms');
 
+		var mc = new MeshCapture(true);
+		mc.captureNavMesh(navMesh, 0xffff);
+		dumpObj("out.obj", mc);
 
 		var navQuery = new NavMeshQuery();
 		navQuery.init(navMesh, MAX_NAV_QUERY_NODES);
@@ -705,14 +842,15 @@ class Complete {
 		var queryFilter = new QueryFilter();
 
 		/*
-	m_polyPickExt[0] = 2;
-	m_polyPickExt[1] = 4;
-	m_polyPickExt[2] = 2;
-	
-	m_neighbourhoodRadius = 2.5f;
-	m_randomRadius = 5.0f;
-		*/
-		var spos = new Vec3(5020., 0., 5050.);
+			m_polyPickExt[0] = 2;
+			m_polyPickExt[1] = 4;
+			m_polyPickExt[2] = 2;
+
+			m_neighbourhoodRadius = 2.5f;
+			m_randomRadius = 5.0f;
+		 */
+
+		var spos = new Vec3(20., 0., 20.);
 		var polyPickExt = new Vec3(2., 4., 2.);
 		var startRef = -1;
 		var nearestPoint = new Vec3(-1., -1., -1.);

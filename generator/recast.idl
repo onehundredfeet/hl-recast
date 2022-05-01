@@ -1,4 +1,10 @@
 //--------------------------------------------------------------------------------------------
+// DetourStatus.h
+//--------------------------------------------------------------------------------------------
+
+typedef StatusCode uint;
+
+//--------------------------------------------------------------------------------------------
 // Recast.h
 //--------------------------------------------------------------------------------------------
 
@@ -527,9 +533,10 @@ interface DetourCommon {
 interface TileCache {
 	void TileCache();
 
-	void init([Const] TileCacheParams params,TileCacheAlloc talloc,TileCacheCompressor tcomp,TileCacheMeshProcess tmproc);
-	long addTile(byte * data, long dataSize, long flags, [Return, Cast="unsigned int *"]long result);
-	void buildNavMeshTilesAt(int tx, int ty, NavMesh navmesh);
+	void init([Const] TileCacheParams params, TileCacheAlloc talloc, TileCacheCompressor tcomp, TileCacheMeshProcess tmproc);
+	StatusCode addTile(byte * data, long dataSize, long flags, [Out]uint result);
+	StatusCode buildNavMeshTilesAt(int tx, int ty, NavMesh navmesh);
+	
 
 };
 
@@ -664,11 +671,7 @@ enum dtCompressedTileFlags
 };
 
 
-//--------------------------------------------------------------------------------------------
-// DetourStatus.h
-//--------------------------------------------------------------------------------------------
 
-typedef StatusCode uint;
 
 
 //--------------------------------------------------------------------------------------------
@@ -1125,4 +1128,19 @@ interface Tests {
 	void setToZero( [Out] int a, [Out] float b, [Out] double c, [Out] bool d);
 	[Static, Internal="setToOne"]
 	void setToOne( [Out] int a, [Out] float b, [Out] double c, [Out] bool d);
+};
+
+[Internal="dtMeshCapture"]
+interface MeshCapture {
+	void MeshCapture(boolean isSurface);
+	void captureNavMesh([Deref] NavMesh nm, int flags);
+	void captureHeightField([Deref] Heightfield hf);
+	void captureCompactHeightField([Deref] CompactHeightfield chf);
+	void captureHeighfieldLayerSet( [Deref] HeightfieldLayerSet hfls );
+	
+	long numVerts();
+	long numSurfacePrims();
+	boolean isSurface();
+	void getVert(int idx, float3 pos  ); 
+
 };

@@ -124,7 +124,7 @@ class Pathfinder extends hxd.App {
 		cfg.walkableClimb = 4;
 	    cfg.walkableRadius = 2;
 		cfg.maxEdgeLen = 40;
-		cfg.maxSimplificationError = 1.3;
+		cfg.maxSimplificationError = 1.0;
 		cfg.minRegionArea = 64;
 		cfg.mergeRegionArea = 400;
 		cfg.maxVertsPerPoly = 6;

@@ -144,6 +144,7 @@ bool rcCreateChunkyTriMesh(rcChunkyTriMesh* cm, const float* verts, const int* t
 {
 	int nchunks = (ntris + trisPerChunk-1) / trisPerChunk;
 
+	printf("Chunking tri mesh %d tris into %d tris per chunk", ntris, trisPerChunk);
 	cm->nodes = new rcChunkyTriMeshNode[nchunks*4];
 	if (!cm->nodes)
 		return false;
@@ -196,7 +197,18 @@ bool rcCreateChunkyTriMesh(rcChunkyTriMesh* cm, const float* verts, const int* t
 		if (node.n > cm->maxTrisPerChunk)
 			cm->maxTrisPerChunk = node.n;
 	}
-	 
+	
+	printf("chunked into %d nodes", cm->nnodes);
+	auto chunkedTris = 0;
+	for (int i = 0; i < cm->nnodes; ++i)
+	{
+		rcChunkyTriMeshNode& node = cm->nodes[i];
+		const bool isLeaf = node.i >= 0;
+		if (!isLeaf) continue;
+		printf("\tnode has %d tris\n", node.n);
+		chunkedTris += node.n;
+	}
+	printf("Chunked triangles is %d\n", chunkedTris);
 	return true;
 }
 
