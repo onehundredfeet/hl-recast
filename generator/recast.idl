@@ -789,65 +789,53 @@ interface NavMesh
 	void NavMesh();
 
 	[Internal="init"] StatusCode setParams([Const] NavMeshParams params);
-
 	StatusCode init([Cast="unsigned char *"]VoidPtr data, [Const] int dataSize, [Const] int flags);
-
 	[Const] NavMeshParams getParams();
 
+	//
+	// Tile API
+	//
 	//StatusCode addTile(char* data, int dataSize, int flags, dtTileRef lastRef, dtTileRef result); TODO
-
 	//StatusCode removeTile(dtTileRef ref, unsigned char** data, int* dataSize); //TODO
-
-	void calcTileLoc([Const] float[] pos, int[] tx, int[] ty);
-
-	[Const] dtMeshTile getTileAt([Const] int x, [Const] int y, [Const] int layer);
-
+//	void calcTileLoc([Const] float[] pos, int[] tx, int[] ty);
+//	[Const] dtMeshTile getTileAt([Const] int x, [Const] int y, [Const] int layer);
 	//int getTilesAt([Const] int x, [Const] int y, dtMeshTile [Const]** tiles, [Const] int maxTiles); //TODO
-
-	dtTileRef getTileRefAt(int x, int y, int layer);
-	
-	dtTileRef getTileRef([Const] dtMeshTile tile);
-	
-	[Const] dtMeshTile getTileByRef(dtTileRef ref);
-	
-	int getMaxTiles();
-	
+	//dtTileRef getTileRefAt(int x, int y, int layer);
+	//dtTileRef getTileRef([Const] dtMeshTile tile);
+	//[Const] dtMeshTile getTileByRef(dtTileRef ref);
+	//int getMaxTiles();
 	//[Const] dtMeshTile getTile(int i); // TODO  Public and private duplicate in C++.
-
 	// StatusCode getTileAndPolyByRef([Const] dtPolyRef ref, [Const] dtMeshTile** tile, [Const] dtPoly** poly); //TODO
-	
 	// void getTileAndPolyByRefUnsafe([Const] dtPolyRef ref, [Const] dtMeshTile** tile, [Const] dtPoly** poly); //TODO
+	//dtPolyRef getPolyRefBase([Const] dtMeshTile tile);
+	//int getTileStateSize([Const] dtMeshTile tile);
+	//StatusCode storeTileState([Const] dtMeshTile tile, char[] data, [Const] int maxDataSize);
+	//StatusCode restoreTileState(dtMeshTile tile, [Const] char[] data, [Const] int maxDataSize);
 
+	//
 	bool isValidPolyRef(dtPolyRef ref);
 	
-	dtPolyRef getPolyRefBase([Const] dtMeshTile tile);
 	
 	StatusCode getOffMeshConnectionPolyEndPoints(dtPolyRef prevRef, dtPolyRef polyRef, float[] startPos, float[] endPos);
 
 	[Const] dtOffMeshConnection getOffMeshConnectionByRef(dtPolyRef ref);
 	
+	//
+	// Poly Area & Flag configuration
+	// This is usually already built by the nav mesh process
+	//
 	StatusCode setPolyFlags(dtPolyRef ref, short flags);
-
 	StatusCode getPolyFlags(dtPolyRef ref, short[] resultFlags);
-
 	StatusCode setPolyArea(dtPolyRef ref, char area);
-
 	StatusCode getPolyArea(dtPolyRef ref, char[] resultArea);
 
-	int getTileStateSize([Const] dtMeshTile tile);
 
-	StatusCode storeTileState([Const] dtMeshTile tile, char[] data, [Const] int maxDataSize);
-	
-	StatusCode restoreTileState(dtMeshTile tile, [Const] char[] data, [Const] int maxDataSize);
 	
 	dtPolyRef encodePolyId(int salt, int it, int ip);
-
-	// void decodePolyId(int dtPolyRef, [Ref] int salt, [Ref] int it, [Ref] int ip); // TODO add unsigned int
+	// void decodePolyId(int dtPolyRef, [Out] uint salt, [Out] uint it, [Out] uint ip); // TODO add unsigned int
 	
 	int decodePolyIdSalt(dtPolyRef ref);
-
 	int decodePolyIdTile(dtPolyRef ref);
-
 	int decodePolyIdPoly(dtPolyRef ref);
 };
 
@@ -855,8 +843,8 @@ interface NavMesh
 interface DetourNavMesh 
 {
 	[Static] int dtGetDetailTriEdgeFlags(char triFlags, int edgeIndex);
-	[Static] NavMesh dtAllocNavMesh();
-	[Static] void dtFreeNavMesh(NavMesh navmesh);
+//	[Static] NavMesh dtAllocNavMesh();
+//	[Static] void dtFreeNavMesh(NavMesh navmesh);
 };
 
 //--------------------------------------------------------------------------------------------
@@ -987,7 +975,7 @@ interface dtRaycastHit
 	attribute float t; 
 	attribute float3 hitNormal;
 	attribute int hitEdgeIndex;
-	//attribute dtPolyRef path; TODO
+	attribute dtPolyRef *path; //TODO
 	attribute int pathCount;
 	attribute int maxPath;
 	attribute float pathCost;
@@ -1002,25 +990,35 @@ interface dtPolyQuery
 interface NavMeshQuery
 {
 	void NavMeshQuery();
+	[Const] NavMesh getAttachedNavMesh();
 
-	StatusCode init([Const] NavMesh nav, [Const] int maxNodes);
-	
-	StatusCode findPath(dtPolyRef startRef, dtPolyRef endRef, [Const] float[] startPos, 
-					[Const] float[] endPos, [Const] QueryFilter filter,
-					[Out] dtPolyRef path, int[] pathCount, [Const] int maxPath);
+	//NEW
+	StatusCode init( NavMesh nav, int maxNodes);
+	StatusCode findPath(dtPolyRef startRef, dtPolyRef endRef, float3 startPos, float3 endPos, QueryFilter filter, dtPolyRef [] path, [Out] int pathCount, int maxPath);
+	StatusCode findNearestPoly([Const] float3 center, [Const] float3 halfExtents,
+							 [Const] QueryFilter filter,
+							 [Out] dtPolyRef nearestRef, float3 nearestPt);
 
+	StatusCode findNearestPoly([Const] float3 center, [Const] float3 halfExtents,
+							 QueryFilter filter,
+							 [Out] dtPolyRef nearestRef, float3 nearestPt, [Out] bool isOverPoly);
+
+	StatusCode initSlicedFindPath(dtPolyRef startRef, dtPolyRef endRef,
+								float3 startPos, float3 endPos,
+								QueryFilter filter,  uint options);
+
+	StatusCode updateSlicedFindPath(int maxIter, [Out]int doneIters);
+	StatusCode finalizeSlicedFindPath(dtPolyRef [] path, [Out] int pathCount, int maxPath);
+
+	//OLD:
 	StatusCode findStraightPath([Const] float[] startPos, [Const] float[] endPos,
 							  [Const, Out] dtPolyRef path, [Const] int pathSize,
 							  float[] straightPath, byte * straightPathFlags, [Out] dtPolyRef straightPathRefs,
 							  int[] straightPathCount, [Const] int maxStraightPath, [Const] int options);
 
-	StatusCode initSlicedFindPath(dtPolyRef startRef, dtPolyRef endRef,
-								[Const] float[] startPos, [Const] float[] endPos,
-								[Const] QueryFilter filter, [Const] uint options);
 
-	StatusCode updateSlicedFindPath([Const] int maxIter, int[] doneIters);
 
-	StatusCode finalizeSlicedFindPath([Out] dtPolyRef path, int[] pathCount, [Const] int maxPath);
+	
 	
 	StatusCode finalizeSlicedFindPathPartial([Const, Out] dtPolyRef existing, [Const] int existingSize,
 										   [Out] dtPolyRef path, int[] pathCount, [Const] int maxPath);
@@ -1037,13 +1035,7 @@ interface NavMeshQuery
 	
 	StatusCode getPathFromDijkstraSearch(dtPolyRef endRef, [Out] dtPolyRef path, int[] pathCount, int maxPath);
 
-	StatusCode findNearestPoly([Const] float3 center, [Const] float3 halfExtents,
-							 [Const] QueryFilter filter,
-							 [Out] dtPolyRef nearestRef, float3 nearestPt);
-
-	StatusCode findNearestPoly([Const] float3 center, [Const] float3 halfExtents,
-							 [Const] QueryFilter filter,
-							 [Out] dtPolyRef nearestRef, float3 nearestPt, [Out] bool isOverPoly);
+	
 
 	StatusCode queryPolygons([Const] float3 center, [Const] float3 halfExtents,
 						   [Const] QueryFilter filter,
@@ -1090,13 +1082,11 @@ interface NavMeshQuery
 
 	StatusCode getPolyHeight(dtPolyRef ref, [Const] float[] pos, float[] height);
 
-	bool isValidPolyRef(dtPolyRef ref, [Const] QueryFilter filter);
-
+	bool isValidPolyRef(dtPolyRef ref, QueryFilter filter);
 	bool isInClosedList(dtPolyRef ref);
 
-    dtNodePool getNodePool();
+    //dtNodePool getNodePool();
 
-	[Const] NavMesh getAttachedNavMesh();
 
 	//[CObject, Internal="dtFreeNavMeshQuery"] void free();
 };
