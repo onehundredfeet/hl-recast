@@ -9,13 +9,8 @@ import hl.NativeArray;
 import hvector.*;
 import hvector.ShaderMath;
 import hvector.ShaderMathF;
-
-class RawMeshData {
-	public function new() {}
-
-	public var vertices = new Array<Float>();
-	public var indices = new Array<Int>();
-}
+import recast.tools.ObjFile;
+import recast.tools.Calculator;
 
 class Complete {
 	static inline final SAMPLE_POLYAREA_GROUND = 0;
@@ -32,48 +27,6 @@ class Complete {
 	static inline final SAMPLE_POLYFLAGS_DISABLED = 0x10; // Disabled polygon
 	static inline final SAMPLE_POLYFLAGS_ALL = 0xffff; // All abilities.
 
-	static function loadObj(filename:String) {
-		var rawMesh = new RawMeshData();
-
-		var fin = sys.io.File.read(filename, false);
-		try {
-			while (true) {
-				var line = fin.readLine();
-
-				if (line.charAt(0) == '#')
-					continue;
-
-				if (line.charAt(0) == 'v') {
-					if (line.charAt(1) == ' ') {
-					var splitted = line.split(" ");
-					rawMesh.vertices.push(Std.parseFloat(splitted[1]));
-					rawMesh.vertices.push(Std.parseFloat(splitted[2]));
-					rawMesh.vertices.push(Std.parseFloat(splitted[3]));
-					}
-					continue;
-				}
-
-				if (line.charAt(0) == 'f') {
-					var splitted = line.split(" ");
-
-					var x = splitted[1].indexOf('/');
-					if (x > -1) splitted[1] = splitted[1].substr(0, x);
-					rawMesh.indices.push(Std.parseInt(splitted[1]) - 1);
-					x = splitted[2].indexOf('/');
-					if (x > -1) splitted[2] = splitted[2].substr(0, x);
-					rawMesh.indices.push(Std.parseInt(splitted[2]) - 1);
-					x = splitted[3].indexOf('/');
-					if (x > -1) splitted[3] = splitted[3].substr(0, x);
-					rawMesh.indices.push(Std.parseInt(splitted[3]) - 1);
-				}
-			}
-			fin.close();
-		} catch (e:haxe.io.Eof) {
-			trace("Obj reading done");
-		}
-
-		return rawMesh;
-	}
 
 	static function FloatArrayToNativeArray(array:Array<Float>) {
 		var out = new hl.NativeArray<Single>(array.length);
@@ -121,19 +74,6 @@ class Complete {
 	static var _cacheLayerCount = 0;
 	static var _cacheCompressedSize = 0;
 	static var _cacheRawSize = 0;
-
-	static function getGridSize(bmin, bmax) {
-		// Init cache
-		//		const float* bmin = m_geom->getNavMeshBoundsMin();
-		//		const float* bmax = m_geom->getNavMeshBoundsMax();
-		//		int gw = 0, gh = 0;
-
-		var gwa = 0;
-		var gha = 0;
-		recast.Native.Recast.calcGridSize(bmin, bmax, _cellSize, hl.Ref.make(gwa), hl.Ref.make(gha));
-
-		return {width: gwa, height: gha};
-	}
 
 	static function getRasterConfig(bmin, bmax) {
 		trace("Processing Recast...");
@@ -184,18 +124,6 @@ class Complete {
 		return cfg;
 	}
 
-	static function getTileCounts(gw, gh) {
-		final ts = Std.int(_tileSizeWS);
-		final tw = Std.int((gw + ts - 1) / ts);
-		final th = Std.int((gh + ts - 1) / ts);
-
-
-		trace('getTileCounts... gw ${gw} gh ${gh} tw ${tw} th ${th} tsws ${_tileSizeWS}');
-
-
-
-		return {tileSizeI: ts, tileWidthCount: tw, tileHeightCount: th};
-	}
 
 	static function getTileCacheParameters( tw, th, bmin:Vec3):TileCacheParams {
 		trace("getTileCacheParameters...");
@@ -729,38 +657,7 @@ class Complete {
 		fo.close();
 	}
 	*/
-	static function dumpObj(path:String, mc:MeshCapture) {
-		trace('Dumping obj ${path}');
-		var vc = mc.numVerts();
-		var nt:Int = Std.int(vc / 3);
 
-		var fo = File.write(path, false);
-
-		var vert = new Vec3(0., 0., 0.);
-		trace('\t ${vc} verts ${nt} tris');
-		fo.writeString('# verts ${vc}\n');
-
-		for (i in 0...vc) {
-			mc.getVert(i, vert);
-
-			fo.writeString('v ${vert.x} ${vert.y} ${vert.z}\n');
-			if (i % 10000 == 0 && i > 0) {
-				trace('${i} verts');
-				fo.flush();
-			}
-		}
-
-		for (i in 0...nt) {
-			fo.writeString('f ${(i * 3) + 0 + 1} ${(i * 3) + 1 + 1} ${(i * 3) + 2 + 1}\n');
-			if (i % 10000 == 0 && i > 0) {
-				trace('${i} faces');
-				fo.flush();
-			}
-		}
-
-		fo.flush();
-		fo.close();
-	}
 
 	static function testIDL() {
 		var a = 1;
@@ -794,12 +691,9 @@ class Complete {
 		//
 		/////////////////////////////// Phase 1 - Load mesh
 		//
-		var rawMesh = loadObj("undulating_small.obj");
-		var verticesCount = cast(rawMesh.vertices.length / 3, Int);
-		var trianglesCount = cast(rawMesh.indices.length / 3, Int);
-
-		var nativeVertices = FloatArrayToNativeArray(rawMesh.vertices);
-		var nativeIndices = IntArrayToNativeArray(rawMesh.indices);
+		var rawMesh = ObjFile.loadNative("examples/undulating_small.obj");
+		var verticesCount = Std.int(rawMesh.vertices.length / 3);
+		var trianglesCount = Std.int(rawMesh.indicies.length / 3);
 
 		var chunkyTriMesh = new ChunkyTriMesh();
 
@@ -807,10 +701,10 @@ class Complete {
 
 		var pt = new PerformanceTimer();
 
-		var bounds = getBounds(nativeVertices, verticesCount);
-		var gridwh = getGridSize(bounds.min, bounds.max);
+		var bounds = getBounds(rawMesh.vertices, verticesCount);
+		var gridwh = Calculator.getGridSize(_cellSize, bounds.min, bounds.max);
 		var rasterCfg = getRasterConfig( bounds.min, bounds.max);
-		var tileCounts = getTileCounts(gridwh.width, gridwh.height);
+		var tileCounts = Calculator.getTileCounts(_tileSizeWS, gridwh.width, gridwh.height);
 		var cacheCfg = getTileCacheParameters( tileCounts.tileWidthCount, tileCounts.tileHeightCount, bounds.min);
 		var configuredCache = getTileCache(cacheCfg);
 
@@ -818,12 +712,12 @@ class Complete {
 		var navMesh = new NavMesh();
 		navMesh.setParams(navMeshCfg);
 		pt.start();
-		chunkyTriMesh.build(nativeVertices, nativeIndices, trianglesCount, TRIANGLES_PER_CHUNK);
+		chunkyTriMesh.build(rawMesh.vertices, rawMesh.indicies, trianglesCount, TRIANGLES_PER_CHUNK);
 		pt.stop();
 		trace('Chunky ${pt.deltaMilliseconds()}ms tcx ${tileCounts.tileWidthCount} tcy ${tileCounts.tileHeightCount}');
 
 		pt.start();
-		preprocessTiles(chunkyTriMesh, nativeVertices, verticesCount, configuredCache.cache, tileCounts.tileWidthCount, tileCounts.tileHeightCount, rasterCfg,
+		preprocessTiles(chunkyTriMesh, rawMesh.vertices, verticesCount, configuredCache.cache, tileCounts.tileWidthCount, tileCounts.tileHeightCount, rasterCfg,
 			cacheCfg);
 		pt.stop();
 		trace('Preprocessing ${pt.deltaMilliseconds()}ms : rasterizedTris ${rasterizedTris} heightfield ${_heightfieldTime}ms filter ${_filterTime}ms cache ${_cacheTime}ms');
@@ -834,21 +728,14 @@ class Complete {
 
 		var mc = new MeshCapture(true);
 		mc.captureNavMesh(navMesh, 0xffff);
-		dumpObj("out.obj", mc);
+		ObjFile.dump("out.obj", mc);
 
 		var navQuery = new NavMeshQuery();
 		navQuery.init(navMesh, MAX_NAV_QUERY_NODES);
 
 		var queryFilter = new QueryFilter();
 
-		/*
-			m_polyPickExt[0] = 2;
-			m_polyPickExt[1] = 4;
-			m_polyPickExt[2] = 2;
 
-			m_neighbourhoodRadius = 2.5f;
-			m_randomRadius = 5.0f;
-		 */
 
 		var spos = new Vec3(20., 0., 20.);
 		var polyPickExt = new Vec3(2., 4., 2.);
@@ -863,9 +750,10 @@ class Complete {
 			// Odd
 			trace('--- Failure did not call ${status}');
 			status = recast.Status.setFailure(status);
+		} else {
+			trace('Nearest isSuccess ${recast.Status.isSuccess(status)} isOverPoly ${isOverPoly} nearestPoint ${nearestPoint} startRef ${startRef}');
 		}
 
-		trace('Nearest isSuccess ${recast.Status.isSuccess(status)} isOverPoly ${isOverPoly} nearestPoint ${nearestPoint} startRef ${startRef}');
 		trace("--- Done");
 		// nav mesh is now built
 	}

@@ -6,3 +6,4 @@ PathfinderSample/pathfinder.hl
 .DS_Store
 recast.hdll
 bin
+out.obj

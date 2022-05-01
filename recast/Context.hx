@@ -2,18 +2,18 @@ package recast;
 
 class Context {
 
-    var _context : recast.Native.RCContext;
-    var _config : recast.Native.Config;
+    var _context : recast.Native.RasterContext;
+    var _config : recast.Native.RasterConfig;
 
-    public function new ( configDefaults: recast.Native.Config, logging : Bool ) {
-        _context = new recast.Native.RCContext(logging);
+    public function new ( configDefaults: recast.Native.RasterConfig, logging : Bool ) {
+        _context = new recast.Native.RasterContext(logging);
         _config = configDefaults;
     }
 
 	public  function createHeightfield(width : Int, height : Int) : recast.Native.Heightfield {
         var hf = new recast.Native.Heightfield( );
 
-        if (_context.rcCreateHeightfield( hf, width, height, _config.bmin, _config.bmax, _config.cs, _config.ch )) {
+        if (_context.createHeightfield( hf, width, height, _config.bmin, _config.bmax, _config.cs, _config.ch )) {
             return hf;
         }
         return null;
