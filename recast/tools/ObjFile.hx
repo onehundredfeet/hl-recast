@@ -43,7 +43,6 @@ class ObjFile {
 			}
 			fin.close();
 		} catch (e:haxe.io.Eof) {
-			trace("Obj reading done");
 		}
 
 		return {vertices:vertices, indices : indices };
@@ -53,16 +52,16 @@ class ObjFile {
 		var x = load(filename);
 		return {vertices:SingleArrayToNativeArray(x.vertices), indicies: IntArrayToNativeArray(x.indices)};
 	}
-	
+
 	public static function dump(path:String, mc:recast.Native.MeshCapture) {
-		trace('Dumping obj ${path}');
+		//trace('Dumping obj ${path}');
 		var vc = mc.numVerts();
 		var nt:Int = Std.int(vc / 3);
 
 		var fo = File.write(path, false);
 
 		var vert = new Vec3(0., 0., 0.);
-		trace('\t ${vc} verts ${nt} tris');
+		//trace('\t ${vc} verts ${nt} tris');
 		fo.writeString('# verts ${vc}\n');
 
 		for (i in 0...vc) {

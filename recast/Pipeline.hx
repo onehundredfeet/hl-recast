@@ -279,8 +279,8 @@ class Pipeline {
         // Tile info.
         header.width = layer.width;
         header.height = layer.height;
-        trace('layer width ${layer.width} height ${ layer.height}');
-        trace('layer width ${header.width} height ${ header.height}');
+//        trace('layer width ${layer.width} height ${ layer.height}');
+  //      trace('layer width ${header.width} height ${ header.height}');
         header.minx = layer.minx;
         header.maxx = layer.maxx;
         header.miny = layer.miny;
@@ -302,7 +302,7 @@ class Pipeline {
 }
 
 	function getRasterConfig(bmin, bmax) {
-		trace("Processing Recast...");
+		//trace("Processing Recast...");
 		// -------------------------------------------------------------------------------------
 		// Step 1. Initialize build config.
 		// -------------------------------------------------------------------------------------
@@ -326,6 +326,7 @@ class Pipeline {
 
 		// Tiles
 		cfg.tileSize = Std.int(_tileCellCount);
+		cfg.walkableRadius = Std.int(ceil(agentRadius / cfg.cs));
 		cfg.borderSize = cfg.walkableRadius + 3; // Reserve enough padding.
 		cfg.width = cfg.tileSize + cfg.borderSize * 2;
 		cfg.height = cfg.tileSize + cfg.borderSize * 2;
@@ -333,7 +334,6 @@ class Pipeline {
 		cfg.detailSampleMaxError = cellHeight * detailSampleMaxError;
 		cfg.walkableHeight = Std.int(ceil(agentHeight / cfg.ch)); // voxel units
 		cfg.walkableClimb = Std.int(floor(agentMaxClimb / cfg.ch));
-		cfg.walkableRadius = Std.int(ceil(agentRadius / cfg.cs));
 
 		if (cfg.width > 255)
 			throw 'tile width is beyond 255: ${cfg.width}';

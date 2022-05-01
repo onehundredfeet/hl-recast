@@ -25,11 +25,7 @@ class Calculator {
 		final tw = Std.int((gw + ts - 1) / ts);
 		final th = Std.int((gh + ts - 1) / ts);
 
-
-		trace('getTileCounts... gw ${gw} gh ${gh} tw ${tw} th ${th} tsws ${tileSizeWS}');
-
-
-
+		//trace('getTileCounts... gw ${gw} gh ${gh} tw ${tw} th ${th} tsws ${tileSizeWS}');
 		return {tileSizeI: ts, tileWidthCount: tw, tileHeightCount: th};
 	}
 

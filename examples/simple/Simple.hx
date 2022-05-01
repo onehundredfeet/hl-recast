@@ -15,8 +15,6 @@ class Simple {
 
 
 	public static function main() {
-		trace("main()");
-
 		// Leave the defaults
 		var pipeline = new Pipeline();
 
