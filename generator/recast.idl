@@ -671,6 +671,21 @@ enum dtCompressedTileFlags
 };
 
 
+/// Vertex flags returned by dtNavMeshQuery::findStraightPath.
+enum dtStraightPathFlags
+{
+	"DT_STRAIGHTPATH_START",
+	"DT_STRAIGHTPATH_END",
+	"DT_STRAIGHTPATH_OFFMESH_CONNECTION"
+};
+
+/// Options for dtNavMeshQuery::findStraightPath.
+enum dtStraightPathOptions
+{
+	"DT_STRAIGHTPATH_AREA_CROSSINGS",
+	"DT_STRAIGHTPATH_ALL_CROSSINGS"
+};
+
 
 
 
@@ -970,7 +985,8 @@ interface QueryFilter
 	
 };
 
-interface dtRaycastHit
+[Internal="dtRaycastHit"]
+interface RaycastHit
 {
 	attribute float t; 
 	attribute float3 hitNormal;
@@ -1009,19 +1025,26 @@ interface NavMeshQuery
 
 	StatusCode updateSlicedFindPath(int maxIter, [Out]int doneIters);
 	StatusCode finalizeSlicedFindPath(dtPolyRef [] path, [Out] int pathCount, int maxPath);
+	StatusCode finalizeSlicedFindPathPartial( dtPolyRef [] existing, int existingSize,
+										   dtPolyRef [] path, [Out]int pathCount, int maxPath);
+	StatusCode findStraightPath(float3 startPos, float3 endPos,
+							  dtPolyRef [] path, int pathSize,
+							  float[] straightPath, byte [] straightPathFlags, dtPolyRef [] straightPathRefs,
+							  [Out] int straightPathCount, int maxStraightPath, int options);
+
+	StatusCode raycast(dtPolyRef startRef,  float3 startPos,float3 endPos,QueryFilter filter,
+					 [Out]float t, float3 hitNormal, dtPolyRef [] path, [Out] int pathCount,  int maxPath);
+	
+	StatusCode raycast(dtPolyRef startRef,  float3 startPos,  float3 endPos,
+					 QueryFilter filter,  int options,
+					 RaycastHit hit, dtPolyRef prevRef);
 
 	//OLD:
-	StatusCode findStraightPath([Const] float[] startPos, [Const] float[] endPos,
-							  [Const, Out] dtPolyRef path, [Const] int pathSize,
-							  float[] straightPath, byte * straightPathFlags, [Out] dtPolyRef straightPathRefs,
-							  int[] straightPathCount, [Const] int maxStraightPath, [Const] int options);
 
 
 
 	
 	
-	StatusCode finalizeSlicedFindPathPartial([Const, Out] dtPolyRef existing, [Const] int existingSize,
-										   [Out] dtPolyRef path, int[] pathCount, [Const] int maxPath);
 
 	StatusCode findPolysAroundCircle(dtPolyRef startRef, [Const] float[] centerPos, [Const] float radius,
 								   [Const] QueryFilter filter,
@@ -1053,13 +1076,7 @@ interface NavMeshQuery
 							  [Const] QueryFilter filter, float3 resultPos, [Out] dtPolyRef visited, 
 							  int[] visitedCount, [Const] int maxVisitedSize);
 	
-	StatusCode raycast(dtPolyRef startRef, [Const] float3 startPos, [Const] float3 endPos,
-					 [Const] QueryFilter filter,
-					 float[] t, float[] hitNormal, [Out] dtPolyRef path, int[] pathCount, [Const] int maxPath);
-	
-	StatusCode raycast(dtPolyRef startRef, [Const] float[] startPos, [Const] float[] endPos,
-					 [Const] QueryFilter filter, [Const] int options,
-					 dtRaycastHit hit, dtPolyRef prevRef);
+
 
 	StatusCode findDistanceToWall(dtPolyRef startRef, [Const] float[] centerPos, [Const] float maxRadius,
 								[Const] QueryFilter filter,

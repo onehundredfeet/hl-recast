@@ -25,29 +25,35 @@ class Simple {
 		var nm = pipeline.createTileCacheNavMesh(tileCache);
 
 		var mc = new MeshCapture(true);
-		mc.captureNavMesh(nm, 0xffff);
+		mc.captureNavMesh(nm.nativeMesh, 0xffff);
 		ObjFile.dump("out.obj", mc);
 
-		var navQuery = new NavMeshQuery();
-		navQuery.init(nm, MAX_NAV_QUERY_NODES);
 
-		var queryFilter = new QueryFilter();
+		var q = nm.createInstantQuery();
 
-		var spos = new Vec3(20., 0., 20.);
+		var apos = new Vec3(10., 0., 10.);
+		var bpos = new Vec3(20., 0., 20.);
 		var polyPickExt = new Vec3(2., 4., 2.);
-		var startRef = -1;
-		var nearestPoint = new Vec3(-1., -1., -1.);
-		var isOverPoly = false;
-		var status = navQuery.findNearestPoly(spos, polyPickExt, queryFilter, startRef, nearestPoint, isOverPoly);
-		if (startRef == 0) {
-			trace('--- Didn\'t find failure ${status}');
-			status = recast.Status.setFailure(status);
-		} else if (startRef == -1) {
-			// Odd
-			trace('--- Failure did not call ${status}');
-			status = recast.Status.setFailure(status);
+		var a = q.findStart(apos, polyPickExt );
+		var b = q.findEnd(bpos, polyPickExt );
+		
+		if (a && b) {
+			if (q.findPathStartToEnd()) {
+				trace('Path is successful! with a length of ${q.pathLength}');
+
+				for (t in q.pathIt) {
+					trace('\tPoly: ${t}');
+				}
+
+				if (q.refinePath()) {
+					trace('Funnel is successful!');
+				} else {
+					trace('Funnel has failed!');
+				}
+			} else 
+				trace('Can\'t find path between stat and end: ' + q.lastStatusString());
 		} else {
-			trace('Nearest isSuccess ${recast.Status.isSuccess(status)} isOverPoly ${isOverPoly} nearestPoint ${nearestPoint} startRef ${startRef}');
+			trace('Couldn\'t find positions ');
 		}
 	}
 }

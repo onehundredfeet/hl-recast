@@ -165,7 +165,7 @@ class Pipeline {
 			}
         }
 
-		return navMesh;
+		return new TiledNavMesh(navMesh, tileCache);
 	}
 
 
@@ -393,16 +393,6 @@ class Pipeline {
         vtc.cache = tileCache;
         return vtc;
 
-        /*
-		return {
-			config: tcparams,
-			cache: tileCache,
-			compressor: compressor,
-			allocator: allocator,
-			processor: processor,
-            bounds: bounds,
-            tilecounts : tilecounts
-		}; // need to hodl onto these references
-        */
+
 	}
 }
