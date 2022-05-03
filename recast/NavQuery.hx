@@ -25,7 +25,8 @@ class NavQuery {
 
     static inline final MAX_PATH_LENGTH = 256;
     static inline final MAX_NAV_QUERY_NODES = 2048;
-
+    static final PATH_TO_LINE_PATH = 3;
+    
     public var pathLength(get,never) : Int;
     inline function get_pathLength() return _pathLength;
 

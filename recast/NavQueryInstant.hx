@@ -16,26 +16,10 @@ abstract PathVertexCapture(Int) from Int to Int {
 
 class NavQueryInstant extends NavQuery{
     
-    static final PATH_TO_LINE_PATH = 3;
-
-
-
-
-
+    
     public function new(nm : TiledNavMesh, maxPath = NavQuery.MAX_PATH_LENGTH) {
         super(nm,  NavQuery.MAX_NAV_QUERY_NODES, maxPath);
     }
-
-    public var pathLength(get,never) : Int;
-    inline function get_pathLength() return _pathLength;
-
-    // Will be longer than path, do not iterate
-    public var pathArrayRaw(get,never) : NativeArray<UInt>;
-    inline function  get_pathArrayRaw() return _polys;
-
-    public var pathIt(get,never) : NativeSpanIt<UInt>;
-    inline function  get_pathIt() return new NativeSpanIt<UInt>(_polys, _pathLength);
-
 
     //Stateless - returns all results
     public function findNearest( center : Vec3, halfExtents : Vec3, nearestPoint : Vec3 ) : Null<Int>  {
@@ -90,7 +74,7 @@ class NavQueryInstant extends NavQuery{
     }
 
     inline public function refinePath( mode : PathVertexCapture = PATH_ONLY, gatherFlags = true, gatherPolyIDs = true) {        
-        var length = _pathLength * PATH_TO_LINE_PATH;
+        var length = _pathLength * NavQuery.PATH_TO_LINE_PATH;
         
         if (_linePoints == null || _linePoints.length < length) _linePoints = new NativeArray<Single>(length);
         if (gatherFlags && (_lineFlags == null || _lineFlags.length < length)) _lineFlags = new NativeArray<hl.UI8>(length);
@@ -110,11 +94,5 @@ class NavQueryInstant extends NavQuery{
     }
 
 
-        /*
-	StatusCode findStraightPath(float3 startPos, float3 endPos,
-							  dtPolyRef [] path, int pathSize,
-							  float[] straightPath, [Out, Cast="unsigned char *"] uint straightPathFlags, dtPolyRef [] straightPathRefs,
-							  [Out] int straightPathCount, int maxStraightPath, int options);
-        */
 
 }

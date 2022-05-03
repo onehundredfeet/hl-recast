@@ -47,6 +47,11 @@ class Simple {
 
 				if (q.refinePath()) {
 					trace('Funnel is successful!');
+					for (i in 0...q.linePathLength) {
+						var x = q.getLinePoint(i);
+						trace('\tpt: ${x.x}, ${x.y}, ${x.z}');
+					}
+
 				} else {
 					trace('Funnel has failed!');
 				}
