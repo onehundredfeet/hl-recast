@@ -719,7 +719,7 @@ HL_PRIM bool HL_NAME(ChunkyTriMesh_build4)(pref<rcChunkyTriMesh>* _this, varray*
 DEFINE_PRIM(_BOOL, ChunkyTriMesh_build4, _IDL _ARR _ARR _I32 _I32);
 
 HL_PRIM int HL_NAME(ChunkyTriMesh_getOverlappingRect4)(pref<rcChunkyTriMesh>* _this, _hl_float2* bmin, _hl_float2* bmax, varray* ids, int maxIds) {
-	return (rcGetChunksOverlappingRect( _unref(_this) , (_hl_float2*)bmin, (_hl_float2*)bmax, hl_aptr(ids,int), maxIds));
+	return (rcGetChunksOverlappingRect( _unref(_this) , (float*)(_hl_float2*)bmin, (float*)(_hl_float2*)bmax, hl_aptr(ids,int), maxIds));
 }
 DEFINE_PRIM(_I32, ChunkyTriMesh_getOverlappingRect4, _IDL _STRUCT _STRUCT _ARR _I32);
 
@@ -754,7 +754,7 @@ HL_PRIM void HL_NAME(RasterContext_startTimer1)(pref<rcContext>* _this, int labe
 DEFINE_PRIM(_VOID, RasterContext_startTimer1, _IDL _I32);
 
 HL_PRIM bool HL_NAME(RasterContext_createHeightfield7)(pref<rcContext>* _this, pref<rcHeightfield>* hf, int width, int height, _hl_float3* bmin, _hl_float3* bmax, float cs, float ch) {
-	return (rcCreateHeightfield( _unref(_this) , *_unref_ptr_safe(hf), width, height, (HL_CONST _hl_float3*)bmin, (HL_CONST _hl_float3*)bmax, cs, ch));
+	return (rcCreateHeightfield( _unref(_this) , *_unref_ptr_safe(hf), width, height, (float*)(_hl_float3*)bmin, (float*)(_hl_float3*)bmax, cs, ch));
 }
 DEFINE_PRIM(_BOOL, RasterContext_createHeightfield7, _IDL _IDL _I32 _I32 _STRUCT _STRUCT _F32 _F32);
 
@@ -774,7 +774,7 @@ HL_PRIM bool HL_NAME(RasterContext_rcAddSpan7)(pref<rcContext>* _this, pref<rcHe
 DEFINE_PRIM(_BOOL, RasterContext_rcAddSpan7, _IDL _IDL _I32 _I32 _I32 _I32 _I32 _I32);
 
 HL_PRIM bool HL_NAME(RasterContext_rasterizeTriangle6)(pref<rcContext>* _this, _hl_float3* v0, _hl_float3* v1, _hl_float3* v2, int area, pref<rcHeightfield>* solid, int flagMergeThr) {
-	return (rcRasterizeTriangle( _unref(_this) , (HL_CONST _hl_float3*)v0, (HL_CONST _hl_float3*)v1, (HL_CONST _hl_float3*)v2, area, *_unref_ptr_safe(solid), flagMergeThr));
+	return (rcRasterizeTriangle( _unref(_this) , (float*)(HL_CONST _hl_float3*)v0, (float*)(HL_CONST _hl_float3*)v1, (float*)(HL_CONST _hl_float3*)v2, area, *_unref_ptr_safe(solid), flagMergeThr));
 }
 DEFINE_PRIM(_BOOL, RasterContext_rasterizeTriangle6, _IDL _STRUCT _STRUCT _STRUCT _I32 _IDL _I32);
 
@@ -824,17 +824,17 @@ HL_PRIM bool HL_NAME(RasterContext_rcMedianFilterWalkableArea1)(pref<rcContext>*
 DEFINE_PRIM(_BOOL, RasterContext_rcMedianFilterWalkableArea1, _IDL _IDL);
 
 HL_PRIM void HL_NAME(RasterContext_rcMarkBoxArea4)(pref<rcContext>* _this, _hl_float3* bmin, _hl_float3* bmax, unsigned char areaId, pref<rcCompactHeightfield>* chf) {
-	(rcMarkBoxArea( _unref(_this) , (HL_CONST _hl_float3*)bmin, (HL_CONST _hl_float3*)bmax, areaId, *_unref_ptr_safe(chf)));
+	(rcMarkBoxArea( _unref(_this) , (float*)(_hl_float3*)bmin, (float*)(_hl_float3*)bmax, areaId, *_unref_ptr_safe(chf)));
 }
 DEFINE_PRIM(_VOID, RasterContext_rcMarkBoxArea4, _IDL _STRUCT _STRUCT _I8 _IDL);
 
 HL_PRIM void HL_NAME(RasterContext_rcMarkConvexPolyArea6)(pref<rcContext>* _this, _hl_float3* verts, int nverts, float hmin, float hmax, unsigned char areaId, pref<rcCompactHeightfield>* chf) {
-	(rcMarkConvexPolyArea( _unref(_this) , (HL_CONST _hl_float3*)verts, nverts, hmin, hmax, areaId, *_unref_ptr_safe(chf)));
+	(rcMarkConvexPolyArea( _unref(_this) , (float*)(_hl_float3*)verts, nverts, hmin, hmax, areaId, *_unref_ptr_safe(chf)));
 }
 DEFINE_PRIM(_VOID, RasterContext_rcMarkConvexPolyArea6, _IDL _STRUCT _I32 _F32 _F32 _I8 _IDL);
 
 HL_PRIM void HL_NAME(RasterContext_rcMarkCylinderArea5)(pref<rcContext>* _this, _hl_float3* pos, float r, float h, unsigned char areaId, pref<rcCompactHeightfield>* chf) {
-	(rcMarkCylinderArea( _unref(_this) , (HL_CONST _hl_float3*)pos, r, h, areaId, *_unref_ptr_safe(chf)));
+	(rcMarkCylinderArea( _unref(_this) , (float*)(_hl_float3*)pos, r, h, areaId, *_unref_ptr_safe(chf)));
 }
 DEFINE_PRIM(_VOID, RasterContext_rcMarkCylinderArea5, _IDL _STRUCT _F32 _F32 _I8 _IDL);
 
@@ -956,7 +956,7 @@ DEFINE_PRIM(_F32,RasterConfig_set_ch,_IDL _F32);
 HL_PRIM _hl_float3* HL_NAME(RasterConfig_get_bmin)( pref<rcConfig>* _this ) {
 	return (_hl_float3* )(_unref(_this)->bmin);
 }
-HL_PRIM void HL_NAME(RasterConfig_getbminv)( rcConfig _this, _hl_float3* value ) {
+HL_PRIM void HL_NAME(RasterConfig_getbminv)( pref<rcConfig>* _this, _hl_float3* value ) {
 	 float *src = (float*) & (_unref(_this)->bmin)[0];
 	 float *dst = (float*) value;
 	dst[0] = src[0]; dst[1] = src[1]; dst[2] = src[2];
@@ -969,7 +969,7 @@ HL_PRIM _hl_float3* HL_NAME(RasterConfig_set_bmin)( pref<rcConfig>* _this, _hl_f
 	dst[0] = src[0]; dst[1] = src[1]; dst[2] = src[2];
 	return value;
 }
-HL_PRIM void HL_NAME(RasterConfig_setbmin3)( rcConfig _this,  float value0, float value1, float value2 ) {
+HL_PRIM void HL_NAME(RasterConfig_setbmin3)( pref<rcConfig>* _this,  float value0, float value1, float value2 ) {
 	 float *p = (_unref(_this)->bmin);
 	p[0] = value0; p[1] = value1; p[2] = value2;
 }
@@ -979,7 +979,7 @@ DEFINE_PRIM(_STRUCT,RasterConfig_set_bmin,_IDL _STRUCT);
 HL_PRIM _hl_float3* HL_NAME(RasterConfig_get_bmax)( pref<rcConfig>* _this ) {
 	return (_hl_float3* )(_unref(_this)->bmax);
 }
-HL_PRIM void HL_NAME(RasterConfig_getbmaxv)( rcConfig _this, _hl_float3* value ) {
+HL_PRIM void HL_NAME(RasterConfig_getbmaxv)( pref<rcConfig>* _this, _hl_float3* value ) {
 	 float *src = (float*) & (_unref(_this)->bmax)[0];
 	 float *dst = (float*) value;
 	dst[0] = src[0]; dst[1] = src[1]; dst[2] = src[2];
@@ -992,7 +992,7 @@ HL_PRIM _hl_float3* HL_NAME(RasterConfig_set_bmax)( pref<rcConfig>* _this, _hl_f
 	dst[0] = src[0]; dst[1] = src[1]; dst[2] = src[2];
 	return value;
 }
-HL_PRIM void HL_NAME(RasterConfig_setbmax3)( rcConfig _this,  float value0, float value1, float value2 ) {
+HL_PRIM void HL_NAME(RasterConfig_setbmax3)( pref<rcConfig>* _this,  float value0, float value1, float value2 ) {
 	 float *p = (_unref(_this)->bmax);
 	p[0] = value0; p[1] = value1; p[2] = value2;
 }
@@ -1187,7 +1187,7 @@ DEFINE_PRIM(_I32,Heightfield_set_height,_IDL _I32);
 HL_PRIM _hl_float3* HL_NAME(Heightfield_get_bmin)( pref<rcHeightfield>* _this ) {
 	return (_hl_float3* )(_unref(_this)->bmin);
 }
-HL_PRIM void HL_NAME(Heightfield_getbminv)( rcHeightfield _this, _hl_float3* value ) {
+HL_PRIM void HL_NAME(Heightfield_getbminv)( pref<rcHeightfield>* _this, _hl_float3* value ) {
 	 float *src = (float*) & (_unref(_this)->bmin)[0];
 	 float *dst = (float*) value;
 	dst[0] = src[0]; dst[1] = src[1]; dst[2] = src[2];
@@ -1200,7 +1200,7 @@ HL_PRIM _hl_float3* HL_NAME(Heightfield_set_bmin)( pref<rcHeightfield>* _this, _
 	dst[0] = src[0]; dst[1] = src[1]; dst[2] = src[2];
 	return value;
 }
-HL_PRIM void HL_NAME(Heightfield_setbmin3)( rcHeightfield _this,  float value0, float value1, float value2 ) {
+HL_PRIM void HL_NAME(Heightfield_setbmin3)( pref<rcHeightfield>* _this,  float value0, float value1, float value2 ) {
 	 float *p = (_unref(_this)->bmin);
 	p[0] = value0; p[1] = value1; p[2] = value2;
 }
@@ -1210,7 +1210,7 @@ DEFINE_PRIM(_STRUCT,Heightfield_set_bmin,_IDL _STRUCT);
 HL_PRIM _hl_float3* HL_NAME(Heightfield_get_bmax)( pref<rcHeightfield>* _this ) {
 	return (_hl_float3* )(_unref(_this)->bmax);
 }
-HL_PRIM void HL_NAME(Heightfield_getbmaxv)( rcHeightfield _this, _hl_float3* value ) {
+HL_PRIM void HL_NAME(Heightfield_getbmaxv)( pref<rcHeightfield>* _this, _hl_float3* value ) {
 	 float *src = (float*) & (_unref(_this)->bmax)[0];
 	 float *dst = (float*) value;
 	dst[0] = src[0]; dst[1] = src[1]; dst[2] = src[2];
@@ -1223,7 +1223,7 @@ HL_PRIM _hl_float3* HL_NAME(Heightfield_set_bmax)( pref<rcHeightfield>* _this, _
 	dst[0] = src[0]; dst[1] = src[1]; dst[2] = src[2];
 	return value;
 }
-HL_PRIM void HL_NAME(Heightfield_setbmax3)( rcHeightfield _this,  float value0, float value1, float value2 ) {
+HL_PRIM void HL_NAME(Heightfield_setbmax3)( pref<rcHeightfield>* _this,  float value0, float value1, float value2 ) {
 	 float *p = (_unref(_this)->bmax);
 	p[0] = value0; p[1] = value1; p[2] = value2;
 }
@@ -1428,7 +1428,7 @@ DEFINE_PRIM(_I32,CompactHeightfield_set_maxRegions,_IDL _I32);
 HL_PRIM _hl_float3* HL_NAME(CompactHeightfield_get_bmin)( pref<rcCompactHeightfield>* _this ) {
 	return (_hl_float3* )(_unref(_this)->bmin);
 }
-HL_PRIM void HL_NAME(CompactHeightfield_getbminv)( rcCompactHeightfield _this, _hl_float3* value ) {
+HL_PRIM void HL_NAME(CompactHeightfield_getbminv)( pref<rcCompactHeightfield>* _this, _hl_float3* value ) {
 	 float *src = (float*) & (_unref(_this)->bmin)[0];
 	 float *dst = (float*) value;
 	dst[0] = src[0]; dst[1] = src[1]; dst[2] = src[2];
@@ -1441,7 +1441,7 @@ HL_PRIM _hl_float3* HL_NAME(CompactHeightfield_set_bmin)( pref<rcCompactHeightfi
 	dst[0] = src[0]; dst[1] = src[1]; dst[2] = src[2];
 	return value;
 }
-HL_PRIM void HL_NAME(CompactHeightfield_setbmin3)( rcCompactHeightfield _this,  float value0, float value1, float value2 ) {
+HL_PRIM void HL_NAME(CompactHeightfield_setbmin3)( pref<rcCompactHeightfield>* _this,  float value0, float value1, float value2 ) {
 	 float *p = (_unref(_this)->bmin);
 	p[0] = value0; p[1] = value1; p[2] = value2;
 }
@@ -1451,7 +1451,7 @@ DEFINE_PRIM(_STRUCT,CompactHeightfield_set_bmin,_IDL _STRUCT);
 HL_PRIM _hl_float3* HL_NAME(CompactHeightfield_get_bmax)( pref<rcCompactHeightfield>* _this ) {
 	return (_hl_float3* )(_unref(_this)->bmax);
 }
-HL_PRIM void HL_NAME(CompactHeightfield_getbmaxv)( rcCompactHeightfield _this, _hl_float3* value ) {
+HL_PRIM void HL_NAME(CompactHeightfield_getbmaxv)( pref<rcCompactHeightfield>* _this, _hl_float3* value ) {
 	 float *src = (float*) & (_unref(_this)->bmax)[0];
 	 float *dst = (float*) value;
 	dst[0] = src[0]; dst[1] = src[1]; dst[2] = src[2];
@@ -1464,7 +1464,7 @@ HL_PRIM _hl_float3* HL_NAME(CompactHeightfield_set_bmax)( pref<rcCompactHeightfi
 	dst[0] = src[0]; dst[1] = src[1]; dst[2] = src[2];
 	return value;
 }
-HL_PRIM void HL_NAME(CompactHeightfield_setbmax3)( rcCompactHeightfield _this,  float value0, float value1, float value2 ) {
+HL_PRIM void HL_NAME(CompactHeightfield_setbmax3)( pref<rcCompactHeightfield>* _this,  float value0, float value1, float value2 ) {
 	 float *p = (_unref(_this)->bmax);
 	p[0] = value0; p[1] = value1; p[2] = value2;
 }
@@ -1534,7 +1534,7 @@ DEFINE_PRIM(_BYTES,CompactHeightfield_set_areas,_IDL _BYTES);
 HL_PRIM _hl_float3* HL_NAME(HeightfieldLayer_get_bmin)( pref<rcHeightfieldLayer>* _this ) {
 	return (_hl_float3* )(_unref(_this)->bmin);
 }
-HL_PRIM void HL_NAME(HeightfieldLayer_getbminv)( rcHeightfieldLayer _this, _hl_float3* value ) {
+HL_PRIM void HL_NAME(HeightfieldLayer_getbminv)( pref<rcHeightfieldLayer>* _this, _hl_float3* value ) {
 	 float *src = (float*) & (_unref(_this)->bmin)[0];
 	 float *dst = (float*) value;
 	dst[0] = src[0]; dst[1] = src[1]; dst[2] = src[2];
@@ -1547,7 +1547,7 @@ HL_PRIM _hl_float3* HL_NAME(HeightfieldLayer_set_bmin)( pref<rcHeightfieldLayer>
 	dst[0] = src[0]; dst[1] = src[1]; dst[2] = src[2];
 	return value;
 }
-HL_PRIM void HL_NAME(HeightfieldLayer_setbmin3)( rcHeightfieldLayer _this,  float value0, float value1, float value2 ) {
+HL_PRIM void HL_NAME(HeightfieldLayer_setbmin3)( pref<rcHeightfieldLayer>* _this,  float value0, float value1, float value2 ) {
 	 float *p = (_unref(_this)->bmin);
 	p[0] = value0; p[1] = value1; p[2] = value2;
 }
@@ -1557,7 +1557,7 @@ DEFINE_PRIM(_STRUCT,HeightfieldLayer_set_bmin,_IDL _STRUCT);
 HL_PRIM _hl_float3* HL_NAME(HeightfieldLayer_get_bmax)( pref<rcHeightfieldLayer>* _this ) {
 	return (_hl_float3* )(_unref(_this)->bmax);
 }
-HL_PRIM void HL_NAME(HeightfieldLayer_getbmaxv)( rcHeightfieldLayer _this, _hl_float3* value ) {
+HL_PRIM void HL_NAME(HeightfieldLayer_getbmaxv)( pref<rcHeightfieldLayer>* _this, _hl_float3* value ) {
 	 float *src = (float*) & (_unref(_this)->bmax)[0];
 	 float *dst = (float*) value;
 	dst[0] = src[0]; dst[1] = src[1]; dst[2] = src[2];
@@ -1570,7 +1570,7 @@ HL_PRIM _hl_float3* HL_NAME(HeightfieldLayer_set_bmax)( pref<rcHeightfieldLayer>
 	dst[0] = src[0]; dst[1] = src[1]; dst[2] = src[2];
 	return value;
 }
-HL_PRIM void HL_NAME(HeightfieldLayer_setbmax3)( rcHeightfieldLayer _this,  float value0, float value1, float value2 ) {
+HL_PRIM void HL_NAME(HeightfieldLayer_setbmax3)( pref<rcHeightfieldLayer>* _this,  float value0, float value1, float value2 ) {
 	 float *p = (_unref(_this)->bmax);
 	p[0] = value0; p[1] = value1; p[2] = value2;
 }
@@ -1815,7 +1815,7 @@ DEFINE_PRIM(_I32,rcContourSet_set_nconts,_IDL _I32);
 HL_PRIM _hl_float3* HL_NAME(rcContourSet_get_bmin)( pref<rcContourSet>* _this ) {
 	return (_hl_float3* )(_unref(_this)->bmin);
 }
-HL_PRIM void HL_NAME(rcContourSet_getbminv)( rcContourSet _this, _hl_float3* value ) {
+HL_PRIM void HL_NAME(rcContourSet_getbminv)( pref<rcContourSet>* _this, _hl_float3* value ) {
 	 float *src = (float*) & (_unref(_this)->bmin)[0];
 	 float *dst = (float*) value;
 	dst[0] = src[0]; dst[1] = src[1]; dst[2] = src[2];
@@ -1828,7 +1828,7 @@ HL_PRIM _hl_float3* HL_NAME(rcContourSet_set_bmin)( pref<rcContourSet>* _this, _
 	dst[0] = src[0]; dst[1] = src[1]; dst[2] = src[2];
 	return value;
 }
-HL_PRIM void HL_NAME(rcContourSet_setbmin3)( rcContourSet _this,  float value0, float value1, float value2 ) {
+HL_PRIM void HL_NAME(rcContourSet_setbmin3)( pref<rcContourSet>* _this,  float value0, float value1, float value2 ) {
 	 float *p = (_unref(_this)->bmin);
 	p[0] = value0; p[1] = value1; p[2] = value2;
 }
@@ -1838,7 +1838,7 @@ DEFINE_PRIM(_STRUCT,rcContourSet_set_bmin,_IDL _STRUCT);
 HL_PRIM _hl_float3* HL_NAME(rcContourSet_get_bmax)( pref<rcContourSet>* _this ) {
 	return (_hl_float3* )(_unref(_this)->bmax);
 }
-HL_PRIM void HL_NAME(rcContourSet_getbmaxv)( rcContourSet _this, _hl_float3* value ) {
+HL_PRIM void HL_NAME(rcContourSet_getbmaxv)( pref<rcContourSet>* _this, _hl_float3* value ) {
 	 float *src = (float*) & (_unref(_this)->bmax)[0];
 	 float *dst = (float*) value;
 	dst[0] = src[0]; dst[1] = src[1]; dst[2] = src[2];
@@ -1851,7 +1851,7 @@ HL_PRIM _hl_float3* HL_NAME(rcContourSet_set_bmax)( pref<rcContourSet>* _this, _
 	dst[0] = src[0]; dst[1] = src[1]; dst[2] = src[2];
 	return value;
 }
-HL_PRIM void HL_NAME(rcContourSet_setbmax3)( rcContourSet _this,  float value0, float value1, float value2 ) {
+HL_PRIM void HL_NAME(rcContourSet_setbmax3)( pref<rcContourSet>* _this,  float value0, float value1, float value2 ) {
 	 float *p = (_unref(_this)->bmax);
 	p[0] = value0; p[1] = value1; p[2] = value2;
 }
@@ -2016,7 +2016,7 @@ DEFINE_PRIM(_I32,PolyMesh_set_nvp,_IDL _I32);
 HL_PRIM _hl_float3* HL_NAME(PolyMesh_get_bmin)( pref<rcPolyMesh>* _this ) {
 	return (_hl_float3* )(_unref(_this)->bmin);
 }
-HL_PRIM void HL_NAME(PolyMesh_getbminv)( rcPolyMesh _this, _hl_float3* value ) {
+HL_PRIM void HL_NAME(PolyMesh_getbminv)( pref<rcPolyMesh>* _this, _hl_float3* value ) {
 	 float *src = (float*) & (_unref(_this)->bmin)[0];
 	 float *dst = (float*) value;
 	dst[0] = src[0]; dst[1] = src[1]; dst[2] = src[2];
@@ -2029,7 +2029,7 @@ HL_PRIM _hl_float3* HL_NAME(PolyMesh_set_bmin)( pref<rcPolyMesh>* _this, _hl_flo
 	dst[0] = src[0]; dst[1] = src[1]; dst[2] = src[2];
 	return value;
 }
-HL_PRIM void HL_NAME(PolyMesh_setbmin3)( rcPolyMesh _this,  float value0, float value1, float value2 ) {
+HL_PRIM void HL_NAME(PolyMesh_setbmin3)( pref<rcPolyMesh>* _this,  float value0, float value1, float value2 ) {
 	 float *p = (_unref(_this)->bmin);
 	p[0] = value0; p[1] = value1; p[2] = value2;
 }
@@ -2039,7 +2039,7 @@ DEFINE_PRIM(_STRUCT,PolyMesh_set_bmin,_IDL _STRUCT);
 HL_PRIM _hl_float3* HL_NAME(PolyMesh_get_bmax)( pref<rcPolyMesh>* _this ) {
 	return (_hl_float3* )(_unref(_this)->bmax);
 }
-HL_PRIM void HL_NAME(PolyMesh_getbmaxv)( rcPolyMesh _this, _hl_float3* value ) {
+HL_PRIM void HL_NAME(PolyMesh_getbmaxv)( pref<rcPolyMesh>* _this, _hl_float3* value ) {
 	 float *src = (float*) & (_unref(_this)->bmax)[0];
 	 float *dst = (float*) value;
 	dst[0] = src[0]; dst[1] = src[1]; dst[2] = src[2];
@@ -2052,7 +2052,7 @@ HL_PRIM _hl_float3* HL_NAME(PolyMesh_set_bmax)( pref<rcPolyMesh>* _this, _hl_flo
 	dst[0] = src[0]; dst[1] = src[1]; dst[2] = src[2];
 	return value;
 }
-HL_PRIM void HL_NAME(PolyMesh_setbmax3)( rcPolyMesh _this,  float value0, float value1, float value2 ) {
+HL_PRIM void HL_NAME(PolyMesh_setbmax3)( pref<rcPolyMesh>* _this,  float value0, float value1, float value2 ) {
 	 float *p = (_unref(_this)->bmax);
 	p[0] = value0; p[1] = value1; p[2] = value2;
 }
@@ -2210,17 +2210,17 @@ HL_PRIM void HL_NAME(Recast_rcFreeContourSet1)(pref<rcContourSet>* cset) {
 DEFINE_PRIM(_VOID, Recast_rcFreeContourSet1, _IDL);
 
 HL_PRIM void HL_NAME(Recast_calcBounds4)(varray* verts, int nv, _hl_float3* bmin, _hl_float3* bmax) {
-	(rcCalcBounds(hl_aptr(verts,float), nv, (_hl_float3*)bmin, (_hl_float3*)bmax));
+	(rcCalcBounds(hl_aptr(verts,float), nv, (float*)(_hl_float3*)bmin, (float*)(_hl_float3*)bmax));
 }
 DEFINE_PRIM(_VOID, Recast_calcBounds4, _ARR _I32 _STRUCT _STRUCT);
 
 HL_PRIM void HL_NAME(Recast_calcGridSize5)(_hl_float3* bmin, _hl_float3* bmax, float cs, int* w, int* h) {
-	(rcCalcGridSize((HL_CONST _hl_float3*)bmin, (HL_CONST _hl_float3*)bmax, cs, w, h));
+	(rcCalcGridSize((float*)(_hl_float3*)bmin, (float*)(_hl_float3*)bmax, cs, w, h));
 }
 DEFINE_PRIM(_VOID, Recast_calcGridSize5, _STRUCT _STRUCT _F32 _REF(_I32) _REF(_I32));
 
 HL_PRIM int HL_NAME(Recast_offsetPoly5)(_hl_float3* verts, int nverts, float offset, _hl_float3* outVerts, int maxOutVerts) {
-	return (rcOffsetPoly((HL_CONST _hl_float3*)verts, nverts, offset, (_hl_float3*)outVerts, maxOutVerts));
+	return (rcOffsetPoly((float*)(_hl_float3*)verts, nverts, offset, (float*)(_hl_float3*)outVerts, maxOutVerts));
 }
 DEFINE_PRIM(_I32, Recast_offsetPoly5, _STRUCT _I32 _F32 _STRUCT _I32);
 
@@ -2263,211 +2263,6 @@ HL_PRIM bool HL_NAME(Math_isfinite1)(float x) {
 	return (isfinite(x));
 }
 DEFINE_PRIM(_BOOL, Math_isfinite1, _F32);
-
-HL_PRIM void HL_NAME(DetourCommon_dtVcross3)(_hl_float3* dest, _hl_float3* v1, _hl_float3* v2) {
-	(dtVcross((_hl_float3*)dest, (HL_CONST _hl_float3*)v1, (HL_CONST _hl_float3*)v2));
-}
-DEFINE_PRIM(_VOID, DetourCommon_dtVcross3, _STRUCT _STRUCT _STRUCT);
-
-HL_PRIM float HL_NAME(DetourCommon_dtVdot2)(_hl_float3* v1, _hl_float3* v2) {
-	return (dtVdot((HL_CONST _hl_float3*)v1, (HL_CONST _hl_float3*)v2));
-}
-DEFINE_PRIM(_F32, DetourCommon_dtVdot2, _STRUCT _STRUCT);
-
-HL_PRIM void HL_NAME(DetourCommon_dtVmad4)(_hl_float3* dest, _hl_float3* v1, _hl_float3* v2, float s) {
-	(dtVmad((_hl_float3*)dest, (HL_CONST _hl_float3*)v1, (HL_CONST _hl_float3*)v2, s));
-}
-DEFINE_PRIM(_VOID, DetourCommon_dtVmad4, _STRUCT _STRUCT _STRUCT _F32);
-
-HL_PRIM void HL_NAME(DetourCommon_dtVlerp4)(_hl_float3* dest, _hl_float3* v1, _hl_float3* v2, float t) {
-	(dtVlerp((_hl_float3*)dest, (HL_CONST _hl_float3*)v1, (HL_CONST _hl_float3*)v2, t));
-}
-DEFINE_PRIM(_VOID, DetourCommon_dtVlerp4, _STRUCT _STRUCT _STRUCT _F32);
-
-HL_PRIM void HL_NAME(DetourCommon_dtVadd3)(_hl_float3* dest, _hl_float3* v1, _hl_float3* v2) {
-	(dtVadd((_hl_float3*)dest, (HL_CONST _hl_float3*)v1, (HL_CONST _hl_float3*)v2));
-}
-DEFINE_PRIM(_VOID, DetourCommon_dtVadd3, _STRUCT _STRUCT _STRUCT);
-
-HL_PRIM void HL_NAME(DetourCommon_dtVsub3)(_hl_float3* dest, _hl_float3* v1, _hl_float3* v2) {
-	(dtVsub((_hl_float3*)dest, (HL_CONST _hl_float3*)v1, (HL_CONST _hl_float3*)v2));
-}
-DEFINE_PRIM(_VOID, DetourCommon_dtVsub3, _STRUCT _STRUCT _STRUCT);
-
-HL_PRIM void HL_NAME(DetourCommon_dtVscale3)(_hl_float3* dest, _hl_float3* v, float t) {
-	(dtVscale((_hl_float3*)dest, (HL_CONST _hl_float3*)v, t));
-}
-DEFINE_PRIM(_VOID, DetourCommon_dtVscale3, _STRUCT _STRUCT _F32);
-
-HL_PRIM void HL_NAME(DetourCommon_dtVmin2)(_hl_float3* mn, _hl_float3* v) {
-	(dtVmin((_hl_float3*)mn, (HL_CONST _hl_float3*)v));
-}
-DEFINE_PRIM(_VOID, DetourCommon_dtVmin2, _STRUCT _STRUCT);
-
-HL_PRIM void HL_NAME(DetourCommon_dtVmax2)(_hl_float3* mx, _hl_float3* v) {
-	(dtVmax((_hl_float3*)mx, (HL_CONST _hl_float3*)v));
-}
-DEFINE_PRIM(_VOID, DetourCommon_dtVmax2, _STRUCT _STRUCT);
-
-HL_PRIM void HL_NAME(DetourCommon_dtVset4)(_hl_float3* dest, float x, float y, float z) {
-	(dtVset((_hl_float3*)dest, x, y, z));
-}
-DEFINE_PRIM(_VOID, DetourCommon_dtVset4, _STRUCT _F32 _F32 _F32);
-
-HL_PRIM void HL_NAME(DetourCommon_dtVcopy2)(_hl_float3* dest, _hl_float3* a) {
-	(dtVcopy((_hl_float3*)dest, (HL_CONST _hl_float3*)a));
-}
-DEFINE_PRIM(_VOID, DetourCommon_dtVcopy2, _STRUCT _STRUCT);
-
-HL_PRIM float HL_NAME(DetourCommon_dtVlen1)(_hl_float3* v) {
-	return (dtVlen((HL_CONST _hl_float3*)v));
-}
-DEFINE_PRIM(_F32, DetourCommon_dtVlen1, _STRUCT);
-
-HL_PRIM float HL_NAME(DetourCommon_dtVlenSqr1)(_hl_float3* v) {
-	return (dtVlenSqr((HL_CONST _hl_float3*)v));
-}
-DEFINE_PRIM(_F32, DetourCommon_dtVlenSqr1, _STRUCT);
-
-HL_PRIM float HL_NAME(DetourCommon_dtVdist2)(_hl_float3* v1, _hl_float3* v2) {
-	return (dtVdist((HL_CONST _hl_float3*)v1, (HL_CONST _hl_float3*)v2));
-}
-DEFINE_PRIM(_F32, DetourCommon_dtVdist2, _STRUCT _STRUCT);
-
-HL_PRIM float HL_NAME(DetourCommon_dtVdistSqr2)(_hl_float3* v1, _hl_float3* v2) {
-	return (dtVdistSqr((HL_CONST _hl_float3*)v1, (HL_CONST _hl_float3*)v2));
-}
-DEFINE_PRIM(_F32, DetourCommon_dtVdistSqr2, _STRUCT _STRUCT);
-
-HL_PRIM float HL_NAME(DetourCommon_dtVdist2D2)(_hl_float3* v1, _hl_float3* v2) {
-	return (dtVdist2D((HL_CONST _hl_float3*)v1, (HL_CONST _hl_float3*)v2));
-}
-DEFINE_PRIM(_F32, DetourCommon_dtVdist2D2, _STRUCT _STRUCT);
-
-HL_PRIM float HL_NAME(DetourCommon_dtVdist2DSqr2)(_hl_float3* v1, _hl_float3* v2) {
-	return (dtVdist2DSqr((HL_CONST _hl_float3*)v1, (HL_CONST _hl_float3*)v2));
-}
-DEFINE_PRIM(_F32, DetourCommon_dtVdist2DSqr2, _STRUCT _STRUCT);
-
-HL_PRIM void HL_NAME(DetourCommon_dtVnormalize1)(_hl_float3* v) {
-	(dtVnormalize((_hl_float3*)v));
-}
-DEFINE_PRIM(_VOID, DetourCommon_dtVnormalize1, _STRUCT);
-
-HL_PRIM bool HL_NAME(DetourCommon_dtVequal2)(_hl_float3* p0, _hl_float3* p1) {
-	return (dtVequal((HL_CONST _hl_float3*)p0, (HL_CONST _hl_float3*)p1));
-}
-DEFINE_PRIM(_BOOL, DetourCommon_dtVequal2, _STRUCT _STRUCT);
-
-HL_PRIM bool HL_NAME(DetourCommon_dtVisfinite1)(_hl_float3* v) {
-	return (dtVisfinite((HL_CONST _hl_float3*)v));
-}
-DEFINE_PRIM(_BOOL, DetourCommon_dtVisfinite1, _STRUCT);
-
-HL_PRIM bool HL_NAME(DetourCommon_dtVisfinite2D1)(_hl_float3* v) {
-	return (dtVisfinite2D((HL_CONST _hl_float3*)v));
-}
-DEFINE_PRIM(_BOOL, DetourCommon_dtVisfinite2D1, _STRUCT);
-
-HL_PRIM float HL_NAME(DetourCommon_dtVdot2D2)(_hl_float3* u, _hl_float3* v) {
-	return (dtVdot2D((HL_CONST _hl_float3*)u, (HL_CONST _hl_float3*)v));
-}
-DEFINE_PRIM(_F32, DetourCommon_dtVdot2D2, _STRUCT _STRUCT);
-
-HL_PRIM float HL_NAME(DetourCommon_dtVperp2D2)(_hl_float3* u, _hl_float3* v) {
-	return (dtVperp2D((HL_CONST _hl_float3*)u, (HL_CONST _hl_float3*)v));
-}
-DEFINE_PRIM(_F32, DetourCommon_dtVperp2D2, _STRUCT _STRUCT);
-
-HL_PRIM float HL_NAME(DetourCommon_dtTriArea2D3)(_hl_float3* a, _hl_float3* b, _hl_float3* c) {
-	return (dtTriArea2D((HL_CONST _hl_float3*)a, (HL_CONST _hl_float3*)b, (HL_CONST _hl_float3*)c));
-}
-DEFINE_PRIM(_F32, DetourCommon_dtTriArea2D3, _STRUCT _STRUCT _STRUCT);
-
-HL_PRIM bool HL_NAME(DetourCommon_dtOverlapQuantBounds4)(varray* amin, varray* amax, varray* bmin, varray* bmax) {
-	return (dtOverlapQuantBounds(hl_aptr(amin,HL_CONST unsigned short), hl_aptr(amax,HL_CONST unsigned short), hl_aptr(bmin,HL_CONST unsigned short), hl_aptr(bmax,HL_CONST unsigned short)));
-}
-DEFINE_PRIM(_BOOL, DetourCommon_dtOverlapQuantBounds4, _ARR _ARR _ARR _ARR);
-
-HL_PRIM bool HL_NAME(DetourCommon_dtOverlapBounds4)(_hl_float3* amin, _hl_float3* amax, _hl_float3* bmin, _hl_float3* bmax) {
-	return (dtOverlapBounds((HL_CONST _hl_float3*)amin, (HL_CONST _hl_float3*)amax, (HL_CONST _hl_float3*)bmin, (HL_CONST _hl_float3*)bmax));
-}
-DEFINE_PRIM(_BOOL, DetourCommon_dtOverlapBounds4, _STRUCT _STRUCT _STRUCT _STRUCT);
-
-HL_PRIM void HL_NAME(DetourCommon_dtClosestPtPointTriangle5)(_hl_float3* closest, _hl_float3* p, _hl_float3* a, _hl_float3* b, _hl_float3* c) {
-	(dtClosestPtPointTriangle((_hl_float3*)closest, (HL_CONST _hl_float3*)p, (HL_CONST _hl_float3*)a, (HL_CONST _hl_float3*)b, (HL_CONST _hl_float3*)c));
-}
-DEFINE_PRIM(_VOID, DetourCommon_dtClosestPtPointTriangle5, _STRUCT _STRUCT _STRUCT _STRUCT _STRUCT);
-
-HL_PRIM bool HL_NAME(DetourCommon_dtClosestHeightPointTriangle5)(_hl_float3* p, _hl_float3* a, _hl_float3* b, _hl_float3* c, float& h) {
-	return (dtClosestHeightPointTriangle((HL_CONST _hl_float3*)p, (HL_CONST _hl_float3*)a, (HL_CONST _hl_float3*)b, (HL_CONST _hl_float3*)c, h));
-}
-DEFINE_PRIM(_BOOL, DetourCommon_dtClosestHeightPointTriangle5, _STRUCT _STRUCT _STRUCT _STRUCT _F32);
-
-HL_PRIM bool HL_NAME(DetourCommon_dtIntersectSegmentPoly2D8)(_hl_float3* p0, _hl_float3* p1, _hl_float3* verts, int nverts, float& tmin, float& tmax, int& segMin, int& segMax) {
-	return (dtIntersectSegmentPoly2D((HL_CONST _hl_float3*)p0, (HL_CONST _hl_float3*)p1, (HL_CONST _hl_float3*)verts, nverts, tmin, tmax, segMin, segMax));
-}
-DEFINE_PRIM(_BOOL, DetourCommon_dtIntersectSegmentPoly2D8, _STRUCT _STRUCT _STRUCT _I32 _F32 _F32 _I32 _I32);
-
-HL_PRIM bool HL_NAME(DetourCommon_dtIntersectSegSeg2D6)(_hl_float3* ap, _hl_float3* aq, _hl_float3* bp, _hl_float3* bq, float& s, float& t) {
-	return (dtIntersectSegSeg2D((HL_CONST _hl_float3*)ap, (HL_CONST _hl_float3*)aq, (HL_CONST _hl_float3*)bp, (HL_CONST _hl_float3*)bq, s, t));
-}
-DEFINE_PRIM(_BOOL, DetourCommon_dtIntersectSegSeg2D6, _STRUCT _STRUCT _STRUCT _STRUCT _F32 _F32);
-
-HL_PRIM bool HL_NAME(DetourCommon_dtPointInPolygon3)(_hl_float3* pt, _hl_float3* verts, int nverts) {
-	return (dtPointInPolygon((HL_CONST _hl_float3*)pt, (HL_CONST _hl_float3*)verts, nverts));
-}
-DEFINE_PRIM(_BOOL, DetourCommon_dtPointInPolygon3, _STRUCT _STRUCT _I32);
-
-HL_PRIM bool HL_NAME(DetourCommon_dtDistancePtPolyEdgesSqr5)(_hl_float3* pt, _hl_float3* verts, int nverts, _hl_float3* ed, _hl_float3* et) {
-	return (dtDistancePtPolyEdgesSqr((HL_CONST _hl_float3*)pt, (HL_CONST _hl_float3*)verts, nverts, (_hl_float3*)ed, (_hl_float3*)et));
-}
-DEFINE_PRIM(_BOOL, DetourCommon_dtDistancePtPolyEdgesSqr5, _STRUCT _STRUCT _I32 _STRUCT _STRUCT);
-
-HL_PRIM float HL_NAME(DetourCommon_dtDistancePtSegSqr2D4)(_hl_float3* pt, _hl_float3* p, _hl_float3* q, float& t) {
-	return (dtDistancePtSegSqr2D((HL_CONST _hl_float3*)pt, (HL_CONST _hl_float3*)p, (HL_CONST _hl_float3*)q, t));
-}
-DEFINE_PRIM(_F32, DetourCommon_dtDistancePtSegSqr2D4, _STRUCT _STRUCT _STRUCT _F32);
-
-HL_PRIM void HL_NAME(DetourCommon_dtCalcPolyCenter4)(_hl_float3* tc, vbyte* idx, int nidx, _hl_float3* verts) {
-	(dtCalcPolyCenter((_hl_float3*)tc, (unsigned short *)idx, nidx, (HL_CONST _hl_float3*)verts));
-}
-DEFINE_PRIM(_VOID, DetourCommon_dtCalcPolyCenter4, _STRUCT _BYTES _I32 _STRUCT);
-
-HL_PRIM bool HL_NAME(DetourCommon_dtOverlapPolyPoly2D4)(_hl_float3* polya, int npolya, _hl_float3* polyb, int npolyb) {
-	return (dtOverlapPolyPoly2D((HL_CONST _hl_float3*)polya, npolya, (HL_CONST _hl_float3*)polyb, npolyb));
-}
-DEFINE_PRIM(_BOOL, DetourCommon_dtOverlapPolyPoly2D4, _STRUCT _I32 _STRUCT _I32);
-
-HL_PRIM int HL_NAME(DetourCommon_nextPow21)(int v) {
-	return (dtNextPow2(v));
-}
-DEFINE_PRIM(_I32, DetourCommon_nextPow21, _I32);
-
-HL_PRIM int HL_NAME(DetourCommon_ilog21)(int v) {
-	return (dtIlog2(v));
-}
-DEFINE_PRIM(_I32, DetourCommon_ilog21, _I32);
-
-HL_PRIM int HL_NAME(DetourCommon_align41)(int x) {
-	return (dtAlign4(x));
-}
-DEFINE_PRIM(_I32, DetourCommon_align41, _I32);
-
-HL_PRIM int HL_NAME(DetourCommon_dtOppositeTile1)(int side) {
-	return (dtOppositeTile(side));
-}
-DEFINE_PRIM(_I32, DetourCommon_dtOppositeTile1, _I32);
-
-HL_PRIM void HL_NAME(DetourCommon_dtSwapByte2)(varray* a, varray* b) {
-	(dtSwapByte(hl_aptr(a,unsigned char), hl_aptr(b,unsigned char)));
-}
-DEFINE_PRIM(_VOID, DetourCommon_dtSwapByte2, _ARR _ARR);
-
-HL_PRIM void HL_NAME(DetourCommon_randomPointInConvexPoly6)(varray* pts, int npts, varray* areas, float s, float t, varray* out) {
-	(dtRandomPointInConvexPoly(hl_aptr(pts,HL_CONST float), npts, hl_aptr(areas,float), s, t, hl_aptr(out,float)));
-}
-DEFINE_PRIM(_VOID, DetourCommon_randomPointInConvexPoly6, _ARR _I32 _ARR _F32 _F32 _ARR);
 
 HL_PRIM pref<dtTileCache>* HL_NAME(TileCache_new0)() {
 	return alloc_ref((new dtTileCache()),TileCache);
@@ -2554,7 +2349,7 @@ DEFINE_PRIM(_I32,TileCacheLayerHeader_set_tlayer,_IDL _I32);
 HL_PRIM _hl_float3* HL_NAME(TileCacheLayerHeader_get_bmin)( pref<dtTileCacheLayerHeader>* _this ) {
 	return (_hl_float3* )(_unref(_this)->bmin);
 }
-HL_PRIM void HL_NAME(TileCacheLayerHeader_getbminv)( dtTileCacheLayerHeader _this, _hl_float3* value ) {
+HL_PRIM void HL_NAME(TileCacheLayerHeader_getbminv)( pref<dtTileCacheLayerHeader>* _this, _hl_float3* value ) {
 	 float *src = (float*) & (_unref(_this)->bmin)[0];
 	 float *dst = (float*) value;
 	dst[0] = src[0]; dst[1] = src[1]; dst[2] = src[2];
@@ -2567,7 +2362,7 @@ HL_PRIM _hl_float3* HL_NAME(TileCacheLayerHeader_set_bmin)( pref<dtTileCacheLaye
 	dst[0] = src[0]; dst[1] = src[1]; dst[2] = src[2];
 	return value;
 }
-HL_PRIM void HL_NAME(TileCacheLayerHeader_setbmin3)( dtTileCacheLayerHeader _this,  float value0, float value1, float value2 ) {
+HL_PRIM void HL_NAME(TileCacheLayerHeader_setbmin3)( pref<dtTileCacheLayerHeader>* _this,  float value0, float value1, float value2 ) {
 	 float *p = (_unref(_this)->bmin);
 	p[0] = value0; p[1] = value1; p[2] = value2;
 }
@@ -2577,7 +2372,7 @@ DEFINE_PRIM(_STRUCT,TileCacheLayerHeader_set_bmin,_IDL _STRUCT);
 HL_PRIM _hl_float3* HL_NAME(TileCacheLayerHeader_get_bmax)( pref<dtTileCacheLayerHeader>* _this ) {
 	return (_hl_float3* )(_unref(_this)->bmax);
 }
-HL_PRIM void HL_NAME(TileCacheLayerHeader_getbmaxv)( dtTileCacheLayerHeader _this, _hl_float3* value ) {
+HL_PRIM void HL_NAME(TileCacheLayerHeader_getbmaxv)( pref<dtTileCacheLayerHeader>* _this, _hl_float3* value ) {
 	 float *src = (float*) & (_unref(_this)->bmax)[0];
 	 float *dst = (float*) value;
 	dst[0] = src[0]; dst[1] = src[1]; dst[2] = src[2];
@@ -2590,7 +2385,7 @@ HL_PRIM _hl_float3* HL_NAME(TileCacheLayerHeader_set_bmax)( pref<dtTileCacheLaye
 	dst[0] = src[0]; dst[1] = src[1]; dst[2] = src[2];
 	return value;
 }
-HL_PRIM void HL_NAME(TileCacheLayerHeader_setbmax3)( dtTileCacheLayerHeader _this,  float value0, float value1, float value2 ) {
+HL_PRIM void HL_NAME(TileCacheLayerHeader_setbmax3)( pref<dtTileCacheLayerHeader>* _this,  float value0, float value1, float value2 ) {
 	 float *p = (_unref(_this)->bmax);
 	p[0] = value0; p[1] = value1; p[2] = value2;
 }
@@ -2690,7 +2485,7 @@ DEFINE_PRIM(_IDL, TileCacheParams_new0,);
 HL_PRIM _hl_float3* HL_NAME(TileCacheParams_get_orig)( pref<dtTileCacheParams>* _this ) {
 	return (_hl_float3* )(_unref(_this)->orig);
 }
-HL_PRIM void HL_NAME(TileCacheParams_getorigv)( dtTileCacheParams _this, _hl_float3* value ) {
+HL_PRIM void HL_NAME(TileCacheParams_getorigv)( pref<dtTileCacheParams>* _this, _hl_float3* value ) {
 	 float *src = (float*) & (_unref(_this)->orig)[0];
 	 float *dst = (float*) value;
 	dst[0] = src[0]; dst[1] = src[1]; dst[2] = src[2];
@@ -2703,7 +2498,7 @@ HL_PRIM _hl_float3* HL_NAME(TileCacheParams_set_orig)( pref<dtTileCacheParams>* 
 	dst[0] = src[0]; dst[1] = src[1]; dst[2] = src[2];
 	return value;
 }
-HL_PRIM void HL_NAME(TileCacheParams_setorig3)( dtTileCacheParams _this,  float value0, float value1, float value2 ) {
+HL_PRIM void HL_NAME(TileCacheParams_setorig3)( pref<dtTileCacheParams>* _this,  float value0, float value1, float value2 ) {
 	 float *p = (_unref(_this)->orig);
 	p[0] = value0; p[1] = value1; p[2] = value2;
 }
@@ -3268,7 +3063,7 @@ DEFINE_PRIM(_F32,dtMeshHeader_set_walkableClimb,_IDL _F32);
 HL_PRIM _hl_float3* HL_NAME(dtMeshHeader_get_bmin)( pref<dtMeshHeader>* _this ) {
 	return (_hl_float3* )(_unref(_this)->bmin);
 }
-HL_PRIM void HL_NAME(dtMeshHeader_getbminv)( dtMeshHeader _this, _hl_float3* value ) {
+HL_PRIM void HL_NAME(dtMeshHeader_getbminv)( pref<dtMeshHeader>* _this, _hl_float3* value ) {
 	 float *src = (float*) & (_unref(_this)->bmin)[0];
 	 float *dst = (float*) value;
 	dst[0] = src[0]; dst[1] = src[1]; dst[2] = src[2];
@@ -3281,7 +3076,7 @@ HL_PRIM _hl_float3* HL_NAME(dtMeshHeader_set_bmin)( pref<dtMeshHeader>* _this, _
 	dst[0] = src[0]; dst[1] = src[1]; dst[2] = src[2];
 	return value;
 }
-HL_PRIM void HL_NAME(dtMeshHeader_setbmin3)( dtMeshHeader _this,  float value0, float value1, float value2 ) {
+HL_PRIM void HL_NAME(dtMeshHeader_setbmin3)( pref<dtMeshHeader>* _this,  float value0, float value1, float value2 ) {
 	 float *p = (_unref(_this)->bmin);
 	p[0] = value0; p[1] = value1; p[2] = value2;
 }
@@ -3291,7 +3086,7 @@ DEFINE_PRIM(_STRUCT,dtMeshHeader_set_bmin,_IDL _STRUCT);
 HL_PRIM _hl_float3* HL_NAME(dtMeshHeader_get_bmax)( pref<dtMeshHeader>* _this ) {
 	return (_hl_float3* )(_unref(_this)->bmax);
 }
-HL_PRIM void HL_NAME(dtMeshHeader_getbmaxv)( dtMeshHeader _this, _hl_float3* value ) {
+HL_PRIM void HL_NAME(dtMeshHeader_getbmaxv)( pref<dtMeshHeader>* _this, _hl_float3* value ) {
 	 float *src = (float*) & (_unref(_this)->bmax)[0];
 	 float *dst = (float*) value;
 	dst[0] = src[0]; dst[1] = src[1]; dst[2] = src[2];
@@ -3304,7 +3099,7 @@ HL_PRIM _hl_float3* HL_NAME(dtMeshHeader_set_bmax)( pref<dtMeshHeader>* _this, _
 	dst[0] = src[0]; dst[1] = src[1]; dst[2] = src[2];
 	return value;
 }
-HL_PRIM void HL_NAME(dtMeshHeader_setbmax3)( dtMeshHeader _this,  float value0, float value1, float value2 ) {
+HL_PRIM void HL_NAME(dtMeshHeader_setbmax3)( pref<dtMeshHeader>* _this,  float value0, float value1, float value2 ) {
 	 float *p = (_unref(_this)->bmax);
 	p[0] = value0; p[1] = value1; p[2] = value2;
 }
@@ -3469,7 +3264,7 @@ DEFINE_PRIM(_IDL, NavMeshParams_new0,);
 HL_PRIM _hl_float3* HL_NAME(NavMeshParams_get_orig)( pref<dtNavMeshParams>* _this ) {
 	return (_hl_float3* )(_unref(_this)->orig);
 }
-HL_PRIM void HL_NAME(NavMeshParams_getorigv)( dtNavMeshParams _this, _hl_float3* value ) {
+HL_PRIM void HL_NAME(NavMeshParams_getorigv)( pref<dtNavMeshParams>* _this, _hl_float3* value ) {
 	 float *src = (float*) & (_unref(_this)->orig)[0];
 	 float *dst = (float*) value;
 	dst[0] = src[0]; dst[1] = src[1]; dst[2] = src[2];
@@ -3482,7 +3277,7 @@ HL_PRIM _hl_float3* HL_NAME(NavMeshParams_set_orig)( pref<dtNavMeshParams>* _thi
 	dst[0] = src[0]; dst[1] = src[1]; dst[2] = src[2];
 	return value;
 }
-HL_PRIM void HL_NAME(NavMeshParams_setorig3)( dtNavMeshParams _this,  float value0, float value1, float value2 ) {
+HL_PRIM void HL_NAME(NavMeshParams_setorig3)( pref<dtNavMeshParams>* _this,  float value0, float value1, float value2 ) {
 	 float *p = (_unref(_this)->orig);
 	p[0] = value0; p[1] = value1; p[2] = value2;
 }
@@ -3612,7 +3407,7 @@ DEFINE_PRIM(_I32, DetourNavMesh_dtGetDetailTriEdgeFlags2, _I8 _I32);
 HL_PRIM _hl_float3* HL_NAME(dtNode_get_pos)( pref<dtNode>* _this ) {
 	return (_hl_float3* )(_unref(_this)->pos);
 }
-HL_PRIM void HL_NAME(dtNode_getposv)( dtNode _this, _hl_float3* value ) {
+HL_PRIM void HL_NAME(dtNode_getposv)( pref<dtNode>* _this, _hl_float3* value ) {
 	 float *src = (float*) & (_unref(_this)->pos)[0];
 	 float *dst = (float*) value;
 	dst[0] = src[0]; dst[1] = src[1]; dst[2] = src[2];
@@ -3625,7 +3420,7 @@ HL_PRIM _hl_float3* HL_NAME(dtNode_set_pos)( pref<dtNode>* _this, _hl_float3* va
 	dst[0] = src[0]; dst[1] = src[1]; dst[2] = src[2];
 	return value;
 }
-HL_PRIM void HL_NAME(dtNode_setpos3)( dtNode _this,  float value0, float value1, float value2 ) {
+HL_PRIM void HL_NAME(dtNode_setpos3)( pref<dtNode>* _this,  float value0, float value1, float value2 ) {
 	 float *p = (_unref(_this)->pos);
 	p[0] = value0; p[1] = value1; p[2] = value2;
 }
@@ -4035,7 +3830,7 @@ DEFINE_PRIM(_I32,NavMeshCreateParams_set_tileLayer,_IDL _I32);
 HL_PRIM _hl_float3* HL_NAME(NavMeshCreateParams_get_bmin)( pref<dtNavMeshCreateParams>* _this ) {
 	return (_hl_float3* )(_unref(_this)->bmin);
 }
-HL_PRIM void HL_NAME(NavMeshCreateParams_getbminv)( dtNavMeshCreateParams _this, _hl_float3* value ) {
+HL_PRIM void HL_NAME(NavMeshCreateParams_getbminv)( pref<dtNavMeshCreateParams>* _this, _hl_float3* value ) {
 	 float *src = (float*) & (_unref(_this)->bmin)[0];
 	 float *dst = (float*) value;
 	dst[0] = src[0]; dst[1] = src[1]; dst[2] = src[2];
@@ -4048,7 +3843,7 @@ HL_PRIM _hl_float3* HL_NAME(NavMeshCreateParams_set_bmin)( pref<dtNavMeshCreateP
 	dst[0] = src[0]; dst[1] = src[1]; dst[2] = src[2];
 	return value;
 }
-HL_PRIM void HL_NAME(NavMeshCreateParams_setbmin3)( dtNavMeshCreateParams _this,  float value0, float value1, float value2 ) {
+HL_PRIM void HL_NAME(NavMeshCreateParams_setbmin3)( pref<dtNavMeshCreateParams>* _this,  float value0, float value1, float value2 ) {
 	 float *p = (_unref(_this)->bmin);
 	p[0] = value0; p[1] = value1; p[2] = value2;
 }
@@ -4058,7 +3853,7 @@ DEFINE_PRIM(_STRUCT,NavMeshCreateParams_set_bmin,_IDL _STRUCT);
 HL_PRIM _hl_float3* HL_NAME(NavMeshCreateParams_get_bmax)( pref<dtNavMeshCreateParams>* _this ) {
 	return (_hl_float3* )(_unref(_this)->bmax);
 }
-HL_PRIM void HL_NAME(NavMeshCreateParams_getbmaxv)( dtNavMeshCreateParams _this, _hl_float3* value ) {
+HL_PRIM void HL_NAME(NavMeshCreateParams_getbmaxv)( pref<dtNavMeshCreateParams>* _this, _hl_float3* value ) {
 	 float *src = (float*) & (_unref(_this)->bmax)[0];
 	 float *dst = (float*) value;
 	dst[0] = src[0]; dst[1] = src[1]; dst[2] = src[2];
@@ -4071,7 +3866,7 @@ HL_PRIM _hl_float3* HL_NAME(NavMeshCreateParams_set_bmax)( pref<dtNavMeshCreateP
 	dst[0] = src[0]; dst[1] = src[1]; dst[2] = src[2];
 	return value;
 }
-HL_PRIM void HL_NAME(NavMeshCreateParams_setbmax3)( dtNavMeshCreateParams _this,  float value0, float value1, float value2 ) {
+HL_PRIM void HL_NAME(NavMeshCreateParams_setbmax3)( pref<dtNavMeshCreateParams>* _this,  float value0, float value1, float value2 ) {
 	 float *p = (_unref(_this)->bmax);
 	p[0] = value0; p[1] = value1; p[2] = value2;
 }
@@ -4206,7 +4001,7 @@ DEFINE_PRIM(_F32,RaycastHit_set_t,_IDL _F32);
 HL_PRIM _hl_float3* HL_NAME(RaycastHit_get_hitNormal)( pref<dtRaycastHit>* _this ) {
 	return (_hl_float3* )(_unref(_this)->hitNormal);
 }
-HL_PRIM void HL_NAME(RaycastHit_gethitNormalv)( dtRaycastHit _this, _hl_float3* value ) {
+HL_PRIM void HL_NAME(RaycastHit_gethitNormalv)( pref<dtRaycastHit>* _this, _hl_float3* value ) {
 	 float *src = (float*) & (_unref(_this)->hitNormal)[0];
 	 float *dst = (float*) value;
 	dst[0] = src[0]; dst[1] = src[1]; dst[2] = src[2];
@@ -4219,7 +4014,7 @@ HL_PRIM _hl_float3* HL_NAME(RaycastHit_set_hitNormal)( pref<dtRaycastHit>* _this
 	dst[0] = src[0]; dst[1] = src[1]; dst[2] = src[2];
 	return value;
 }
-HL_PRIM void HL_NAME(RaycastHit_sethitNormal3)( dtRaycastHit _this,  float value0, float value1, float value2 ) {
+HL_PRIM void HL_NAME(RaycastHit_sethitNormal3)( pref<dtRaycastHit>* _this,  float value0, float value1, float value2 ) {
 	 float *p = (_unref(_this)->hitNormal);
 	p[0] = value0; p[1] = value1; p[2] = value2;
 }
@@ -4292,22 +4087,22 @@ HL_PRIM unsigned int HL_NAME(NavMeshQuery_init2)(pref<dtNavMeshQuery>* _this, pr
 DEFINE_PRIM(_I32, NavMeshQuery_init2, _IDL _IDL _I32);
 
 HL_PRIM unsigned int HL_NAME(NavMeshQuery_findPath8)(pref<dtNavMeshQuery>* _this, unsigned int startRef, unsigned int endRef, _hl_float3* startPos, _hl_float3* endPos, pref<dtQueryFilter>* filter, varray* path, int* pathCount, int maxPath) {
-	return (_unref(_this)->findPath(startRef, endRef, (_hl_float3*)startPos, (_hl_float3*)endPos, _unref_ptr_safe(filter), hl_aptr(path,unsigned int), pathCount, maxPath));
+	return (_unref(_this)->findPath(startRef, endRef, (float*)(_hl_float3*)startPos, (float*)(_hl_float3*)endPos, _unref_ptr_safe(filter), hl_aptr(path,unsigned int), pathCount, maxPath));
 }
 DEFINE_PRIM(_I32, NavMeshQuery_findPath8, _IDL _I32 _I32 _STRUCT _STRUCT _IDL _ARR _REF(_I32) _I32);
 
 HL_PRIM unsigned int HL_NAME(NavMeshQuery_findNearestPoly5)(pref<dtNavMeshQuery>* _this, _hl_float3* center, _hl_float3* halfExtents, pref<dtQueryFilter>* filter, unsigned int* nearestRef, _hl_float3* nearestPt) {
-	return (_unref(_this)->findNearestPoly((HL_CONST _hl_float3*)center, (HL_CONST _hl_float3*)halfExtents, _unref_ptr_safe(filter), nearestRef, (_hl_float3*)nearestPt));
+	return (_unref(_this)->findNearestPoly((float*)(_hl_float3*)center, (float*)(_hl_float3*)halfExtents, _unref_ptr_safe(filter), nearestRef, (float*)(_hl_float3*)nearestPt));
 }
 DEFINE_PRIM(_I32, NavMeshQuery_findNearestPoly5, _IDL _STRUCT _STRUCT _IDL _REF(_I32) _STRUCT);
 
 HL_PRIM unsigned int HL_NAME(NavMeshQuery_findNearestPoly6)(pref<dtNavMeshQuery>* _this, _hl_float3* center, _hl_float3* halfExtents, pref<dtQueryFilter>* filter, unsigned int* nearestRef, _hl_float3* nearestPt, bool* isOverPoly) {
-	return (_unref(_this)->findNearestPoly((HL_CONST _hl_float3*)center, (HL_CONST _hl_float3*)halfExtents, _unref_ptr_safe(filter), nearestRef, (_hl_float3*)nearestPt, isOverPoly));
+	return (_unref(_this)->findNearestPoly((float*)(_hl_float3*)center, (float*)(_hl_float3*)halfExtents, _unref_ptr_safe(filter), nearestRef, (float*)(_hl_float3*)nearestPt, isOverPoly));
 }
 DEFINE_PRIM(_I32, NavMeshQuery_findNearestPoly6, _IDL _STRUCT _STRUCT _IDL _REF(_I32) _STRUCT _REF(_BOOL));
 
 HL_PRIM unsigned int HL_NAME(NavMeshQuery_initSlicedFindPath6)(pref<dtNavMeshQuery>* _this, unsigned int startRef, unsigned int endRef, _hl_float3* startPos, _hl_float3* endPos, pref<dtQueryFilter>* filter, unsigned int options) {
-	return (_unref(_this)->initSlicedFindPath(startRef, endRef, (_hl_float3*)startPos, (_hl_float3*)endPos, _unref_ptr_safe(filter), options));
+	return (_unref(_this)->initSlicedFindPath(startRef, endRef, (float*)(_hl_float3*)startPos, (float*)(_hl_float3*)endPos, _unref_ptr_safe(filter), options));
 }
 DEFINE_PRIM(_I32, NavMeshQuery_initSlicedFindPath6, _IDL _I32 _I32 _STRUCT _STRUCT _IDL _I32);
 
@@ -4327,17 +4122,17 @@ HL_PRIM unsigned int HL_NAME(NavMeshQuery_finalizeSlicedFindPathPartial5)(pref<d
 DEFINE_PRIM(_I32, NavMeshQuery_finalizeSlicedFindPathPartial5, _IDL _ARR _I32 _ARR _REF(_I32) _I32);
 
 HL_PRIM unsigned int HL_NAME(NavMeshQuery_findStraightPath10)(pref<dtNavMeshQuery>* _this, _hl_float3* startPos, _hl_float3* endPos, varray* path, int pathSize, varray* straightPath, varray* straightPathFlags, varray* straightPathRefs, int* straightPathCount, int maxStraightPath, int options) {
-	return (_unref(_this)->findStraightPath((_hl_float3*)startPos, (_hl_float3*)endPos, hl_aptr(path,unsigned int), pathSize, hl_aptr(straightPath,float), hl_aptr(straightPathFlags,unsigned char), hl_aptr(straightPathRefs,unsigned int), straightPathCount, maxStraightPath, options));
+	return (_unref(_this)->findStraightPath((float*)(_hl_float3*)startPos, (float*)(_hl_float3*)endPos, hl_aptr(path,unsigned int), pathSize, hl_aptr(straightPath,float), hl_aptr(straightPathFlags,unsigned char), hl_aptr(straightPathRefs,unsigned int), straightPathCount, maxStraightPath, options));
 }
 DEFINE_PRIM(_I32, NavMeshQuery_findStraightPath10, _IDL _STRUCT _STRUCT _ARR _I32 _ARR _ARR _ARR _REF(_I32) _I32 _I32);
 
 HL_PRIM unsigned int HL_NAME(NavMeshQuery_raycast9)(pref<dtNavMeshQuery>* _this, unsigned int startRef, _hl_float3* startPos, _hl_float3* endPos, pref<dtQueryFilter>* filter, float* t, _hl_float3* hitNormal, varray* path, int* pathCount, int maxPath) {
-	return (_unref(_this)->raycast(startRef, (_hl_float3*)startPos, (_hl_float3*)endPos, _unref_ptr_safe(filter), t, (_hl_float3*)hitNormal, hl_aptr(path,unsigned int), pathCount, maxPath));
+	return (_unref(_this)->raycast(startRef, (float*)(_hl_float3*)startPos, (float*)(_hl_float3*)endPos, _unref_ptr_safe(filter), t, (float*)(_hl_float3*)hitNormal, hl_aptr(path,unsigned int), pathCount, maxPath));
 }
 DEFINE_PRIM(_I32, NavMeshQuery_raycast9, _IDL _I32 _STRUCT _STRUCT _IDL _REF(_F32) _STRUCT _ARR _REF(_I32) _I32);
 
 HL_PRIM unsigned int HL_NAME(NavMeshQuery_raycast7)(pref<dtNavMeshQuery>* _this, unsigned int startRef, _hl_float3* startPos, _hl_float3* endPos, pref<dtQueryFilter>* filter, int options, pref<dtRaycastHit>* hit, unsigned int prevRef) {
-	return (_unref(_this)->raycast(startRef, (_hl_float3*)startPos, (_hl_float3*)endPos, _unref_ptr_safe(filter), options, _unref_ptr_safe(hit), prevRef));
+	return (_unref(_this)->raycast(startRef, (float*)(_hl_float3*)startPos, (float*)(_hl_float3*)endPos, _unref_ptr_safe(filter), options, _unref_ptr_safe(hit), prevRef));
 }
 DEFINE_PRIM(_I32, NavMeshQuery_raycast7, _IDL _I32 _STRUCT _STRUCT _IDL _I32 _IDL _I32);
 
@@ -4357,22 +4152,22 @@ HL_PRIM unsigned int HL_NAME(NavMeshQuery_getPathFromDijkstraSearch4)(pref<dtNav
 DEFINE_PRIM(_I32, NavMeshQuery_getPathFromDijkstraSearch4, _IDL _I32 _REF(_I32) _ARR _I32);
 
 HL_PRIM unsigned int HL_NAME(NavMeshQuery_queryPolygons6)(pref<dtNavMeshQuery>* _this, _hl_float3* center, _hl_float3* halfExtents, pref<dtQueryFilter>* filter, unsigned int* polys, varray* polyCount, int maxPolys) {
-	return (_unref(_this)->queryPolygons((HL_CONST _hl_float3*)center, (HL_CONST _hl_float3*)halfExtents, _unref_ptr_safe(filter), polys, hl_aptr(polyCount,int), maxPolys));
+	return (_unref(_this)->queryPolygons((float*)(_hl_float3*)center, (float*)(_hl_float3*)halfExtents, _unref_ptr_safe(filter), polys, hl_aptr(polyCount,int), maxPolys));
 }
 DEFINE_PRIM(_I32, NavMeshQuery_queryPolygons6, _IDL _STRUCT _STRUCT _IDL _REF(_I32) _ARR _I32);
 
 HL_PRIM unsigned int HL_NAME(NavMeshQuery_queryPolygons4)(pref<dtNavMeshQuery>* _this, _hl_float3* center, _hl_float3* halfExtents, pref<dtQueryFilter>* filter, pref<dtPolyQuery>* query) {
-	return (_unref(_this)->queryPolygons((HL_CONST _hl_float3*)center, (HL_CONST _hl_float3*)halfExtents, _unref_ptr_safe(filter), _unref_ptr_safe(query)));
+	return (_unref(_this)->queryPolygons((float*)(_hl_float3*)center, (float*)(_hl_float3*)halfExtents, _unref_ptr_safe(filter), _unref_ptr_safe(query)));
 }
 DEFINE_PRIM(_I32, NavMeshQuery_queryPolygons4, _IDL _STRUCT _STRUCT _IDL _IDL);
 
 HL_PRIM unsigned int HL_NAME(NavMeshQuery_findLocalNeighbourhood8)(pref<dtNavMeshQuery>* _this, unsigned int startRef, _hl_float3* centerPos, float radius, pref<dtQueryFilter>* filter, unsigned int* resultRef, unsigned int* resultParent, varray* resultCount, int maxResult) {
-	return (_unref(_this)->findLocalNeighbourhood(startRef, (HL_CONST _hl_float3*)centerPos, radius, _unref_ptr_safe(filter), resultRef, resultParent, hl_aptr(resultCount,int), maxResult));
+	return (_unref(_this)->findLocalNeighbourhood(startRef, (float*)(_hl_float3*)centerPos, radius, _unref_ptr_safe(filter), resultRef, resultParent, hl_aptr(resultCount,int), maxResult));
 }
 DEFINE_PRIM(_I32, NavMeshQuery_findLocalNeighbourhood8, _IDL _I32 _STRUCT _F32 _IDL _REF(_I32) _REF(_I32) _ARR _I32);
 
 HL_PRIM unsigned int HL_NAME(NavMeshQuery_moveAlongSurface8)(pref<dtNavMeshQuery>* _this, unsigned int startRef, _hl_float3* startPos, _hl_float3* endPos, pref<dtQueryFilter>* filter, _hl_float3* resultPos, unsigned int* visited, varray* visitedCount, int maxVisitedSize) {
-	return (_unref(_this)->moveAlongSurface(startRef, (HL_CONST _hl_float3*)startPos, (HL_CONST _hl_float3*)endPos, _unref_ptr_safe(filter), (_hl_float3*)resultPos, visited, hl_aptr(visitedCount,int), maxVisitedSize));
+	return (_unref(_this)->moveAlongSurface(startRef, (float*)(_hl_float3*)startPos, (float*)(_hl_float3*)endPos, _unref_ptr_safe(filter), (float*)(_hl_float3*)resultPos, visited, hl_aptr(visitedCount,int), maxVisitedSize));
 }
 DEFINE_PRIM(_I32, NavMeshQuery_moveAlongSurface8, _IDL _I32 _STRUCT _STRUCT _IDL _STRUCT _REF(_I32) _ARR _I32);
 
@@ -4497,7 +4292,7 @@ HL_PRIM bool HL_NAME(MeshCapture_isSurface0)(pref<dtMeshCapture>* _this) {
 DEFINE_PRIM(_BOOL, MeshCapture_isSurface0, _IDL);
 
 HL_PRIM void HL_NAME(MeshCapture_getVert2)(pref<dtMeshCapture>* _this, int idx, _hl_float3* pos) {
-	(_unref(_this)->getVert(idx, (_hl_float3*)pos));
+	(_unref(_this)->getVert(idx, (float*)(_hl_float3*)pos));
 }
 DEFINE_PRIM(_VOID, MeshCapture_getVert2, _IDL _I32 _STRUCT);
 

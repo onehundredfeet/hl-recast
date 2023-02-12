@@ -98,7 +98,7 @@ interface ChunkyTriMesh {
 	boolean build([Const] float [] verts, [Const] int [] tris, int ntris, int trisPerChunk); 	// Native Array
 
 	[CObject,Internal="rcGetChunksOverlappingRect"]
-	int getOverlappingRect(float2 bmin, float2 bmax, int[] ids, int maxIds);
+	int getOverlappingRect([Cast="float*"]float2 bmin, [Cast="float*"]float2 bmax, int[] ids, int maxIds);
 };
 
 
@@ -114,7 +114,7 @@ interface RasterContext
 	void startTimer([Const] rcTimerLabel label);
 
 	[CObject, Internal="rcCreateHeightfield"] bool createHeightfield([Deref] Heightfield hf, int width, int height, 
-							[Const] float3 bmin, [Const] float3 bmax, float cs, float ch);
+							[Cast="float*"] float3 bmin, [Cast="float*"] float3 bmax, float cs, float ch);
 
 	[CObject, Internal="rcMarkWalkableTriangles"] void markWalkableTriangles([Const] float walkableSlopeAngle, 
 							[Const] float[] verts, int nv,[Const] int* tris, int nt, char* areas); 
@@ -125,8 +125,8 @@ interface RasterContext
 	[CObject] bool rcAddSpan([Ref] Heightfield hf, [Const] int x, [Const] int y, 
 							[Const] int smin, [Const] int smax, [Const] int area, [Const] int flagMergeThr);
 
-	[CObject, Internal="rcRasterizeTriangle"] bool rasterizeTriangle([Const] float3 v0, [Const] float3 v1, 
-							[Const] float3 v2, [Const] int area, [Ref] Heightfield solid, [Const] int flagMergeThr);
+	[CObject, Internal="rcRasterizeTriangle"] bool rasterizeTriangle([Const,Cast="float*"] float3 v0, [Const,Cast="float*"] float3 v1, 
+							[Const,Cast="float*"] float3 v2, [Const] int area, [Ref] Heightfield solid, [Const] int flagMergeThr);
 
 	[CObject,Internal="rcRasterizeTriangles"] 
 	bool rasterizeTriangles([Const]  float[] verts, [Const]  int nv,
@@ -157,15 +157,15 @@ interface RasterContext
 
 	[CObject] bool rcMedianFilterWalkableArea([Deref] CompactHeightfield chf);
 
-	[CObject] void rcMarkBoxArea([Const]  float3 bmin, [Const] float3 bmax, char areaId,
+	[CObject] void rcMarkBoxArea([Cast="float*"]  float3 bmin, [Cast="float*"] float3 bmax, char areaId,
 							[Deref] CompactHeightfield chf);
 
-	[CObject] void rcMarkConvexPolyArea([Const] float3 verts, [Const]  int nverts,
+	[CObject] void rcMarkConvexPolyArea([Cast="float*"] float3 verts, [Const]  int nverts,
 							[Const]  float hmin, [Const]  float hmax, char areaId,
 							[Deref] CompactHeightfield chf);
 
 
-	[CObject] void rcMarkCylinderArea([Const]  float3 pos,
+	[CObject] void rcMarkCylinderArea([Cast="float*"]  float3 pos,
 							[Const]  float r, [Const]  float h, char areaId,
 							[Deref] CompactHeightfield chf);
 
@@ -425,13 +425,13 @@ interface Recast{
 //	[Static] void rcFreePolyMeshDetail(PolyMeshDetail dmesh);
 
 	// UPDATED TO NEW METHOD
-	[Static, Internal="rcCalcBounds"] void calcBounds(float[] verts, int nv, float3 bmin, float3 bmax);
+	[Static, Internal="rcCalcBounds"] void calcBounds(float[] verts, int nv, [Cast="float*"]float3 bmin,  [Cast="float*"] float3 bmax);
 
-	[Static, Internal="rcCalcGridSize"] void calcGridSize([Const] float3 bmin, [Const] float3 bmax, float cs,[Out] int w, [Out] int h);
+	[Static, Internal="rcCalcGridSize"] void calcGridSize( [Cast="float*"] float3 bmin,  [Cast="float*"] float3 bmax, float cs,[Out] int w, [Out] int h);
 
 	
 
-	[Static, Internal="rcOffsetPoly"] int offsetPoly([Const] float3 verts, [Const]  int nverts, [Const]  float offset,float3 outVerts, [Const]  int maxOutVerts);
+	[Static, Internal="rcOffsetPoly"] int offsetPoly( [Cast="float*"] float3 verts, [Const]  int nverts, [Const]  float offset, [Cast="float*"] float3 outVerts, [Const]  int maxOutVerts);
 
 };
 
@@ -456,7 +456,7 @@ interface Math {
 //--------------------------------------------------------------------------------------------
 [NoDelete]
 interface DetourCommon {
-
+/*
 	[Static] void dtVcross(float3 dest, [Const] float3 v1, [Const] float3 v2);
 	[Static] float dtVdot([Const] float3 v1, [Const] float3 v2);
 	[Static] void dtVmad(float3 dest, [Const] float3 v1, [Const] float3 v2, [Const] float s);
@@ -524,6 +524,7 @@ interface DetourCommon {
 
 	[Static, Internal="dtRandomPointInConvexPoly"] void randomPointInConvexPoly([Const] float[] pts, [Const] int npts, float[] areas,
 								[Const] float s, [Const] float t, float[] out);
+								*/
 };
 
 //--------------------------------------------------------------------------------------------
@@ -1010,32 +1011,32 @@ interface NavMeshQuery
 
 	//NEW
 	StatusCode init( NavMesh nav, int maxNodes);
-	StatusCode findPath(dtPolyRef startRef, dtPolyRef endRef, float3 startPos, float3 endPos, QueryFilter filter, dtPolyRef [] path, [Out] int pathCount, int maxPath);
-	StatusCode findNearestPoly([Const] float3 center, [Const] float3 halfExtents,
+	StatusCode findPath(dtPolyRef startRef, dtPolyRef endRef, [Cast="float*"]float3 startPos, [Cast="float*"]float3 endPos, QueryFilter filter, dtPolyRef [] path, [Out] int pathCount, int maxPath);
+	StatusCode findNearestPoly([Cast="float*"] float3 center, [Cast="float*"] float3 halfExtents,
 							 [Const] QueryFilter filter,
-							 [Out] dtPolyRef nearestRef, float3 nearestPt);
+							 [Out] dtPolyRef nearestRef, [Cast="float*"]float3 nearestPt);
 
-	StatusCode findNearestPoly([Const] float3 center, [Const] float3 halfExtents,
+	StatusCode findNearestPoly([Cast="float*"] float3 center, [Cast="float*"] float3 halfExtents,
 							 QueryFilter filter,
-							 [Out] dtPolyRef nearestRef, float3 nearestPt, [Out] bool isOverPoly);
+							 [Out] dtPolyRef nearestRef, [Cast="float*"]float3 nearestPt, [Out] bool isOverPoly);
 
 	StatusCode initSlicedFindPath(dtPolyRef startRef, dtPolyRef endRef,
-								float3 startPos, float3 endPos,
+								[Cast="float*"]float3 startPos, [Cast="float*"]float3 endPos,
 								QueryFilter filter,  uint options);
 
 	StatusCode updateSlicedFindPath(int maxIter, [Out]int doneIters);
 	StatusCode finalizeSlicedFindPath(dtPolyRef [] path, [Out] int pathCount, int maxPath);
 	StatusCode finalizeSlicedFindPathPartial( dtPolyRef [] existing, int existingSize,
 										   dtPolyRef [] path, [Out]int pathCount, int maxPath);
-	StatusCode findStraightPath(float3 startPos, float3 endPos,
+	StatusCode findStraightPath([Cast="float*"]float3 startPos, [Cast="float*"]float3 endPos,
 							  dtPolyRef [] path, int pathSize,
 							  float[] straightPath, byte [] straightPathFlags, dtPolyRef [] straightPathRefs,
 							  [Out] int straightPathCount, int maxStraightPath, int options);
 
-	StatusCode raycast(dtPolyRef startRef,  float3 startPos,float3 endPos,QueryFilter filter,
-					 [Out]float t, float3 hitNormal, dtPolyRef [] path, [Out] int pathCount,  int maxPath);
+	StatusCode raycast(dtPolyRef startRef,  [Cast="float*"]float3 startPos,[Cast="float*"]float3 endPos,QueryFilter filter,
+					 [Out]float t, [Cast="float*"]float3 hitNormal, dtPolyRef [] path, [Out] int pathCount,  int maxPath);
 	
-	StatusCode raycast(dtPolyRef startRef,  float3 startPos,  float3 endPos,
+	StatusCode raycast(dtPolyRef startRef,  [Cast="float*"]float3 startPos,  [Cast="float*"]float3 endPos,
 					 QueryFilter filter,  int options,
 					 RaycastHit hit, dtPolyRef prevRef);
 
@@ -1060,20 +1061,20 @@ interface NavMeshQuery
 
 	
 
-	StatusCode queryPolygons([Const] float3 center, [Const] float3 halfExtents,
+	StatusCode queryPolygons([Cast="float*"] float3 center, [Cast="float*"] float3 halfExtents,
 						   [Const] QueryFilter filter,
 						   [Out] dtPolyRef polys, int[] polyCount, [Const] int maxPolys);
 
-	StatusCode queryPolygons([Const] float3 center, [Const] float3 halfExtents,
+	StatusCode queryPolygons([Cast="float*"] float3 center, [Cast="float*"] float3 halfExtents,
 						   [Const] QueryFilter filter, dtPolyQuery query);
 
-	StatusCode findLocalNeighbourhood(dtPolyRef startRef, [Const] float3 centerPos, [Const] float radius,
+	StatusCode findLocalNeighbourhood(dtPolyRef startRef, [Cast="float*"] float3 centerPos, [Const] float radius,
 									[Const] QueryFilter filter,
 									[Out] dtPolyRef resultRef, [Out] dtPolyRef resultParent,
 									int[] resultCount, [Const] int maxResult);
 
-	StatusCode moveAlongSurface(dtPolyRef startRef, [Const] float3 startPos, [Const] float3 endPos,
-							  [Const] QueryFilter filter, float3 resultPos, [Out] dtPolyRef visited, 
+	StatusCode moveAlongSurface(dtPolyRef startRef, [Cast="float*"] float3 startPos, [Cast="float*"] float3 endPos,
+							  [Const] QueryFilter filter, [Cast="float*"]float3 resultPos, [Out] dtPolyRef visited, 
 							  int[] visitedCount, [Const] int maxVisitedSize);
 	
 
@@ -1148,6 +1149,6 @@ interface MeshCapture {
 	long numVerts();
 	long numSurfacePrims();
 	boolean isSurface();
-	void getVert(int idx, float3 pos  ); 
+	void getVert(int idx, [Cast="float*"]float3 pos  ); 
 
 };
