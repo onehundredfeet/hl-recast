@@ -1,10 +1,9 @@
-package recast;
+package ;
 
 #if eval
 class Generator {
-
 	// Put any necessary includes in this string and they will be added to the generated files
-	static var INCLUDE = "
+	static var HL_INCLUDE = "
 #ifdef _WIN32
 #pragma warning(disable:4305)
 #pragma warning(disable:4244)
@@ -46,11 +45,27 @@ rcSpan* rcHeightfield_rcSpanAt(rcHeightfield *context, int pos) {
 }
 
 ";
-	
-	public static function generateCpp() {	
-		var options = { idlFile : "generator/recast.idl", nativeLib : "recast", outputDir : "src", includeCode : INCLUDE, autoGC : true };
-		webidl.Generate.generateCpp(options);
-	}
 
+static var options = {
+	idlFile: "lib/recast/recast.idl",
+	target: null,
+	packageName: "recast",
+	nativeLib: "recast",
+	outputDir: "src",
+	includeCode: null,
+	autoGC: true
+};
+
+static final JVM_INCLUDE = "";
+
+public static function generateCpp(target = idl.Options.Target.TargetHL) {
+	options.target = target;
+	options.includeCode = switch (target) {
+		case idl.Options.Target.TargetHL: HL_INCLUDE;
+		case idl.Options.Target.TargetJVM: JVM_INCLUDE;
+		default: "";
+	};
+	idl.generator.Generate.generateCpp(options);
+}
 }
 #end

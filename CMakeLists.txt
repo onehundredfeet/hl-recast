@@ -1,5 +1,11 @@
 cmake_minimum_required(VERSION 3.10)
-project (recast)
+project (recast C CXX)
+
+set(PATH_TO_IDL "../hl-idl")
+# a bunch of pre-configured options that may or may not be useful
+# it attempts to cover most of what is used for basic libraries
+# you can reference the paths defined here to help make your cmake code more portable
+include(${PATH_TO_IDL}/h-idl-defines.cmake)
 
 
 if (NOT RECAST_ROOT) 
@@ -26,25 +32,9 @@ if (NOT RECAST_DEMO_ROOT)
 set(RECAST_DEMO_ROOT "${RECAST_ROOT}/RecastDemo")
 endif()
 
-if (NOT HL_INCLUDE_DIR) 
-    set(HL_INCLUDE_DIR "/usr/local/include")
-endif()
-
-if (NOT HL_LIB_DIR) 
-    set(HL_LIB_DIR "/usr/local/lib")
-endif()
-
-if (NOT COMMON_LIB_DIR) 
-    set(COMMON_LIB_DIR "/usr/local/lib")
-endif()
-
-if (NOT HDLL_DESTINATION) 
-    set(HDLL_DESTINATION "/usr/local/lib")
-endif()
 
 
-
-add_library(recast.hdll SHARED
+set( PROJECT_ADDITIONAL_SOURCES 
 ${RECAST_SRC_DIR}/Source/Recast.cpp
 ${RECAST_SRC_DIR}/Source/RecastAlloc.cpp
 ${RECAST_SRC_DIR}/Source/RecastArea.cpp
@@ -76,38 +66,14 @@ src/recast.cpp
 src/fastlz/fastlz.c
 )
 
-set_target_properties(recast.hdll
-PROPERTIES
-PREFIX ""
-OUTPUT_NAME recast
-SUFFIX .hdll
-)
-
-cmake_policy(SET CMP0015 NEW)
-
-target_include_directories(recast.hdll
-PRIVATE
+set (PROJECT_ADDITIONAL_INCLUDES
+# otherlib/include
 ${RECAST_SRC_DIR}/Include
 ${DETOUR_SRC_DIR}/Include
 ${DETOUR_SRC_DIR}/Include
 ${DETOUR_TILE_CACHE_ROOT}/Include
 ${RECAST_DEMO_ROOT}/Include
 ${DETOUR_DEBUG_UTIL_ROOT}/Include
-${HL_INCLUDE_DIR}
 )
 
-
-if (UNIX)
-    # Some special flags are needed for GNU GCC compiler
-    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -fPIC  -O3  -fpermissive")
-    #not sure why the ${HL_LIB_DIR} is necessary given the above.
-    SET(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -shared  ")
-
-    find_library(LIBHL NAMES hl HINTS ${HL_LIB_DIR} )
-else()
-    find_library(LIBHL NAMES libhl HINTS ${HL_LIB_DIR} )
-endif (UNIX)
-
-target_link_libraries(recast.hdll ${LIBHL})
-
-install(TARGETS recast.hdll DESTINATION ${HDLL_DESTINATION})
+include(${PATH_TO_IDL}/h-idl-configure.cmake)
