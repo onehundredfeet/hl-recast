@@ -8,14 +8,16 @@
 #include <DetourTileCacheBuilder.h>
 #include <Recast.h>
 #include <RecastAlloc.h>
+#include <stdio.h>
 
 #include <map>
+#include <unordered_map>
 #include <vector>
 
 #include "ChunkyTriMesh.h"
 #include "PerfTimer.h"
 #include "fastlz/fastlz.h"
-#include <stdio.h>
+#include "hl-idl-helpers.hpp"
 
 struct FastLZCompressor : public dtTileCacheCompressor {
     inline dtTileCacheCompressor *asSuper() {
@@ -220,8 +222,8 @@ inline void setToOne(int *a, float *b, double *c, bool *d) {
 }
 
 class dtMeshCapture : public duDebugDraw {
-	public:
-	    struct float3 {
+   public:
+    struct float3 {
         float3() {
         }
         float3(float x, float y, float z) {
@@ -233,26 +235,23 @@ class dtMeshCapture : public duDebugDraw {
         float y;
         float z;
 
-        inline float3 add( float3 v ) {
+        inline float3 add(float3 v) {
             return float3(x + v.x, y + v.y, z + v.z);
         }
-        inline float3 sub( float3 v ) {
+        inline float3 sub(float3 v) {
             return float3(x - v.x, y - v.y, z - v.z);
         }
-        inline float3 scale( float s ) {
-            return float3(x * s, y* s, z * s);
+        inline float3 scale(float s) {
+            return float3(x * s, y * s, z * s);
         }
     };
-	dtMeshCapture(bool isSurface) : _isSurface(isSurface) {
+    dtMeshCapture(bool isSurface) : _isSurface(isSurface) {
+    }
 
-	}
-
-    
-
-	void captureNavMesh(const dtNavMesh &nm, unsigned short flags = 0xffff);
-	void captureHeightField(const rcHeightfield &hf);
-	void captureCompactHeightField(const rcCompactHeightfield &chf);
-    void captureHeighfieldLayerSet(const rcHeightfieldLayerSet &hfls );
+    void captureNavMesh(const dtNavMesh &nm, unsigned short flags = 0xffff);
+    void captureHeightField(const rcHeightfield &hf);
+    void captureCompactHeightField(const rcCompactHeightfield &chf);
+    void captureHeighfieldLayerSet(const rcHeightfieldLayerSet &hfls);
 
     /// Begin drawing primitives.
     ///  @param prim [in] primitive type to draw, one of rcDebugDrawPrimitives.
@@ -282,28 +281,27 @@ class dtMeshCapture : public duDebugDraw {
     /// End drawing primitives.
     virtual void end();
 
-	size_t numVerts() { return _verts.size(); }
-	size_t numSurfacePrims() { return _verts.size() / 3; }
-	bool isSurface(){return _isSurface; }
-	inline float3 &getVert(int idx ) {
-		return _verts[idx];
-	}
-	
-	inline void getVert(int idx, float *vert ) {
-		const auto x = _verts[idx];
-		vert[0] = x.x;
-		vert[1] = x.y;
-		vert[2] = x.z;
-	}
+    size_t numVerts() { return _verts.size(); }
+    size_t numSurfacePrims() { return _verts.size() / 3; }
+    bool isSurface() { return _isSurface; }
+    inline float3 &getVert(int idx) {
+        return _verts[idx];
+    }
 
-	virtual void depthMask(bool state) {}
+    inline void getVert(int idx, float *vert) {
+        const auto x = _verts[idx];
+        vert[0] = x.x;
+        vert[1] = x.y;
+        vert[2] = x.z;
+    }
 
-	virtual void texture(bool state) {}
+    virtual void depthMask(bool state) {}
+
+    virtual void texture(bool state) {}
+
    private:
-
-
     float3 _lastVerts[4];
-	bool _isSurface;
+    bool _isSurface;
     std::vector<float3> _verts;
     duDebugDrawPrimitives _currentMode;
     int _prim;
@@ -312,28 +310,28 @@ class dtMeshCapture : public duDebugDraw {
     inline void finishPrim() {
         switch (_currentMode) {
             case duDebugDrawPrimitives::DU_DRAW_QUADS:
-				if (_prim == 4) {
-					_verts.push_back(_lastVerts[0]);
-					_verts.push_back(_lastVerts[1]);
-					_verts.push_back(_lastVerts[2]);
+                if (_prim == 4) {
+                    _verts.push_back(_lastVerts[0]);
+                    _verts.push_back(_lastVerts[1]);
+                    _verts.push_back(_lastVerts[2]);
 
-					_verts.push_back(_lastVerts[0]);
-					_verts.push_back(_lastVerts[2]);
-					_verts.push_back(_lastVerts[3]);
+                    _verts.push_back(_lastVerts[0]);
+                    _verts.push_back(_lastVerts[2]);
+                    _verts.push_back(_lastVerts[3]);
 
-					_prim = 0;
-				}
-				break;
+                    _prim = 0;
+                }
+                break;
             case duDebugDrawPrimitives::DU_DRAW_TRIS:
-				if (_prim == 3) {
-					_verts.push_back(_lastVerts[0]);
-					_verts.push_back(_lastVerts[1]);
-					_verts.push_back(_lastVerts[2]);
-					_prim = 0;
-				}
-				break;
+                if (_prim == 3) {
+                    _verts.push_back(_lastVerts[0]);
+                    _verts.push_back(_lastVerts[1]);
+                    _verts.push_back(_lastVerts[2]);
+                    _prim = 0;
+                }
+                break;
             case duDebugDrawPrimitives::DU_DRAW_LINES:
-				if (_prim == 2) {
+                if (_prim == 2) {
                     auto x = _lastVerts[0];
                     auto y = _lastVerts[0];
                     auto delta = y.sub(x);
@@ -362,27 +360,152 @@ class dtMeshCapture : public duDebugDraw {
                     auto c = y.add(p);
                     auto d = y.sub(p);
 
-					_verts.push_back(a);
-					_verts.push_back(b);
-					_verts.push_back(c);
+                    _verts.push_back(a);
+                    _verts.push_back(b);
+                    _verts.push_back(c);
 
-					_verts.push_back(b);
-					_verts.push_back(c);
-					_verts.push_back(d);
+                    _verts.push_back(b);
+                    _verts.push_back(c);
+                    _verts.push_back(d);
 
-					_prim = 0;
-				}
-								break;
+                    _prim = 0;
+                }
+                break;
 
             case duDebugDrawPrimitives::DU_DRAW_POINTS:
-				if (_isSurface) throw std::runtime_error("Adding points to surface capture") ;
-				_verts.push_back(_lastVerts[0]);
+                if (_isSurface) throw std::runtime_error("Adding points to surface capture");
+                _verts.push_back(_lastVerts[0]);
                 _prim = 0;
-								break;
-
+                break;
         }
     }
-
 };
 
+struct iVert {
+    unsigned short int x, y, z;
+    bool operator==(const iVert &other) const {
+        return x == other.x && y == other.y && z == other.z;
+    }
+};
+// The specialized hash function for `unordered_map` keys
+struct ivert_hash_fn {
+    std::size_t operator()(const iVert &node) const {
+        std::size_t h1 = std::hash<unsigned short int>()(node.x);
+        std::size_t h2 = std::hash<unsigned short int>()(node.y);
+        std::size_t h3 = std::hash<unsigned short int>()(node.z);
+
+        return h1 << 32 | h2 << 16 | h3;
+    }
+};
+
+static unsigned short MESH_NULL_IDX = 0xffff;
+
+class NavTileConverter {
+    dtNavMeshCreateParams _params;
+    std::vector<unsigned short int> _qverts;
+    std::vector<unsigned short int> _polyVerts;
+    std::vector<unsigned short int> _polyVertCount;
+    std::vector<unsigned short int> _polyFlags;
+
+    std::vector<unsigned char> _polyAreas;
+    // temp
+    std::unordered_map<iVert, int, ivert_hash_fn> _vertMap;
+    std::vector<int> _vertIndex;
+
+   public:
+    void buildF(float *verts, int totalVerts, int polyCount, int *vertCounts,  int *polyType, int *polyFlags) {
+        _vertMap.clear();
+        _vertIndex.resize(totalVerts);
+        auto min_x = _params.bmin[0];
+        auto min_y = _params.bmin[1];
+        auto min_z = _params.bmin[2];
+
+        double quantFactor = 1.0 / _params.cs;
+
+        // collapse duplicates
+        for (int i = 0; i < totalVerts; i++) {
+            iVert v;
+            auto idx = i * 3;
+            v.x = (unsigned short int)((verts[idx] - min_x) * quantFactor) & 0xfffe;
+            v.y = (unsigned short int)((verts[idx + 1] - min_y) * quantFactor) & 0xfffe;
+            v.z = (unsigned short int)((verts[idx + 2] - min_z) * quantFactor) & 0xfffe;
+            auto it = _vertMap.find(v);
+            if (it != _vertMap.end()) {
+                _vertIndex[i] = it->second;
+                continue;
+            }
+            _vertIndex[i] = i;
+            _vertMap[v] = i;
+        }
+
+        _params.vertCount = _vertMap.size();
+        _params.polyCount = polyCount;
+
+        int nvp = 3;
+
+        for (int p = 0; p < polyCount; p++) {
+            auto vertCount = vertCounts[p];
+            if (vertCount > nvp) {
+                nvp = vertCount;
+            }
+        }
+
+        _params.nvp = nvp;
+
+        // build compatible indices
+        auto polyIdx = 0;
+        _polyVertCount.resize(polyCount);
+        _polyFlags.resize(polyCount);
+        _polyAreas.resize(polyCount);
+        _polyVerts.clear();
+        _polyVerts.reserve(polyCount * nvp * 2);
+
+        for (int p = 0; p < polyCount; p++) {
+            auto vertCount = vertCounts[p];
+            _polyVertCount[p] = vertCount;
+            _polyFlags[p] = polyFlags[p];
+            _polyAreas[p] = polyType[p];
+
+            // store the indices in the first half
+            for (int i = 0; i < vertCount; i++) {
+                auto idx = _vertIndex[polyIdx + i];
+                _polyVerts.push_back(idx);
+            }
+            // pad the remaineder
+            for (int i = vertCount; i < nvp; i++) {
+                _polyVerts.push_back(MESH_NULL_IDX);
+            }
+            // pad the second half
+            for (int i = 0; i < nvp; i++) {
+                _polyVerts.push_back(0);
+            }
+            polyIdx += vertCount;
+        }
+
+        /*
+                        const unsigned short* verts;			///< The polygon mesh vertices. [(x, y, z) * #vertCount] [Unit: vx]
+                int vertCount;							///< The number vertices in the polygon mesh. [Limit: >= 3]
+                const unsigned short* polys;			///< The polygon data. [Size: #polyCount * 2 * #nvp]
+                const unsigned short* polyFlags;		///< The user defined flags assigned to each polygon. [Size: #polyCount]
+                const unsigned char* polyAreas;			///< The user defined area ids assigned to each polygon. [Size: #polyCount]
+                int polyCount;							///< Number of polygons in the mesh. [Limit: >= 1]
+                int nvp;								///< Number maximum number of vertices per polygon. [Limit: >= 3]
+
+            */
+    }
+    void buildD(double *verts, int totalVerts, int *vertCounts, int polyCount) {
+    }
+    void setUnits(double gridSize, double cellHeight) {
+        _params.cs = gridSize;
+        _params.ch = cellHeight;
+    }
+    void setLocation(int x, int y, _hl_float3 *min, _hl_float3 *max) {
+        _params.tileX = x;
+        _params.tileY = y;
+    }
+
+    void *getTileData() {
+        return nullptr;
+    }
+};
 #endif

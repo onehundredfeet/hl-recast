@@ -1163,3 +1163,15 @@ interface MeshCapture {
 	void getVert(int idx, [Cast="float*"]float3 pos  ); 
 
 };
+
+interface NavTileConverter {
+	void NavTileConverter();
+
+	void setUnits( double cellSize, double cellHeight); // The vertex resolution to quantize the mesh to.
+	void buildF(float* verts, int totalVerts,  int polyCount, int* polyVertCount,int* polyType, int* polyFlags);
+//	void buildD(double* verts, int totalVerts, int* vertCounts, int polyCount);
+	
+	void setLocation( int x, int y, float3 min, float3 max);
+
+	VoidPtr getTileData();
+};

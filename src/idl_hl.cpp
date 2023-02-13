@@ -683,6 +683,11 @@ HL_PRIM void HL_NAME(MeshCapture_delete)( pref<dtMeshCapture>* _this ) {
 	free_ref(_this );
 }
 DEFINE_PRIM(_VOID, MeshCapture_delete, _IDL);
+static void finalize_NavTileConverter( pref<NavTileConverter>* _this ) { free_ref(_this ); }
+HL_PRIM void HL_NAME(NavTileConverter_delete)( pref<NavTileConverter>* _this ) {
+	free_ref(_this );
+}
+DEFINE_PRIM(_VOID, NavTileConverter_delete, _IDL);
 HL_PRIM pref<rcChunkyTriMesh>* HL_NAME(ChunkyTriMesh_new0)() {
 	return alloc_ref((new rcChunkyTriMesh()),ChunkyTriMesh);
 }
@@ -4310,5 +4315,30 @@ HL_PRIM void HL_NAME(MeshCapture_getVert2)(pref<dtMeshCapture>* _this, int idx, 
 	(_unref(_this)->getVert(idx, (float*)(_hl_float3*)pos));
 }
 DEFINE_PRIM(_VOID, MeshCapture_getVert2, _IDL _I32 _STRUCT);
+
+HL_PRIM pref<NavTileConverter>* HL_NAME(NavTileConverter_new0)() {
+	return alloc_ref((new NavTileConverter()),NavTileConverter);
+}
+DEFINE_PRIM(_IDL, NavTileConverter_new0,);
+
+HL_PRIM void HL_NAME(NavTileConverter_setUnits2)(pref<NavTileConverter>* _this, double cellSize, double cellHeight) {
+	(_unref(_this)->setUnits(cellSize, cellHeight));
+}
+DEFINE_PRIM(_VOID, NavTileConverter_setUnits2, _IDL _F64 _F64);
+
+HL_PRIM void HL_NAME(NavTileConverter_buildF6)(pref<NavTileConverter>* _this, vbyte* verts, int totalVerts, int polyCount, vbyte* polyVertCount, vbyte* polyType, vbyte* polyFlags) {
+	(_unref(_this)->buildF((float*)verts, totalVerts, polyCount, (int*)polyVertCount, (int*)polyType, (int*)polyFlags));
+}
+DEFINE_PRIM(_VOID, NavTileConverter_buildF6, _IDL _BYTES _I32 _I32 _BYTES _BYTES _BYTES);
+
+HL_PRIM void HL_NAME(NavTileConverter_setLocation4)(pref<NavTileConverter>* _this, int x, int y, _hl_float3* min, _hl_float3* max) {
+	(_unref(_this)->setLocation(x, y, (_hl_float3*)min, (_hl_float3*)max));
+}
+DEFINE_PRIM(_VOID, NavTileConverter_setLocation4, _IDL _I32 _I32 _STRUCT _STRUCT);
+
+HL_PRIM void* HL_NAME(NavTileConverter_getTileData0)(pref<NavTileConverter>* _this) {
+	return (_unref(_this)->getTileData());
+}
+DEFINE_PRIM(_BYTES, NavTileConverter_getTileData0, _IDL);
 
 }
