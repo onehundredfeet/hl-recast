@@ -1,6 +1,6 @@
 -lib hl-idl
 -lib hvector
--cp .
+-cp lib
 -cp examples/simple
 -main Simple
 -hl bin/simple.hl

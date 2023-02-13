@@ -295,44 +295,44 @@ rcSpan* rcHeightfield_rcSpanAt(rcHeightfield *context, int pos) {
 
 extern "C" {
 
-static rcLogCategory rcLogCategory__values[] = { RC_LOG_PROGRESS,RC_LOG_WARNING,RC_LOG_ERROR };
-HL_PRIM int HL_NAME(rcLogCategory_toValue0)( int idx ) {
-	return rcLogCategory__values[idx];
+static rcLogCategory LogCategory__values[] = { RC_LOG_PROGRESS,RC_LOG_WARNING,RC_LOG_ERROR };
+HL_PRIM int HL_NAME(LogCategory_toValue0)( int idx ) {
+	return LogCategory__values[idx];
 }
-DEFINE_PRIM(_I32, rcLogCategory_toValue0, _I32);
-HL_PRIM int HL_NAME(rcLogCategory_indexToValue1)( int idx ) {
-	return rcLogCategory__values[idx];
+DEFINE_PRIM(_I32, LogCategory_toValue0, _I32);
+HL_PRIM int HL_NAME(LogCategory_indexToValue1)( int idx ) {
+	return LogCategory__values[idx];
 }
-DEFINE_PRIM(_I32, rcLogCategory_indexToValue1, _I32);
-HL_PRIM int HL_NAME(rcLogCategory_valueToIndex1)( int value ) {
-	for( int i = 0; i < 3; i++ ) if ( value == (int)rcLogCategory__values[i]) return i; return -1;
+DEFINE_PRIM(_I32, LogCategory_indexToValue1, _I32);
+HL_PRIM int HL_NAME(LogCategory_valueToIndex1)( int value ) {
+	for( int i = 0; i < 3; i++ ) if ( value == (int)LogCategory__values[i]) return i; return -1;
 }
-DEFINE_PRIM(_I32, rcLogCategory_valueToIndex1, _I32);
-HL_PRIM int HL_NAME(rcLogCategory_fromValue1)( int value ) {
-	for( int i = 0; i < 3; i++ ) if ( value == (int)rcLogCategory__values[i]) return i; return -1;
+DEFINE_PRIM(_I32, LogCategory_valueToIndex1, _I32);
+HL_PRIM int HL_NAME(LogCategory_fromValue1)( int value ) {
+	for( int i = 0; i < 3; i++ ) if ( value == (int)LogCategory__values[i]) return i; return -1;
 }
-DEFINE_PRIM(_I32, rcLogCategory_fromValue1, _I32);
-HL_PRIM int HL_NAME(rcLogCategory_fromIndex1)( int index ) {return index;}
-DEFINE_PRIM(_I32, rcLogCategory_fromIndex1, _I32);
-static rcTimerLabel rcTimerLabel__values[] = { RC_TIMER_TOTAL,RC_TIMER_TEMP,RC_TIMER_RASTERIZE_TRIANGLES,RC_TIMER_BUILD_COMPACTHEIGHTFIELD,RC_TIMER_BUILD_CONTOURS,RC_TIMER_BUILD_CONTOURS_TRACE,RC_TIMER_BUILD_CONTOURS_SIMPLIFY,RC_TIMER_FILTER_BORDER,RC_TIMER_FILTER_WALKABLE,RC_TIMER_MEDIAN_AREA,RC_TIMER_FILTER_LOW_OBSTACLES,RC_TIMER_BUILD_POLYMESH,RC_TIMER_MERGE_POLYMESH,RC_TIMER_ERODE_AREA,RC_TIMER_MARK_BOX_AREA,RC_TIMER_MARK_CYLINDER_AREA,RC_TIMER_MARK_CONVEXPOLY_AREA,RC_TIMER_BUILD_DISTANCEFIELD,RC_TIMER_BUILD_DISTANCEFIELD_DIST,RC_TIMER_BUILD_DISTANCEFIELD_BLUR,RC_TIMER_BUILD_REGIONS,RC_TIMER_BUILD_REGIONS_WATERSHED,RC_TIMER_BUILD_REGIONS_EXPAND,RC_TIMER_BUILD_REGIONS_FLOOD,RC_TIMER_BUILD_REGIONS_FILTER,RC_TIMER_BUILD_LAYERS,RC_TIMER_BUILD_POLYMESHDETAIL,RC_TIMER_MERGE_POLYMESHDETAIL,RC_MAX_TIMERS };
-HL_PRIM int HL_NAME(rcTimerLabel_toValue0)( int idx ) {
-	return rcTimerLabel__values[idx];
+DEFINE_PRIM(_I32, LogCategory_fromValue1, _I32);
+HL_PRIM int HL_NAME(LogCategory_fromIndex1)( int index ) {return index;}
+DEFINE_PRIM(_I32, LogCategory_fromIndex1, _I32);
+static rcTimerLabel TimerLabel__values[] = { RC_TIMER_TOTAL,RC_TIMER_TEMP,RC_TIMER_RASTERIZE_TRIANGLES,RC_TIMER_BUILD_COMPACTHEIGHTFIELD,RC_TIMER_BUILD_CONTOURS,RC_TIMER_BUILD_CONTOURS_TRACE,RC_TIMER_BUILD_CONTOURS_SIMPLIFY,RC_TIMER_FILTER_BORDER,RC_TIMER_FILTER_WALKABLE,RC_TIMER_MEDIAN_AREA,RC_TIMER_FILTER_LOW_OBSTACLES,RC_TIMER_BUILD_POLYMESH,RC_TIMER_MERGE_POLYMESH,RC_TIMER_ERODE_AREA,RC_TIMER_MARK_BOX_AREA,RC_TIMER_MARK_CYLINDER_AREA,RC_TIMER_MARK_CONVEXPOLY_AREA,RC_TIMER_BUILD_DISTANCEFIELD,RC_TIMER_BUILD_DISTANCEFIELD_DIST,RC_TIMER_BUILD_DISTANCEFIELD_BLUR,RC_TIMER_BUILD_REGIONS,RC_TIMER_BUILD_REGIONS_WATERSHED,RC_TIMER_BUILD_REGIONS_EXPAND,RC_TIMER_BUILD_REGIONS_FLOOD,RC_TIMER_BUILD_REGIONS_FILTER,RC_TIMER_BUILD_LAYERS,RC_TIMER_BUILD_POLYMESHDETAIL,RC_TIMER_MERGE_POLYMESHDETAIL,RC_MAX_TIMERS };
+HL_PRIM int HL_NAME(TimerLabel_toValue0)( int idx ) {
+	return TimerLabel__values[idx];
 }
-DEFINE_PRIM(_I32, rcTimerLabel_toValue0, _I32);
-HL_PRIM int HL_NAME(rcTimerLabel_indexToValue1)( int idx ) {
-	return rcTimerLabel__values[idx];
+DEFINE_PRIM(_I32, TimerLabel_toValue0, _I32);
+HL_PRIM int HL_NAME(TimerLabel_indexToValue1)( int idx ) {
+	return TimerLabel__values[idx];
 }
-DEFINE_PRIM(_I32, rcTimerLabel_indexToValue1, _I32);
-HL_PRIM int HL_NAME(rcTimerLabel_valueToIndex1)( int value ) {
-	for( int i = 0; i < 29; i++ ) if ( value == (int)rcTimerLabel__values[i]) return i; return -1;
+DEFINE_PRIM(_I32, TimerLabel_indexToValue1, _I32);
+HL_PRIM int HL_NAME(TimerLabel_valueToIndex1)( int value ) {
+	for( int i = 0; i < 29; i++ ) if ( value == (int)TimerLabel__values[i]) return i; return -1;
 }
-DEFINE_PRIM(_I32, rcTimerLabel_valueToIndex1, _I32);
-HL_PRIM int HL_NAME(rcTimerLabel_fromValue1)( int value ) {
-	for( int i = 0; i < 29; i++ ) if ( value == (int)rcTimerLabel__values[i]) return i; return -1;
+DEFINE_PRIM(_I32, TimerLabel_valueToIndex1, _I32);
+HL_PRIM int HL_NAME(TimerLabel_fromValue1)( int value ) {
+	for( int i = 0; i < 29; i++ ) if ( value == (int)TimerLabel__values[i]) return i; return -1;
 }
-DEFINE_PRIM(_I32, rcTimerLabel_fromValue1, _I32);
-HL_PRIM int HL_NAME(rcTimerLabel_fromIndex1)( int index ) {return index;}
-DEFINE_PRIM(_I32, rcTimerLabel_fromIndex1, _I32);
+DEFINE_PRIM(_I32, TimerLabel_fromValue1, _I32);
+HL_PRIM int HL_NAME(TimerLabel_fromIndex1)( int index ) {return index;}
+DEFINE_PRIM(_I32, TimerLabel_fromIndex1, _I32);
 static void finalize_ChunkyTriMesh( pref<rcChunkyTriMesh>* _this ) { free_ref(_this ); }
 HL_PRIM void HL_NAME(ChunkyTriMesh_delete)( pref<rcChunkyTriMesh>* _this ) {
 	free_ref(_this );
@@ -413,25 +413,25 @@ HL_PRIM void HL_NAME(PolyMeshDetail_delete)( pref<rcPolyMeshDetail>* _this ) {
 	free_ref(_this );
 }
 DEFINE_PRIM(_VOID, PolyMeshDetail_delete, _IDL);
-static rcAllocHint rcAllocHint__values[] = { RC_ALLOC_PERM,RC_ALLOC_TEMP };
-HL_PRIM int HL_NAME(rcAllocHint_toValue0)( int idx ) {
-	return rcAllocHint__values[idx];
+static rcAllocHint AllocHint__values[] = { RC_ALLOC_PERM,RC_ALLOC_TEMP };
+HL_PRIM int HL_NAME(AllocHint_toValue0)( int idx ) {
+	return AllocHint__values[idx];
 }
-DEFINE_PRIM(_I32, rcAllocHint_toValue0, _I32);
-HL_PRIM int HL_NAME(rcAllocHint_indexToValue1)( int idx ) {
-	return rcAllocHint__values[idx];
+DEFINE_PRIM(_I32, AllocHint_toValue0, _I32);
+HL_PRIM int HL_NAME(AllocHint_indexToValue1)( int idx ) {
+	return AllocHint__values[idx];
 }
-DEFINE_PRIM(_I32, rcAllocHint_indexToValue1, _I32);
-HL_PRIM int HL_NAME(rcAllocHint_valueToIndex1)( int value ) {
-	for( int i = 0; i < 2; i++ ) if ( value == (int)rcAllocHint__values[i]) return i; return -1;
+DEFINE_PRIM(_I32, AllocHint_indexToValue1, _I32);
+HL_PRIM int HL_NAME(AllocHint_valueToIndex1)( int value ) {
+	for( int i = 0; i < 2; i++ ) if ( value == (int)AllocHint__values[i]) return i; return -1;
 }
-DEFINE_PRIM(_I32, rcAllocHint_valueToIndex1, _I32);
-HL_PRIM int HL_NAME(rcAllocHint_fromValue1)( int value ) {
-	for( int i = 0; i < 2; i++ ) if ( value == (int)rcAllocHint__values[i]) return i; return -1;
+DEFINE_PRIM(_I32, AllocHint_valueToIndex1, _I32);
+HL_PRIM int HL_NAME(AllocHint_fromValue1)( int value ) {
+	for( int i = 0; i < 2; i++ ) if ( value == (int)AllocHint__values[i]) return i; return -1;
 }
-DEFINE_PRIM(_I32, rcAllocHint_fromValue1, _I32);
-HL_PRIM int HL_NAME(rcAllocHint_fromIndex1)( int index ) {return index;}
-DEFINE_PRIM(_I32, rcAllocHint_fromIndex1, _I32);
+DEFINE_PRIM(_I32, AllocHint_fromValue1, _I32);
+HL_PRIM int HL_NAME(AllocHint_fromIndex1)( int index ) {return index;}
+DEFINE_PRIM(_I32, AllocHint_fromIndex1, _I32);
 static void finalize_TileCache( pref<dtTileCache>* _this ) { free_ref(_this ); }
 HL_PRIM void HL_NAME(TileCache_delete)( pref<dtTileCache>* _this ) {
 	free_ref(_this );
@@ -531,63 +531,63 @@ HL_PRIM void HL_NAME(RemapProcessor_delete)( pref<RemapProcessor>* _this ) {
 	free_ref(_this );
 }
 DEFINE_PRIM(_VOID, RemapProcessor_delete, _IDL);
-static dtCompressedTileFlags dtCompressedTileFlags__values[] = { DT_COMPRESSEDTILE_FREE_DATA };
-HL_PRIM int HL_NAME(dtCompressedTileFlags_toValue0)( int idx ) {
-	return dtCompressedTileFlags__values[idx];
+static dtCompressedTileFlags CompressedTileFlags__values[] = { DT_COMPRESSEDTILE_FREE_DATA };
+HL_PRIM int HL_NAME(CompressedTileFlags_toValue0)( int idx ) {
+	return CompressedTileFlags__values[idx];
 }
-DEFINE_PRIM(_I32, dtCompressedTileFlags_toValue0, _I32);
-HL_PRIM int HL_NAME(dtCompressedTileFlags_indexToValue1)( int idx ) {
-	return dtCompressedTileFlags__values[idx];
+DEFINE_PRIM(_I32, CompressedTileFlags_toValue0, _I32);
+HL_PRIM int HL_NAME(CompressedTileFlags_indexToValue1)( int idx ) {
+	return CompressedTileFlags__values[idx];
 }
-DEFINE_PRIM(_I32, dtCompressedTileFlags_indexToValue1, _I32);
-HL_PRIM int HL_NAME(dtCompressedTileFlags_valueToIndex1)( int value ) {
-	for( int i = 0; i < 1; i++ ) if ( value == (int)dtCompressedTileFlags__values[i]) return i; return -1;
+DEFINE_PRIM(_I32, CompressedTileFlags_indexToValue1, _I32);
+HL_PRIM int HL_NAME(CompressedTileFlags_valueToIndex1)( int value ) {
+	for( int i = 0; i < 1; i++ ) if ( value == (int)CompressedTileFlags__values[i]) return i; return -1;
 }
-DEFINE_PRIM(_I32, dtCompressedTileFlags_valueToIndex1, _I32);
-HL_PRIM int HL_NAME(dtCompressedTileFlags_fromValue1)( int value ) {
-	for( int i = 0; i < 1; i++ ) if ( value == (int)dtCompressedTileFlags__values[i]) return i; return -1;
+DEFINE_PRIM(_I32, CompressedTileFlags_valueToIndex1, _I32);
+HL_PRIM int HL_NAME(CompressedTileFlags_fromValue1)( int value ) {
+	for( int i = 0; i < 1; i++ ) if ( value == (int)CompressedTileFlags__values[i]) return i; return -1;
 }
-DEFINE_PRIM(_I32, dtCompressedTileFlags_fromValue1, _I32);
-HL_PRIM int HL_NAME(dtCompressedTileFlags_fromIndex1)( int index ) {return index;}
-DEFINE_PRIM(_I32, dtCompressedTileFlags_fromIndex1, _I32);
-static dtStraightPathFlags dtStraightPathFlags__values[] = { DT_STRAIGHTPATH_START,DT_STRAIGHTPATH_END,DT_STRAIGHTPATH_OFFMESH_CONNECTION };
-HL_PRIM int HL_NAME(dtStraightPathFlags_toValue0)( int idx ) {
-	return dtStraightPathFlags__values[idx];
+DEFINE_PRIM(_I32, CompressedTileFlags_fromValue1, _I32);
+HL_PRIM int HL_NAME(CompressedTileFlags_fromIndex1)( int index ) {return index;}
+DEFINE_PRIM(_I32, CompressedTileFlags_fromIndex1, _I32);
+static dtStraightPathFlags StraightPathFlags__values[] = { DT_STRAIGHTPATH_START,DT_STRAIGHTPATH_END,DT_STRAIGHTPATH_OFFMESH_CONNECTION };
+HL_PRIM int HL_NAME(StraightPathFlags_toValue0)( int idx ) {
+	return StraightPathFlags__values[idx];
 }
-DEFINE_PRIM(_I32, dtStraightPathFlags_toValue0, _I32);
-HL_PRIM int HL_NAME(dtStraightPathFlags_indexToValue1)( int idx ) {
-	return dtStraightPathFlags__values[idx];
+DEFINE_PRIM(_I32, StraightPathFlags_toValue0, _I32);
+HL_PRIM int HL_NAME(StraightPathFlags_indexToValue1)( int idx ) {
+	return StraightPathFlags__values[idx];
 }
-DEFINE_PRIM(_I32, dtStraightPathFlags_indexToValue1, _I32);
-HL_PRIM int HL_NAME(dtStraightPathFlags_valueToIndex1)( int value ) {
-	for( int i = 0; i < 3; i++ ) if ( value == (int)dtStraightPathFlags__values[i]) return i; return -1;
+DEFINE_PRIM(_I32, StraightPathFlags_indexToValue1, _I32);
+HL_PRIM int HL_NAME(StraightPathFlags_valueToIndex1)( int value ) {
+	for( int i = 0; i < 3; i++ ) if ( value == (int)StraightPathFlags__values[i]) return i; return -1;
 }
-DEFINE_PRIM(_I32, dtStraightPathFlags_valueToIndex1, _I32);
-HL_PRIM int HL_NAME(dtStraightPathFlags_fromValue1)( int value ) {
-	for( int i = 0; i < 3; i++ ) if ( value == (int)dtStraightPathFlags__values[i]) return i; return -1;
+DEFINE_PRIM(_I32, StraightPathFlags_valueToIndex1, _I32);
+HL_PRIM int HL_NAME(StraightPathFlags_fromValue1)( int value ) {
+	for( int i = 0; i < 3; i++ ) if ( value == (int)StraightPathFlags__values[i]) return i; return -1;
 }
-DEFINE_PRIM(_I32, dtStraightPathFlags_fromValue1, _I32);
-HL_PRIM int HL_NAME(dtStraightPathFlags_fromIndex1)( int index ) {return index;}
-DEFINE_PRIM(_I32, dtStraightPathFlags_fromIndex1, _I32);
-static dtStraightPathOptions dtStraightPathOptions__values[] = { DT_STRAIGHTPATH_AREA_CROSSINGS,DT_STRAIGHTPATH_ALL_CROSSINGS };
-HL_PRIM int HL_NAME(dtStraightPathOptions_toValue0)( int idx ) {
-	return dtStraightPathOptions__values[idx];
+DEFINE_PRIM(_I32, StraightPathFlags_fromValue1, _I32);
+HL_PRIM int HL_NAME(StraightPathFlags_fromIndex1)( int index ) {return index;}
+DEFINE_PRIM(_I32, StraightPathFlags_fromIndex1, _I32);
+static dtStraightPathOptions StraightPathOptions__values[] = { DT_STRAIGHTPATH_AREA_CROSSINGS,DT_STRAIGHTPATH_ALL_CROSSINGS };
+HL_PRIM int HL_NAME(StraightPathOptions_toValue0)( int idx ) {
+	return StraightPathOptions__values[idx];
 }
-DEFINE_PRIM(_I32, dtStraightPathOptions_toValue0, _I32);
-HL_PRIM int HL_NAME(dtStraightPathOptions_indexToValue1)( int idx ) {
-	return dtStraightPathOptions__values[idx];
+DEFINE_PRIM(_I32, StraightPathOptions_toValue0, _I32);
+HL_PRIM int HL_NAME(StraightPathOptions_indexToValue1)( int idx ) {
+	return StraightPathOptions__values[idx];
 }
-DEFINE_PRIM(_I32, dtStraightPathOptions_indexToValue1, _I32);
-HL_PRIM int HL_NAME(dtStraightPathOptions_valueToIndex1)( int value ) {
-	for( int i = 0; i < 2; i++ ) if ( value == (int)dtStraightPathOptions__values[i]) return i; return -1;
+DEFINE_PRIM(_I32, StraightPathOptions_indexToValue1, _I32);
+HL_PRIM int HL_NAME(StraightPathOptions_valueToIndex1)( int value ) {
+	for( int i = 0; i < 2; i++ ) if ( value == (int)StraightPathOptions__values[i]) return i; return -1;
 }
-DEFINE_PRIM(_I32, dtStraightPathOptions_valueToIndex1, _I32);
-HL_PRIM int HL_NAME(dtStraightPathOptions_fromValue1)( int value ) {
-	for( int i = 0; i < 2; i++ ) if ( value == (int)dtStraightPathOptions__values[i]) return i; return -1;
+DEFINE_PRIM(_I32, StraightPathOptions_valueToIndex1, _I32);
+HL_PRIM int HL_NAME(StraightPathOptions_fromValue1)( int value ) {
+	for( int i = 0; i < 2; i++ ) if ( value == (int)StraightPathOptions__values[i]) return i; return -1;
 }
-DEFINE_PRIM(_I32, dtStraightPathOptions_fromValue1, _I32);
-HL_PRIM int HL_NAME(dtStraightPathOptions_fromIndex1)( int index ) {return index;}
-DEFINE_PRIM(_I32, dtStraightPathOptions_fromIndex1, _I32);
+DEFINE_PRIM(_I32, StraightPathOptions_fromValue1, _I32);
+HL_PRIM int HL_NAME(StraightPathOptions_fromIndex1)( int index ) {return index;}
+DEFINE_PRIM(_I32, StraightPathOptions_fromIndex1, _I32);
 static void finalize_dtPoly( pref<dtPoly>* _this ) { free_ref(_this ); }
 HL_PRIM void HL_NAME(dtPoly_delete)( pref<dtPoly>* _this ) {
 	free_ref(_this );
@@ -749,7 +749,7 @@ HL_PRIM void HL_NAME(RasterContext_resetTimers0)(pref<rcContext>* _this) {
 DEFINE_PRIM(_VOID, RasterContext_resetTimers0, _IDL);
 
 HL_PRIM void HL_NAME(RasterContext_startTimer1)(pref<rcContext>* _this, int label) {
-	(_unref(_this)->startTimer(rcTimerLabel__values[label]));
+	(_unref(_this)->startTimer(TimerLabel__values[label]));
 }
 DEFINE_PRIM(_VOID, RasterContext_startTimer1, _IDL _I32);
 
@@ -879,7 +879,7 @@ HL_PRIM bool HL_NAME(RasterContext_buildHeightfieldLayers4)(pref<rcContext>* _th
 DEFINE_PRIM(_BOOL, RasterContext_buildHeightfieldLayers4, _IDL _IDL _I32 _I32 _IDL);
 
 HL_PRIM pref<rcScopedTimer>* HL_NAME(rcScopedTimer_new2)(pref<rcContext>* ctx, int label) {
-	return alloc_ref((new rcScopedTimer(_unref_ptr_safe(ctx), rcTimerLabel__values[label])),rcScopedTimer);
+	return alloc_ref((new rcScopedTimer(_unref_ptr_safe(ctx), TimerLabel__values[label])),rcScopedTimer);
 }
 DEFINE_PRIM(_IDL, rcScopedTimer_new2, _IDL _I32);
 
@@ -2164,30 +2164,30 @@ HL_PRIM int HL_NAME(PolyMeshDetail_set_ntris)( pref<rcPolyMeshDetail>* _this, in
 }
 DEFINE_PRIM(_I32,PolyMeshDetail_set_ntris,_IDL _I32);
 
-HL_PRIM vbyte* HL_NAME(RcAlloc_allocShortArray2)(int length, int hint) {
-	return (vbyte *)(rcAllocShort(length, rcAllocHint__values[hint]));
+HL_PRIM vbyte* HL_NAME(Alloc_allocShortArray2)(int length, int hint) {
+	return (vbyte *)(rcAllocShort(length, AllocHint__values[hint]));
 }
-DEFINE_PRIM(_BYTES, RcAlloc_allocShortArray2, _I32 _I32);
+DEFINE_PRIM(_BYTES, Alloc_allocShortArray2, _I32 _I32);
 
-HL_PRIM vbyte* HL_NAME(RcAlloc_allocByteArray2)(int length, int hint) {
-	return (vbyte *)(rcAlloc(length, rcAllocHint__values[hint]));
+HL_PRIM vbyte* HL_NAME(Alloc_allocByteArray2)(int length, int hint) {
+	return (vbyte *)(rcAlloc(length, AllocHint__values[hint]));
 }
-DEFINE_PRIM(_BYTES, RcAlloc_allocByteArray2, _I32 _I32);
+DEFINE_PRIM(_BYTES, Alloc_allocByteArray2, _I32 _I32);
 
-HL_PRIM void HL_NAME(RcAlloc_freeArray1)(vbyte* array) {
+HL_PRIM void HL_NAME(Alloc_freeArray1)(vbyte* array) {
 	(rcFree((unsigned short*)array));
 }
-DEFINE_PRIM(_VOID, RcAlloc_freeArray1, _BYTES);
+DEFINE_PRIM(_VOID, Alloc_freeArray1, _BYTES);
 
-HL_PRIM void HL_NAME(RcAlloc_clearByteArray2)(vbyte* array, int length) {
+HL_PRIM void HL_NAME(Alloc_clearByteArray2)(vbyte* array, int length) {
 	(rcClear((unsigned char*)array, length));
 }
-DEFINE_PRIM(_VOID, RcAlloc_clearByteArray2, _BYTES _I32);
+DEFINE_PRIM(_VOID, Alloc_clearByteArray2, _BYTES _I32);
 
-HL_PRIM vbyte* HL_NAME(RcAlloc_offsetByteArray2)(vbyte* array, int offset) {
+HL_PRIM vbyte* HL_NAME(Alloc_offsetByteArray2)(vbyte* array, int offset) {
 	return (rcOffset((unsigned char*)array, offset));
 }
-DEFINE_PRIM(_BYTES, RcAlloc_offsetByteArray2, _BYTES _I32);
+DEFINE_PRIM(_BYTES, Alloc_offsetByteArray2, _BYTES _I32);
 
 HL_PRIM void HL_NAME(Recast_rcFreeHeightField1)(pref<rcHeightfield>* hf) {
 	(rcFreeHeightField(_unref_ptr_safe(hf)));
@@ -2263,6 +2263,21 @@ HL_PRIM bool HL_NAME(Math_isfinite1)(float x) {
 	return (isfinite(x));
 }
 DEFINE_PRIM(_BOOL, Math_isfinite1, _F32);
+
+HL_PRIM int HL_NAME(DetourCommon_nextPow21)(int v) {
+	return (dtNextPow2(v));
+}
+DEFINE_PRIM(_I32, DetourCommon_nextPow21, _I32);
+
+HL_PRIM int HL_NAME(DetourCommon_ilog21)(int v) {
+	return (dtIlog2(v));
+}
+DEFINE_PRIM(_I32, DetourCommon_ilog21, _I32);
+
+HL_PRIM int HL_NAME(DetourCommon_align41)(int x) {
+	return (dtAlign4(x));
+}
+DEFINE_PRIM(_I32, DetourCommon_align41, _I32);
 
 HL_PRIM pref<dtTileCache>* HL_NAME(TileCache_new0)() {
 	return alloc_ref((new dtTileCache()),TileCache);

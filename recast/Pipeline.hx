@@ -14,12 +14,12 @@ import recast.Native.ChunkyTriMesh;
 import recast.Native.TileCacheParams;
 import recast.Native.TileCache;
 import recast.Native.TileCacheData;
-import recast.Native.DtCompressedTileFlags;
+import recast.Native.CompressedTileFlags;
 import recast.Native.RasterContext;
 import recast.Native.RasterConfig;
 import recast.Native.Heightfield;
 import recast.Native.HeightfieldLayerSet;
-import recast.Native.RcAlloc;
+import recast.Native.Alloc;
 import recast.Native.CompactHeightfield;
 import recast.Native.AllocHint;
 import recast.Native.TileCacheLayerHeader;
@@ -197,7 +197,7 @@ class Pipeline {
     // Allocate array that can hold triangle flags.
     // If you have multiple meshes you need to process, allocate
     // and array which can hold the max number of triangles you need to process.
-    var triareas = RcAlloc.allocByteArray(chunkyMesh.maxTrisPerChunk, AllocHint.RC_ALLOC_PERM); // new NativeArray<>(chunkyMesh.maxTrisPerChunk);
+    var triareas = Alloc.allocByteArray(chunkyMesh.maxTrisPerChunk, AllocHint.RC_ALLOC_PERM); // new NativeArray<>(chunkyMesh.maxTrisPerChunk);
     // trace('Tri areas ${triareas} is ${chunkyMesh.maxTrisPerChunk}');
     var tbmin = new Vec2(tempRasterCfg.bmin[0], tempRasterCfg.bmin[2]);
     var tbmax = new Vec2(tempRasterCfg.bmax[0], tempRasterCfg.bmax[2]);
@@ -217,7 +217,7 @@ class Pipeline {
         var tris = chunkyMesh.getTriVertIndices(nodeTriIndex * 3);
         var ntris = chunkyMesh.getNodeTriCount(cid[i]);
 
-        RcAlloc.clearByteArray(triareas, ntris);
+        Alloc.clearByteArray(triareas, ntris);
 
         rc.markWalkableTriangles(tempRasterCfg.walkableSlopeAngle, verts, nverts, tris, ntris, triareas);
 
@@ -294,7 +294,7 @@ class Pipeline {
     }
 
 
-    RcAlloc.freeArray(triareas);
+    Alloc.freeArray(triareas);
     return icount;
 
 

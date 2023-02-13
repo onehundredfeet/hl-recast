@@ -8,14 +8,16 @@ typedef StatusCode uint;
 // Recast.h
 //--------------------------------------------------------------------------------------------
 
-enum rcLogCategory
+[Internal="rcLogCategory"]
+enum LogCategory
 {
 	"RC_LOG_PROGRESS",
 	"RC_LOG_WARNING",
 	"RC_LOG_ERROR"
 };
 
-enum rcTimerLabel
+[Internal="rcTimerLabel"]
+enum TimerLabel
 {
 	/// The user defined total time of the build.
 	"RC_TIMER_TOTAL",
@@ -111,7 +113,7 @@ interface RasterContext
 	void resetLog();
 	void enableTimer(boolean state);
 	void resetTimers();
-	void startTimer([Const] rcTimerLabel label);
+	void startTimer([Const] TimerLabel label);
 
 	[CObject, Internal="rcCreateHeightfield"] bool createHeightfield([Deref] Heightfield hf, int width, int height, 
 							[Cast="float*"] float3 bmin, [Cast="float*"] float3 bmax, float cs, float ch);
@@ -195,7 +197,7 @@ interface RasterContext
 
 interface rcScopedTimer 
 {
-	void rcScopedTimer(RasterContext ctx, [Const] rcTimerLabel label);
+	void rcScopedTimer(RasterContext ctx, TimerLabel label);
 };
 
 [Internal="rcConfig"]
@@ -392,17 +394,17 @@ interface PolyMeshDetail
 };
 
 
-
-enum rcAllocHint
+[Internal="rcAllocHint"]
+enum AllocHint
 {
 	"RC_ALLOC_PERM",		///< Memory will persist after a function call.
 	"RC_ALLOC_TEMP"		///< Memory used temporarily within a function.
 };
 
-[NoDelete]
-interface RcAlloc {
-	[Static, Internal="rcAllocShort", Cast="vbyte *"] short * allocShortArray(int length, rcAllocHint hint);
-	[Static, Internal="rcAlloc", Cast="vbyte *"] byte * allocByteArray(int length, rcAllocHint hint);
+[NoDelete, Internal="rcAlloc"]
+interface Alloc {
+	[Static, Internal="rcAllocShort", Cast="vbyte *"] short * allocShortArray(int length, AllocHint hint);
+	[Static, Internal="rcAlloc", Cast="vbyte *"] byte * allocByteArray(int length, AllocHint hint);
 	[Static, Internal="rcFree"] void freeArray(short *array);
 	[Static, Internal="rcClear"] void clearByteArray(byte *array, int length);
 	[Static, Internal="rcOffset"] byte *offsetByteArray(byte *array, int offset);
@@ -516,15 +518,15 @@ interface DetourCommon {
 	[Static] bool dtOverlapPolyPoly2D([Const] float3 polya, [Const] int npolya,
 							[Const] float3 polyb, [Const] int npolyb);
 
-	[Static, Internal="dtNextPow2"] int nextPow2(int v);
-	[Static, Internal="dtIlog2"] int ilog2(int v);
-	[Static, Internal="dtAlign4"] int align4(int x);
 	[Static] int dtOppositeTile(int side);
 	[Static] void dtSwapByte(char[] a, char[] b);	
 
 	[Static, Internal="dtRandomPointInConvexPoly"] void randomPointInConvexPoly([Const] float[] pts, [Const] int npts, float[] areas,
 								[Const] float s, [Const] float t, float[] out);
 								*/
+	[Static, Internal="dtNextPow2"] int nextPow2(int v);
+	[Static, Internal="dtIlog2"] int ilog2(int v);
+	[Static, Internal="dtAlign4"] int align4(int x);
 };
 
 //--------------------------------------------------------------------------------------------
@@ -666,14 +668,16 @@ interface RemapProcessor {
 
 
 /// Flags for addTile
-enum dtCompressedTileFlags
+[Internal="dtCompressedTileFlags"]
+enum CompressedTileFlags
 {
 	"DT_COMPRESSEDTILE_FREE_DATA"	///< Navmesh owns the tile memory and should free it.
 };
 
 
 /// Vertex flags returned by dtNavMeshQuery::findStraightPath.
-enum dtStraightPathFlags
+[Internal="dtStraightPathFlags"]
+enum StraightPathFlags
 {
 	"DT_STRAIGHTPATH_START",
 	"DT_STRAIGHTPATH_END",
@@ -681,7 +685,8 @@ enum dtStraightPathFlags
 };
 
 /// Options for dtNavMeshQuery::findStraightPath.
-enum dtStraightPathOptions
+[Internal="dtStraightPathOptions"]
+enum StraightPathOptions
 {
 	"DT_STRAIGHTPATH_AREA_CROSSINGS",
 	"DT_STRAIGHTPATH_ALL_CROSSINGS"

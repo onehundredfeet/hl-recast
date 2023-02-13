@@ -83,8 +83,8 @@ class NavQueryInstant extends NavQuery{
         var funnelPolyCount = -1;
         var options = switch(mode) {
             case PATH_ONLY: 0;
-            case PATH_AND_AREAS:  DtStraightPathOptions.DT_STRAIGHTPATH_AREA_CROSSINGS.toValue();
-            case PATH_AND_POLYS:  DtStraightPathOptions.DT_STRAIGHTPATH_ALL_CROSSINGS.toValue();
+            case PATH_AND_AREAS:  StraightPathOptions.DT_STRAIGHTPATH_AREA_CROSSINGS.toValue();
+            case PATH_AND_POLYS:  StraightPathOptions.DT_STRAIGHTPATH_ALL_CROSSINGS.toValue();
         };
 
         _lastStatus = _query.findStraightPath( _startPt, _endPt, _polys, _pathLength,  _linePoints, gatherFlags ? _lineFlags : null, gatherPolyIDs ? _linePolys : null, funnelPolyCount, length, options );
