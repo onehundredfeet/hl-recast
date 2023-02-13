@@ -413,7 +413,7 @@ class NavTileConverter {
     std::vector<int> _vertIndex;
 
    public:
-    void buildF(float *verts, int totalVerts, int polyCount, int *vertCounts,  int *polyType, int *polyFlags) {
+    void buildF(float *verts, int totalVerts, int polyCount, int *vertCounts, int *polyType, int *polyFlags) {
         _vertMap.clear();
         _vertIndex.resize(totalVerts);
         auto min_x = _params.bmin[0];
@@ -481,17 +481,6 @@ class NavTileConverter {
             }
             polyIdx += vertCount;
         }
-
-        /*
-                        const unsigned short* verts;			///< The polygon mesh vertices. [(x, y, z) * #vertCount] [Unit: vx]
-                int vertCount;							///< The number vertices in the polygon mesh. [Limit: >= 3]
-                const unsigned short* polys;			///< The polygon data. [Size: #polyCount * 2 * #nvp]
-                const unsigned short* polyFlags;		///< The user defined flags assigned to each polygon. [Size: #polyCount]
-                const unsigned char* polyAreas;			///< The user defined area ids assigned to each polygon. [Size: #polyCount]
-                int polyCount;							///< Number of polygons in the mesh. [Limit: >= 1]
-                int nvp;								///< Number maximum number of vertices per polygon. [Limit: >= 3]
-
-            */
     }
     void buildD(double *verts, int totalVerts, int *vertCounts, int polyCount) {
     }
@@ -499,12 +488,33 @@ class NavTileConverter {
         _params.cs = gridSize;
         _params.ch = cellHeight;
     }
-    void setLocation(int x, int y, _hl_float3 *min, _hl_float3 *max) {
+    void setLocation(int x, int y, int layer, _hl_float3 *min, _hl_float3 *max) {
         _params.tileX = x;
         _params.tileY = y;
+        _params.tileLayer = layer;
+
+        _params.bmin[0] = min->x;
+        _params.bmin[1] = min->y;
+        _params.bmin[2] = min->z;
+
+        _params.bmax[0] = max->x;
+        _params.bmax[1] = max->y;
+        _params.bmax[2] = max->z;
     }
 
-    void *getTileData() {
+    void *getTileData(float walkableHeight, float walkableRadius, float walkableClimb) {
+        _params.buildBvTree = false;
+
+        _params.walkableHeight = walkableHeight;  ///< The agent height. [Unit: wu]
+        _params.walkableRadius = walkableRadius;  ///< The agent radius. [Unit: wu]
+        _params.walkableClimb = walkableClimb;    ///< The agent maximum traversable ledge. (Up/Down) [Unit: wu]
+
+        unsigned char *data = nullptr;
+        int dataSize = 0;
+        if (dtCreateNavMeshData(&_params, &data, &dataSize)) {
+            return data;
+        }
+
         return nullptr;
     }
 };
