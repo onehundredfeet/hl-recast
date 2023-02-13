@@ -6,12 +6,24 @@ import recast.Native.MeshCapture;
 import hvector.Vec3;
 import recast.Native.NavMeshQuery;
 import recast.Native.QueryFilter;
-
+import recast.Native.NavTileConverter;
 //
 // This tries to take the entire complete example and recreate it using the higher level HAXE classes
 //
 class Simple {
     public static final MAX_NAV_QUERY_NODES = 2048;
+
+	static function navBuilderTest() {
+		// Need a nav mesh
+		var converter = new NavTileConverter();
+
+		converter.setUnits(0.1,2.0);
+		converter.setLocation(0, 0, 0, new Vec3(-100, -100, -100), new Vec3(100, 100, 100));
+		converter.setWalkability(1., 1, 1);
+
+//		converter.buildF( )
+		//converter.setUnits(1.0, 1.0);
+	}
 
 
 	public static function main() {
@@ -61,4 +73,5 @@ class Simple {
 			trace('Couldn\'t find positions ');
 		}
 	}
+	
 }

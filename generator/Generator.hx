@@ -56,7 +56,26 @@ static var options = {
 	autoGC: true
 };
 
-static final JVM_INCLUDE = "";
+static final JVM_INCLUDE = "
+#include <Recast.h>
+#include <RecastAlloc.h>
+#include <RecastAssert.h>
+#include \"ChunkyTriMesh.h\"
+
+#include <DetourAlloc.h>
+#include <DetourAssert.h>
+#include <DetourCommon.h>
+#include <DetourMath.h>
+#include <DetourNavMesh.h>
+#include <DetourNavMeshBuilder.h>
+#include <DetourNavMeshQuery.h>
+#include <DetourNode.h>
+#include <DetourStatus.h>
+#include <DetourTileCache.h>
+#include <DetourTileCacheBuilder.h>
+#include \"jvm-recast.h\"
+
+";
 
 public static function generateCpp(target = idl.Options.Target.TargetHL) {
 	options.target = target;

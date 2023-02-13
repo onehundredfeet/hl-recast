@@ -60,7 +60,7 @@ ${DETOUR_DEBUG_UTIL_ROOT}/Source/DebugDraw.cpp
 ${DETOUR_DEBUG_UTIL_ROOT}/Source/DetourDebugDraw.cpp
 ${DETOUR_DEBUG_UTIL_ROOT}/Source/RecastDebugDraw.cpp
 src/ChunkyTriMesh.cpp
-src/hl-recast.cpp
+#src/hl-recast.cpp
 src/fastlz/fastlz.c
 )
 

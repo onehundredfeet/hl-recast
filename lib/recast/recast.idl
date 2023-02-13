@@ -79,6 +79,9 @@ enum TimerLabel
 	"RC_MAX_TIMERS"
 };
 
+interface NavBuffer {
+
+};
 
 [Internal="rcChunkyTriMesh"]
 interface ChunkyTriMesh {
@@ -93,8 +96,8 @@ interface ChunkyTriMesh {
 	[CObject]
 	int getNodeTriCount(int nodeIdx);
 
-	[CObject, Cast="vbyte *"]
-	int *getTriVertIndices(int nodeTriIndex);
+	//[CObject, Cast="vbyte *"]
+	//int *getTriVertIndices(int nodeTriIndex);
 
 	[CObject,Internal="rcCreateChunkyTriMesh"]
 	boolean build([Const] float [] verts, [Const] int [] tris, int ntris, int trisPerChunk); 	// Native Array
@@ -403,11 +406,11 @@ enum AllocHint
 
 [NoDelete, Internal="rcAlloc"]
 interface Alloc {
-	[Static, Internal="rcAllocShort", Cast="vbyte *"] short * allocShortArray(int length, AllocHint hint);
-	[Static, Internal="rcAlloc", Cast="vbyte *"] byte * allocByteArray(int length, AllocHint hint);
-	[Static, Internal="rcFree"] void freeArray(short *array);
-	[Static, Internal="rcClear"] void clearByteArray(byte *array, int length);
-	[Static, Internal="rcOffset"] byte *offsetByteArray(byte *array, int offset);
+//	[Static, Internal="rcAllocShort", Cast="vbyte *"] short * allocShortArray(int length, AllocHint hint);
+//	[Static, Internal="rcAlloc", Cast="vbyte *"] byte * allocByteArray(int length, AllocHint hint);
+//	[Static, Internal="rcFree"] void freeArray(short *array);
+//	[Static, Internal="rcClear"] void clearByteArray(byte *array, int length);
+//	[Static, Internal="rcOffset"] byte *offsetByteArray(byte *array, int offset);
 	
 };
 
@@ -798,7 +801,7 @@ interface MeshTile
 	attribute int flags;							
 	attribute MeshTile next;			
 };
-
+/*
 [Internal="dtNavMeshParams"]
 interface NavMeshParams 
 {
@@ -809,20 +812,22 @@ interface NavMeshParams
 	attribute int maxTiles;		
 	attribute int maxPolys;		
 };
+*/
 
-[Internal="dtNavMesh"]
 interface NavMesh
 {
 	void NavMesh();
 
-	[Internal="init"] StatusCode setParams([Const] NavMeshParams params);
-	StatusCode init([Cast="unsigned char *"]VoidPtr data, [Const] int dataSize, [Const] int flags);
-	[Const] NavMeshParams getParams();
+	void create(float3 origin, float tileWidth, float tileHeight, int maxTiles, int maxPolys);
+	StatusCode load(NavBuffer data,  int flags); // also creates
+
+	TileRef addTile(NavBuffer data, int flags); 
+	void replaceTile(NavBuffer data, TileRef ref, int flags); 
+	StatusCode removeTile(TileRef ref); //TODO
 
 	//
 	// Tile API
 	//
-	//StatusCode addTile(char* data, int dataSize, int flags, dtTileRef lastRef, dtTileRef result); TODO
 	//StatusCode removeTile(dtTileRef ref, unsigned char** data, int* dataSize); //TODO
 //	void calcTileLoc([Const] float[] pos, int[] tx, int[] ty);
 //	[Const] dtMeshTile getTileAt([Const] int x, [Const] int y, [Const] int layer);
@@ -858,13 +863,13 @@ interface NavMesh
 
 
 	
-	PolyRef encodePolyId(int salt, int it, int ip);
+//	PolyRef encodePolyId(int salt, int it, int ip);
 	// void decodePolyId(int PolyRef, [Out] uint salt, [Out] uint it, [Out] uint ip); // TODO add unsigned int
 	
-	int decodePolyIdSalt(PolyRef ref);
-	int decodePolyIdTile(PolyRef ref);
-	int decodePolyIdPoly(PolyRef ref);
-	[Static, Internal="dtGetDetailTriEdgeFlags"] int getDetailTriEdgeFlags(char triFlags, int edgeIndex);
+//	int decodePolyIdSalt(PolyRef ref);
+//	int decodePolyIdTile(PolyRef ref);
+//	int decodePolyIdPoly(PolyRef ref);
+//	[Static, Internal="dtGetDetailTriEdgeFlags"] int getDetailTriEdgeFlags(char triFlags, int edgeIndex);
 //	[Static] NavMesh dtAllocNavMesh();
 //	[Static] void dtFreeNavMesh(NavMesh navmesh);
 };
@@ -969,6 +974,7 @@ interface NavMeshCreateParams
 	attribute bool buildBvTree;
 };
 
+/*
 [NoDelete]
 interface NavMeshBuilder
 {
@@ -978,6 +984,7 @@ interface NavMeshBuilder
 	[Static] bool dtNavMeshDataSwapEndian(byte * data, [Const] int dataSize);
 };
 
+*/
 
 //--------------------------------------------------------------------------------------------
 // DetourNavMeshQuery.h
@@ -1018,7 +1025,7 @@ interface PolyQuery
 interface NavMeshQuery
 {
 	void NavMeshQuery();
-	[Const] NavMesh getAttachedNavMesh();
+	[Cast="NavMesh*"] NavMesh getAttachedNavMesh();
 
 	//NEW
 	StatusCode init( NavMesh nav, int maxNodes);
@@ -1164,6 +1171,8 @@ interface MeshCapture {
 
 };
 
+
+
 interface NavTileConverter {
 	void NavTileConverter();
 
@@ -1171,7 +1180,8 @@ interface NavTileConverter {
 	void buildF(float* verts, int totalVerts,  int polyCount, int* polyVertCount,int* polyType, int* polyFlags);
 //	void buildD(double* verts, int totalVerts, int* vertCounts, int polyCount);
 	
-	void setLocation( int x, int y, float3 min, float3 max);
+	void setLocation( int x, int y, int layer, float3 min, float3 max);
+	void setWalkability(float walkableHeight, float walkableRadius, float walkableClimb);
 
-	VoidPtr getTileData();
+	NavBuffer getTileData();
 };

@@ -1,7 +1,8 @@
 
-	#ifndef __HL_IDL_HELPERS_H_
-#define __HL_IDL_HELPERS_H_
+	#ifndef __JVM_IDL_HELPERS_H_
+#define __JVM_IDL_HELPERS_H_
 
+/*
 #include <hl.h>
 #include <string>
 
@@ -11,63 +12,6 @@ vstring * hl_utf8_to_hlstr( const std::string &str);
 
 #pragma once
 
-
-// Float vector
-struct _h_float2 {
-	float x;
-	float y;
-};
-
-struct _h_float3 {
-	float x;
-	float y;
-	float z;
-};
-
-struct _h_float4 {
-	float x;
-	float y;
-	float z;
-	float w;
-};
-
-// int vector
-struct _h_int2 {
-	int x;
-	int y;
-};
-
-struct _h_int3 {
-	int x;
-	int y;
-	int z;
-};
-
-struct _h_int4 {
-	int x;
-	int y;
-	int z;
-	int w;
-};
-
-// double vector
-struct _h_double2 {
-	double x;
-	double y;
-};
-
-struct _h_double3 {
-	double x;
-	double y;
-	double z;
-};
-
-struct _h_double4 {
-	double x;
-	double y;
-	double z;
-	double w;
-};
 
 
 template<class T, class C>
@@ -99,6 +43,6 @@ class  IteratorWrapper {
 			return &(*_it);
 		}
 };
-
+*/
 #endif
 	
