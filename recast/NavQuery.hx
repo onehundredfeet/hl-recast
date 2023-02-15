@@ -54,9 +54,8 @@ class NavQuery {
     public function new(nm : TiledNavMesh, maxNodes = MAX_NAV_QUERY_NODES, maxPathLength = MAX_PATH_LENGTH) {
         _nm = nm;
 
-        _query = new NavMeshQuery();
         _polys = new NativeArray<UInt>( maxPathLength);
-        checkResult(_query.init(_nm.nativeMesh, maxNodes));        
+        _query = _nm.nativeMesh.createQuery(maxPathLength);
     }
 
     public function lastStatusString() {

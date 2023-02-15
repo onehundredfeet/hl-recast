@@ -83,10 +83,9 @@ interface NavBuffer {
 
 };
 
-[Internal="rcChunkyTriMesh"]
-interface ChunkyTriMesh {
+interface TriMeshPartition {
 
-	void ChunkyTriMesh();
+	void TriMeshPartition();
 
 	attribute int maxTrisPerChunk;
 
@@ -99,11 +98,11 @@ interface ChunkyTriMesh {
 	//[CObject, Cast="vbyte *"]
 	//int *getTriVertIndices(int nodeTriIndex);
 
-	[CObject,Internal="rcCreateChunkyTriMesh"]
-	boolean build([Const] float [] verts, [Const] int [] tris, int ntris, int trisPerChunk); 	// Native Array
+	//[CObject,Internal="rcCreateTriMeshPartition"]
+	//boolean build([Const] float [] verts, [Const] int [] tris, int ntris, int trisPerChunk); 	// Native Array
 
-	[CObject,Internal="rcGetChunksOverlappingRect"]
-	int getOverlappingRect([Cast="float*"]float2 bmin, [Cast="float*"]float2 bmax, int[] ids, int maxIds);
+	//[CObject,Internal="rcGetChunksOverlappingRect"]
+	int getChunksOverlappingRect([Cast="float*"]float2 bmin, [Cast="float*"]float2 bmax, int[] ids, int maxIds);
 };
 
 
@@ -111,7 +110,7 @@ interface ChunkyTriMesh {
 [Internal="rcContext"]
 interface RasterContext 
 {
-    void RasterContext(boolean state);
+    void RasterContext(boolean loggingAndTimers);
     void enableLog(boolean state);
 	void resetLog();
 	void enableTimer(boolean state);
@@ -461,72 +460,6 @@ interface Math {
 //--------------------------------------------------------------------------------------------
 [NoDelete]
 interface DetourCommon {
-/*
-	[Static] void dtVcross(float3 dest, [Const] float3 v1, [Const] float3 v2);
-	[Static] float dtVdot([Const] float3 v1, [Const] float3 v2);
-	[Static] void dtVmad(float3 dest, [Const] float3 v1, [Const] float3 v2, [Const] float s);
-	[Static] void dtVlerp(float3 dest, [Const] float3 v1, [Const] float3 v2, [Const] float t);
-	[Static] void dtVadd(float3 dest, [Const] float3 v1, [Const] float3 v2);
-	[Static] void dtVsub(float3 dest, [Const] float3 v1, [Const] float3 v2);
-	[Static] void dtVscale(float3 dest, [Const] float3 v, [Const] float t);
-	[Static] void dtVmin(float3 mn, [Const] float3 v);
-	[Static] void dtVmax(float3 mx, [Const] float3 v);
-	[Static] void dtVset(float3 dest, [Const] float x, [Const] float y, [Const] float z);
-	[Static] void dtVcopy(float3 dest, [Const] float3 a);
-	[Static] float dtVlen([Const] float3 v);
-	[Static] float dtVlenSqr([Const] float3 v);
-	[Static] float dtVdist([Const] float3 v1, [Const] float3 v2);
-	[Static] float dtVdistSqr([Const] float3 v1, [Const] float3 v2);
-	[Static] float dtVdist2D([Const] float3 v1, [Const] float3 v2);
-	[Static] float dtVdist2DSqr([Const] float3 v1, [Const] float3 v2);
-	[Static] void dtVnormalize(float3 v);
-	[Static] bool dtVequal([Const] float3 p0, [Const] float3 p1);
-	[Static] bool dtVisfinite([Const] float3 v);
-	[Static] bool dtVisfinite2D([Const] float3 v);
-	[Static] float dtVdot2D([Const] float3 u, [Const] float3 v);
-	[Static] float dtVperp2D([Const] float3 u, [Const] float3 v);
-	[Static] float dtTriArea2D([Const] float3 a, [Const] float3 b, [Const] float3 c);
-
-    // TODO replace with short3
-	[Static] bool dtOverlapQuantBounds([Const] short[] amin, [Const] short[] amax,
-						[Const] short[] bmin, [Const] short[] bmax);
-
-	[Static] bool dtOverlapBounds([Const] float3 amin, [Const] float3 amax,
-						[Const] float3 bmin, [Const] float3 bmax);
-
-	[Static] void dtClosestPtPointTriangle(float3 closest, [Const] float3 p,
-						[Const] float3 a, [Const] float3 b, [Const] float3 c);
-
-	[Static] bool dtClosestHeightPointTriangle([Const] float3 p, [Const] float3 a, [Const] float3 b, 
-						[Const] float3 c, [Ref] float h);
-
-	[Static] bool dtIntersectSegmentPoly2D([Const] float3 p0, [Const] float3 p1,
-							  [Const] float3 verts, int nverts,
-							  [Ref] float tmin, [Ref] float tmax,
-							  [Ref] int segMin, [Ref] int segMax);
-
-	[Static] bool dtIntersectSegSeg2D([Const] float3 ap, [Const] float3 aq,
-						 [Const] float3 bp, [Const] float3 bq,
-						 [Ref] float s, [Ref] float t);
-
-	[Static] bool dtPointInPolygon([Const] float3 pt, [Const] float3 verts, [Const] int nverts);
-
-	[Static] bool dtDistancePtPolyEdgesSqr([Const] float3 pt, [Const] float3 verts, [Const] int nverts,
-								float3 ed, float3 et);
-
-	[Static] float dtDistancePtSegSqr2D([Const] float3 pt, [Const] float3 p, [Const] float3 q, [Ref] float t);
-
-	[Static] void dtCalcPolyCenter(float3 tc, [Const, Cast="unsigned short *"] short *idx, int nidx, [Const] float3 verts);
-
-	[Static] bool dtOverlapPolyPoly2D([Const] float3 polya, [Const] int npolya,
-							[Const] float3 polyb, [Const] int npolyb);
-
-	[Static] int dtOppositeTile(int side);
-	[Static] void dtSwapByte(char[] a, char[] b);	
-
-	[Static, Internal="dtRandomPointInConvexPoly"] void randomPointInConvexPoly([Const] float[] pts, [Const] int npts, float[] areas,
-								[Const] float s, [Const] float t, float[] out);
-								*/
 	[Static, Internal="dtNextPow2"] int nextPow2(int v);
 	[Static, Internal="dtIlog2"] int ilog2(int v);
 	[Static, Internal="dtAlign4"] int align4(int x);
@@ -696,6 +629,40 @@ enum StraightPathOptions
 };
 
 
+//
+// Unified nav mesh builder
+// Holds world geo and nav mesh data
+// Will ultimately separate the world geo out again, but easier for now
+//
+
+interface TriMeshBuilder {
+
+};
+
+[Internal="NavWorld::SourcePolyChunk"]
+interface SourcePolyChunk {
+	[Internal="meshPtr"]
+	TriMeshBuilder mesh();
+};
+
+[Internal="NavWorld::TileBuilder"]
+interface TileBuilder {
+
+};
+
+interface NavWorld {
+	[Static, Internal="NavWorld::create"] NavWorld create(float3 origin, float3 dim, int tileSizeInCells, float cellSize, float cellHeight, int maxTiles, int maxPolys);
+    [Const] SourcePolyChunk addChunk();
+	// This should likely be internal, but we'll see how it goes exposed
+	// Allows for easier threading this way.
+    [Const] TileBuilder getTileBuilder(int x, int y);
+
+    void setAgentParameters(float walkableSlopeAngle,
+                            float walkableClimb,
+                            float walkableRadius,
+                            float walkableHeight);
+};
+
 
 
 //--------------------------------------------------------------------------------------------
@@ -704,127 +671,25 @@ enum StraightPathOptions
 typedef PolyRef uint;
 typedef TileRef uint;
 
-[Internal="dtPoly"]
-interface Poly 
-{
-	attribute int firstLink;
-	//attribute short* verts; // TODO original:  unsigned short verts[DT_VERTS_PER_POLYGON];
-	//attribute short* neis;  // TODO original:  unsigned short neis[DT_VERTS_PER_POLYGON];
-	attribute short flags;
-	attribute char vertCount;
-	attribute char areaAndtype;
-	void setArea(char a);
-	void setType(char t);
-	[Const] char getArea();
-    [Const] char getType();
-};
-[Internal="dtPolyDetail"]
-interface PolyDetail 
-{
-	attribute int vertBase;			
-	attribute int triBase;			
-	attribute char vertCount;		
-	attribute char triCount;		
-};
-
-[Internal="dtLink"]
-interface Link 
-{
-	attribute PolyRef ref;		
-	attribute int next;				
-	attribute char edge;			
-	attribute char side;			
-	attribute char bmin;			
-	attribute char bmax;			
-};
-
-[Internal="dtBVNode"]
-interface BVNode 
-{
-	// attribute short* bmin; // TODO replace with short3			
-	// attribute short* bmax; // TODO replace with short3	
-	attribute int i;					
-};
-
-[Internal="dtOffMeshConnection"]
-interface OffMeshConnection 
-{
-	// float pos[6]; // TODO original: float pos[6];
-	attribute float rad;		
-	attribute short poly;
-	attribute char flags;
-	attribute char side;
-	attribute int userId;
-};
-
-[Internal="dtMeshHeader"]
-interface MeshHeader 
-{
-	attribute int magic;				
-	attribute int version;			
-	attribute int x;					
-	attribute int y;					
-	attribute int layer;				
-	attribute int userId;	
-	attribute int polyCount;			
-	attribute int vertCount;			
-	attribute int maxLinkCount;		
-	attribute int detailMeshCount;	
-	attribute int detailVertCount;		
-	attribute int detailTriCount;		
-	attribute int bvNodeCount;		
-	attribute int offMeshConCount;	
-	attribute int offMeshBase;		
-	attribute float walkableHeight;	
-	attribute float walkableRadius;	
-	attribute float walkableClimb;	
-	attribute float3 bmin;			
-	attribute float3 bmax;			
-	attribute float bvQuantFactor;
-};
-
-[Internal="dtMeshTile"]
-interface MeshTile 
-{
-	attribute int salt;			
-	attribute int linksFreeList;	
-	attribute MeshHeader header;	
-	attribute Poly polys; 		  	
-	attribute float* verts;
-	attribute Link links;	
-	attribute PolyDetail detailMeshes;	
-	attribute float* detailVerts;	  
-	attribute char* detailTris;
-	attribute BVNode bvTree;
-	attribute OffMeshConnection offMeshCons;		
-	attribute int dataSize;						
-	attribute int flags;							
-	attribute MeshTile next;			
-};
-/*
-[Internal="dtNavMeshParams"]
-interface NavMeshParams 
-{
-	void NavMeshParams();
-	attribute float3 orig;		
-	attribute float tileWidth;	
-	attribute float tileHeight;	
-	attribute int maxTiles;		
-	attribute int maxPolys;		
-};
-*/
-
 interface NavMesh
 {
-	void NavMesh();
-
 	void create(float3 origin, float tileWidth, float tileHeight, int maxTiles, int maxPolys);
-	StatusCode load(NavBuffer data,  int flags); // also creates
+	void load(NavBuffer data,  int flags); // also creates
 
+	//
+	// Tile API
+	//
 	TileRef addTile(NavBuffer data, int flags); 
 	void replaceTile(NavBuffer data, TileRef ref, int flags); 
 	StatusCode removeTile(TileRef ref); //TODO
 
+	// Querry API
+	NavMeshQuery createQuery(int maxNodes);
+
+
+	//
+	// Old
+	//
 	//
 	// Tile API
 	//
@@ -848,9 +713,9 @@ interface NavMesh
 	bool isValidPolyRef(PolyRef ref);
 	
 	
-	StatusCode getOffMeshConnectionPolyEndPoints(PolyRef prevRef, PolyRef polyRef, float[] startPos, float[] endPos);
+//	StatusCode getOffMeshConnectionPolyEndPoints(PolyRef prevRef, PolyRef polyRef, float[] startPos, float[] endPos);
 
-	[Const] OffMeshConnection getOffMeshConnectionByRef(PolyRef ref);
+//	[Const] OffMeshConnection getOffMeshConnectionByRef(PolyRef ref);
 	
 	//
 	// Poly Area & Flag configuration
@@ -881,110 +746,14 @@ interface NavMesh
 //--------------------------------------------------------------------------------------------
 typedef NodeIndex short;
 
-[Internal="dtNode"]
-interface Node 
-{
-	attribute float3 pos;
-	attribute float cost;
-	attribute float total;
-	attribute uint pidx;
-	attribute uint state;
-	attribute uint flags;
-	attribute PolyRef id;
+
+[Internal="dtStatus"]
+enum DtStatus {
+	"DT_FAILURE",
+	"DT_SUCCESS",
+	"DT_IN_PROGRESS"
 };
 
-[Internal="dtNodePool"]
-interface NodePool
-{
-	void NodePool(int maxNodes, int hashSize);
-	void clear();
-
-	Node getNode(PolyRef id, char state);	
-	Node findNode(PolyRef id, char state);
-	//uint findNodes(PolyRef id, Node** nodes, const int maxNodes); //TODO
-	uint getNodeIdx([Const] Node node);
-	Node getNodeAtIdx(uint idx);	
-	int getMemUsed();	
-	int getMaxNodes();
-	int getHashSize();
- 	NodeIndex getFirst(int bucket);
-	NodeIndex getNext(int i); 
-	int getNodeCount();
-};
-
-[Internal="dtNodeQueue"]
-interface NodeQueue
-{
-	void NodeQueue(int n);
-	void clear();
-	Node top();
-	Node pop();
-	void push(Node node);
-	void modify(Node node);
-	bool empty();
-	int getMemUsed();
-	int getCapacity();
-};
-	
-
-//--------------------------------------------------------------------------------------------
-// DetourNavMeshBuilder.h
-//--------------------------------------------------------------------------------------------
-[Internal="dtNavMeshCreateParams"]
-interface NavMeshCreateParams 
-{
-	void NavMeshCreateParams();
-
-	// Option 1 - Arrays that get coppied and will use the member variable as size	
-	// Currently, setting this will likely leak memory. Unless it's disposed by the dtNavMeshCreateParams class
-	//	attribute short [vertCount] verts;
-
-	// Option 2 - Direct pointer access.
-
-	attribute short* verts;
-	attribute int vertCount;
-	[Const] attribute short* polys;
-	[Const] attribute short* polyFlags;
-	[Const] attribute char* polyAreas;
-	attribute int polyCount;							
-	attribute int nvp;								
-	[Const] attribute uint* detailMeshes;	//TODO check if working ok 
-	[Const] attribute float* detailVerts;				
-	attribute int detailVertsCount;					
-	[Const] attribute char* detailTris;		
-	attribute int detailTriCount;
-	[Const] attribute float* offMeshConVerts;
-	[Const] attribute float* offMeshConRad;
-	[Const] attribute short* offMeshConFlags;
-	[Const] attribute char* offMeshConAreas;
-	[Const] attribute char* offMeshConDir;	
-	[Const] attribute uint* offMeshConUserID;
-	attribute int offMeshConCount;
-	attribute uint userId;	
-	attribute int tileX;				
-	attribute int tileY;				
-	attribute int tileLayer;			
-	attribute float3 bmin;			
-	attribute float3 bmax;			
-	attribute float walkableHeight;
-	attribute float walkableRadius;	
-	attribute float walkableClimb;	
-	attribute float cs;				
-	attribute float ch;				
-	attribute bool buildBvTree;
-};
-
-/*
-[NoDelete]
-interface NavMeshBuilder
-{
-
-	[Static,ReturnArray=(outPtr,aLength)] VoidPointer dtCreateNavMeshData(NavMeshCreateParams params, [Virtual] byte* outPtr, [Out] int aLength ); 
-	[Static] bool dtNavMeshHeaderSwapEndian(byte * data, [Const] int dataSize);
-	[Static] bool dtNavMeshDataSwapEndian(byte * data, [Const] int dataSize);
-};
-
-*/
 
 //--------------------------------------------------------------------------------------------
 // DetourNavMeshQuery.h
@@ -1028,13 +797,13 @@ interface NavMeshQuery
 	[Cast="NavMesh*"] NavMesh getAttachedNavMesh();
 
 	//NEW
-	StatusCode init( NavMesh nav, int maxNodes);
+//	StatusCode init( NavMesh nav, int maxNodes);
 	StatusCode findPath(PolyRef startRef, PolyRef endRef, [Cast="float*"]float3 startPos, [Cast="float*"]float3 endPos, QueryFilter filter, PolyRef [] path, [Out] int pathCount, int maxPath);
-	StatusCode findNearestPoly([Cast="float*"] float3 center, [Cast="float*"] float3 halfExtents,
+	DtStatus findNearestPoly([Cast="float*"] float3 center, [Cast="float*"] float3 halfExtents,
 							 [Const] QueryFilter filter,
 							 [Out] PolyRef nearestRef, [Cast="float*"]float3 nearestPt);
 
-	StatusCode findNearestPoly([Cast="float*"] float3 center, [Cast="float*"] float3 halfExtents,
+	DtStatus findNearestPoly([Cast="float*"] float3 center, [Cast="float*"] float3 halfExtents,
 							 QueryFilter filter,
 							 [Out] PolyRef nearestRef, [Cast="float*"]float3 nearestPt, [Out] bool isOverPoly);
 
@@ -1147,7 +916,7 @@ interface PerformanceTimer {
 	double deltaMilliseconds();
 	double deltaMicroseconds();
 };
-
+/*
 [NoDelete]
 interface Tests {
 	[Static, Internal="setToZero"]
@@ -1155,6 +924,8 @@ interface Tests {
 	[Static, Internal="setToOne"]
 	void setToOne( [Out] int a, [Out] float b, [Out] double c, [Out] bool d);
 };
+
+
 
 [Internal="dtMeshCapture"]
 interface MeshCapture {
@@ -1171,7 +942,7 @@ interface MeshCapture {
 
 };
 
-
+*/
 
 interface NavTileConverter {
 	void NavTileConverter();
@@ -1185,3 +956,288 @@ interface NavTileConverter {
 
 	NavBuffer getTileData();
 };
+
+
+/*
+[Internal="dtPoly"]
+interface Poly 
+{
+	attribute int firstLink;
+	//attribute short* verts; // TODO original:  unsigned short verts[DT_VERTS_PER_POLYGON];
+	//attribute short* neis;  // TODO original:  unsigned short neis[DT_VERTS_PER_POLYGON];
+	attribute short flags;
+	attribute char vertCount;
+	attribute char areaAndtype;
+	void setArea(char a);
+	void setType(char t);
+	[Const] char getArea();
+    [Const] char getType();
+};
+[Internal="dtPolyDetail"]
+interface PolyDetail 
+{
+	attribute int vertBase;			
+	attribute int triBase;			
+	attribute char vertCount;		
+	attribute char triCount;		
+};
+
+[Internal="dtLink"]
+interface Link 
+{
+	attribute PolyRef ref;		
+	attribute int next;				
+	attribute char edge;			
+	attribute char side;			
+	attribute char bmin;			
+	attribute char bmax;			
+};
+
+[Internal="dtBVNode"]
+interface BVNode 
+{
+	// attribute short* bmin; // TODO replace with short3			
+	// attribute short* bmax; // TODO replace with short3	
+	attribute int i;					
+};
+
+[Internal="dtOffMeshConnection"]
+interface OffMeshConnection 
+{
+	// float pos[6]; // TODO original: float pos[6];
+	attribute float rad;		
+	attribute short poly;
+	attribute char flags;
+	attribute char side;
+	attribute int userId;
+};
+
+[Internal="dtMeshHeader"]
+interface MeshHeader 
+{
+	attribute int magic;				
+	attribute int version;			
+	attribute int x;					
+	attribute int y;					
+	attribute int layer;				
+	attribute int userId;	
+	attribute int polyCount;			
+	attribute int vertCount;			
+	attribute int maxLinkCount;		
+	attribute int detailMeshCount;	
+	attribute int detailVertCount;		
+	attribute int detailTriCount;		
+	attribute int bvNodeCount;		
+	attribute int offMeshConCount;	
+	attribute int offMeshBase;		
+	attribute float walkableHeight;	
+	attribute float walkableRadius;	
+	attribute float walkableClimb;	
+	attribute float3 bmin;			
+	attribute float3 bmax;			
+	attribute float bvQuantFactor;
+};
+
+[Internal="dtMeshTile"]
+interface MeshTile 
+{
+	attribute int salt;			
+	attribute int linksFreeList;	
+	attribute MeshHeader header;	
+	attribute Poly polys; 		  	
+	attribute float* verts;
+	attribute Link links;	
+	attribute PolyDetail detailMeshes;	
+	attribute float* detailVerts;	  
+	attribute char* detailTris;
+	attribute BVNode bvTree;
+	attribute OffMeshConnection offMeshCons;		
+	attribute int dataSize;						
+	attribute int flags;							
+	attribute MeshTile next;			
+};
+
+[Internal="dtNavMeshParams"]
+interface NavMeshParams 
+{
+	void NavMeshParams();
+	attribute float3 orig;		
+	attribute float tileWidth;	
+	attribute float tileHeight;	
+	attribute int maxTiles;		
+	attribute int maxPolys;		
+};
+*/
+
+/*
+	[Static] void dtVcross(float3 dest, [Const] float3 v1, [Const] float3 v2);
+	[Static] float dtVdot([Const] float3 v1, [Const] float3 v2);
+	[Static] void dtVmad(float3 dest, [Const] float3 v1, [Const] float3 v2, [Const] float s);
+	[Static] void dtVlerp(float3 dest, [Const] float3 v1, [Const] float3 v2, [Const] float t);
+	[Static] void dtVadd(float3 dest, [Const] float3 v1, [Const] float3 v2);
+	[Static] void dtVsub(float3 dest, [Const] float3 v1, [Const] float3 v2);
+	[Static] void dtVscale(float3 dest, [Const] float3 v, [Const] float t);
+	[Static] void dtVmin(float3 mn, [Const] float3 v);
+	[Static] void dtVmax(float3 mx, [Const] float3 v);
+	[Static] void dtVset(float3 dest, [Const] float x, [Const] float y, [Const] float z);
+	[Static] void dtVcopy(float3 dest, [Const] float3 a);
+	[Static] float dtVlen([Const] float3 v);
+	[Static] float dtVlenSqr([Const] float3 v);
+	[Static] float dtVdist([Const] float3 v1, [Const] float3 v2);
+	[Static] float dtVdistSqr([Const] float3 v1, [Const] float3 v2);
+	[Static] float dtVdist2D([Const] float3 v1, [Const] float3 v2);
+	[Static] float dtVdist2DSqr([Const] float3 v1, [Const] float3 v2);
+	[Static] void dtVnormalize(float3 v);
+	[Static] bool dtVequal([Const] float3 p0, [Const] float3 p1);
+	[Static] bool dtVisfinite([Const] float3 v);
+	[Static] bool dtVisfinite2D([Const] float3 v);
+	[Static] float dtVdot2D([Const] float3 u, [Const] float3 v);
+	[Static] float dtVperp2D([Const] float3 u, [Const] float3 v);
+	[Static] float dtTriArea2D([Const] float3 a, [Const] float3 b, [Const] float3 c);
+
+    // TODO replace with short3
+	[Static] bool dtOverlapQuantBounds([Const] short[] amin, [Const] short[] amax,
+						[Const] short[] bmin, [Const] short[] bmax);
+
+	[Static] bool dtOverlapBounds([Const] float3 amin, [Const] float3 amax,
+						[Const] float3 bmin, [Const] float3 bmax);
+
+	[Static] void dtClosestPtPointTriangle(float3 closest, [Const] float3 p,
+						[Const] float3 a, [Const] float3 b, [Const] float3 c);
+
+	[Static] bool dtClosestHeightPointTriangle([Const] float3 p, [Const] float3 a, [Const] float3 b, 
+						[Const] float3 c, [Ref] float h);
+
+	[Static] bool dtIntersectSegmentPoly2D([Const] float3 p0, [Const] float3 p1,
+							  [Const] float3 verts, int nverts,
+							  [Ref] float tmin, [Ref] float tmax,
+							  [Ref] int segMin, [Ref] int segMax);
+
+	[Static] bool dtIntersectSegSeg2D([Const] float3 ap, [Const] float3 aq,
+						 [Const] float3 bp, [Const] float3 bq,
+						 [Ref] float s, [Ref] float t);
+
+	[Static] bool dtPointInPolygon([Const] float3 pt, [Const] float3 verts, [Const] int nverts);
+
+	[Static] bool dtDistancePtPolyEdgesSqr([Const] float3 pt, [Const] float3 verts, [Const] int nverts,
+								float3 ed, float3 et);
+
+	[Static] float dtDistancePtSegSqr2D([Const] float3 pt, [Const] float3 p, [Const] float3 q, [Ref] float t);
+
+	[Static] void dtCalcPolyCenter(float3 tc, [Const, Cast="unsigned short *"] short *idx, int nidx, [Const] float3 verts);
+
+	[Static] bool dtOverlapPolyPoly2D([Const] float3 polya, [Const] int npolya,
+							[Const] float3 polyb, [Const] int npolyb);
+
+	[Static] int dtOppositeTile(int side);
+	[Static] void dtSwapByte(char[] a, char[] b);	
+
+	[Static, Internal="dtRandomPointInConvexPoly"] void randomPointInConvexPoly([Const] float[] pts, [Const] int npts, float[] areas,
+								[Const] float s, [Const] float t, float[] out);
+								*/
+
+							/*
+[Internal="dtNode"]
+interface Node 
+{
+	attribute float3 pos;
+	attribute float cost;
+	attribute float total;
+	attribute uint pidx;
+	attribute uint state;
+	attribute uint flags;
+	attribute PolyRef id;
+};
+
+[Internal="dtNodePool"]
+interface NodePool
+{
+	void NodePool(int maxNodes, int hashSize);
+	void clear();
+
+	Node getNode(PolyRef id, char state);	
+	Node findNode(PolyRef id, char state);
+	//uint findNodes(PolyRef id, Node** nodes, const int maxNodes); //TODO
+	uint getNodeIdx([Const] Node node);
+	Node getNodeAtIdx(uint idx);	
+	int getMemUsed();	
+	int getMaxNodes();
+	int getHashSize();
+ 	NodeIndex getFirst(int bucket);
+	NodeIndex getNext(int i); 
+	int getNodeCount();
+};
+
+[Internal="dtNodeQueue"]
+interface NodeQueue
+{
+	void NodeQueue(int n);
+	void clear();
+	Node top();
+	Node pop();
+	void push(Node node);
+	void modify(Node node);
+	bool empty();
+	int getMemUsed();
+	int getCapacity();
+};
+	
+
+//--------------------------------------------------------------------------------------------
+// DetourNavMeshBuilder.h
+//--------------------------------------------------------------------------------------------
+[Internal="dtNavMeshCreateParams"]
+interface NavMeshCreateParams 
+{
+	void NavMeshCreateParams();
+
+	// Option 1 - Arrays that get coppied and will use the member variable as size	
+	// Currently, setting this will likely leak memory. Unless it's disposed by the dtNavMeshCreateParams class
+	//	attribute short [vertCount] verts;
+
+	// Option 2 - Direct pointer access.
+
+	attribute short* verts;
+	attribute int vertCount;
+	[Const] attribute short* polys;
+	[Const] attribute short* polyFlags;
+	[Const] attribute char* polyAreas;
+	attribute int polyCount;							
+	attribute int nvp;								
+	[Const] attribute uint* detailMeshes;	//TODO check if working ok 
+	[Const] attribute float* detailVerts;				
+	attribute int detailVertsCount;					
+	[Const] attribute char* detailTris;		
+	attribute int detailTriCount;
+	[Const] attribute float* offMeshConVerts;
+	[Const] attribute float* offMeshConRad;
+	[Const] attribute short* offMeshConFlags;
+	[Const] attribute char* offMeshConAreas;
+	[Const] attribute char* offMeshConDir;	
+	[Const] attribute uint* offMeshConUserID;
+	attribute int offMeshConCount;
+	attribute uint userId;	
+	attribute int tileX;				
+	attribute int tileY;				
+	attribute int tileLayer;			
+	attribute float3 bmin;			
+	attribute float3 bmax;			
+	attribute float walkableHeight;
+	attribute float walkableRadius;	
+	attribute float walkableClimb;	
+	attribute float cs;				
+	attribute float ch;				
+	attribute bool buildBvTree;
+};
+
+
+[NoDelete]
+interface NavMeshBuilder
+{
+
+	[Static,ReturnArray=(outPtr,aLength)] VoidPointer dtCreateNavMeshData(NavMeshCreateParams params, [Virtual] byte* outPtr, [Out] int aLength ); 
+	[Static] bool dtNavMeshHeaderSwapEndian(byte * data, [Const] int dataSize);
+	[Static] bool dtNavMeshDataSwapEndian(byte * data, [Const] int dataSize);
+};
+
+*/

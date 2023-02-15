@@ -15,11 +15,12 @@
 //    misrepresented as being the original software.
 // 3. This notice may not be removed or altered from any source distribution.
 //
-
-#include "ChunkyTriMesh.h"
+// [RC] This is heavily based on Mikko's ChunkyTriMesh code, but modified for clarity
+#include "TriMeshPartition.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#pragma once
 
 struct BoundsItem
 {
@@ -77,7 +78,7 @@ inline int longestAxis(float x, float y)
 }
 
 static void subdivide(BoundsItem* items, int nitems, int imin, int imax, int trisPerChunk,
-					  int& curNode, rcChunkyTriMeshNode* nodes, const int maxNodes,
+					  int& curNode, TriMeshPartitionNode* nodes, const int maxNodes,
 					  int& curTri, int* outTris, const int* inTris)
 {
 	int inum = imax - imin;
@@ -86,7 +87,7 @@ static void subdivide(BoundsItem* items, int nitems, int imin, int imax, int tri
 	if (curNode >= maxNodes)
 		return;
 
-	rcChunkyTriMeshNode& node = nodes[curNode++];
+	TriMeshPartitionNode& node = nodes[curNode++];
 	
 	if (inum <= trisPerChunk)
 	{
@@ -139,13 +140,14 @@ static void subdivide(BoundsItem* items, int nitems, int imin, int imax, int tri
 	}
 }
 
-bool rcCreateChunkyTriMesh(rcChunkyTriMesh* cm, const float* verts, const int* tris, int ntris,
+bool TriMeshPartition::partition(const float* verts, const int* tris, int ntris,
 						   int trisPerChunk)
 {
+	TriMeshPartition* cm = this;
 	int nchunks = (ntris + trisPerChunk-1) / trisPerChunk;
 
 	//printf("Chunking tri mesh %d tris into %d tris per chunk", ntris, trisPerChunk);
-	cm->nodes = new rcChunkyTriMeshNode[nchunks*4];
+	cm->nodes = new TriMeshPartitionNode[nchunks*4];
 	if (!cm->nodes)
 		return false;
 		
@@ -191,7 +193,7 @@ bool rcCreateChunkyTriMesh(rcChunkyTriMesh* cm, const float* verts, const int* t
 	cm->maxTrisPerChunk = 0;
 	for (int i = 0; i < cm->nnodes; ++i)
 	{
-		rcChunkyTriMeshNode& node = cm->nodes[i];
+		TriMeshPartitionNode& node = cm->nodes[i];
 		const bool isLeaf = node.i >= 0;
 		if (!isLeaf) continue;
 		if (node.n > cm->maxTrisPerChunk)
@@ -202,7 +204,7 @@ bool rcCreateChunkyTriMesh(rcChunkyTriMesh* cm, const float* verts, const int* t
 	auto chunkedTris = 0;
 	for (int i = 0; i < cm->nnodes; ++i)
 	{
-		rcChunkyTriMeshNode& node = cm->nodes[i];
+		TriMeshPartitionNode& node = cm->nodes[i];
 		const bool isLeaf = node.i >= 0;
 		if (!isLeaf) continue;
 		//printf("\tnode has %d tris\n", node.n);
@@ -222,16 +224,17 @@ inline bool checkOverlapRect(const float amin[2], const float amax[2],
 	return overlap;
 }
 
-int rcGetChunksOverlappingRect(const rcChunkyTriMesh* cm,
+int TriMeshPartition::getChunksOverlappingRect(
 							   float bmin[2], float bmax[2],
 							   int* ids, const int maxIds)
 {
+	const TriMeshPartition* cm = this;
 	// Traverse tree
 	int i = 0;
 	int n = 0;
 	while (i < cm->nnodes)
 	{
-		const rcChunkyTriMeshNode* node = &cm->nodes[i];
+		const TriMeshPartitionNode* node = &cm->nodes[i];
 		const bool overlap = checkOverlapRect(bmin, bmax, node->bmin, node->bmax);
 		const bool isLeafNode = node->i >= 0;
 		
@@ -292,16 +295,17 @@ static bool checkOverlapSegment(const float p[2], const float q[2],
 	return true;
 }
 
-int rcGetChunksOverlappingSegment(const rcChunkyTriMesh* cm,
+int TriMeshPartition::getChunksOverlappingSegment(
 								  float p[2], float q[2],
 								  int* ids, const int maxIds)
 {
+	const TriMeshPartition* cm = this;
 	// Traverse tree
 	int i = 0;
 	int n = 0;
 	while (i < cm->nnodes)
 	{
-		const rcChunkyTriMeshNode* node = &cm->nodes[i];
+		const TriMeshPartitionNode* node = &cm->nodes[i];
 		const bool overlap = checkOverlapSegment(p, q, node->bmin, node->bmax);
 		const bool isLeafNode = node->i >= 0;
 		

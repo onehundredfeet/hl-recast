@@ -1,143 +1,29 @@
 #ifndef __H_RECAST_H_
 #define __H_RECAST_H_
 
-#include <DebugDraw.h>
+// #include <DebugDraw.h>
+#include <DetourAlloc.h>
 #include <DetourCommon.h>
+#include <DetourDebugDraw.h>
+#include <DetourNavMesh.h>
 #include <DetourNavMeshBuilder.h>
 #include <DetourTileCache.h>
 #include <DetourTileCacheBuilder.h>
 #include <Recast.h>
 #include <RecastAlloc.h>
-#include <stdio.h>
-#include <DetourNavMesh.h>
-#include <DetourDebugDraw.h>
 #include <RecastDebugDraw.h>
-#include <DetourAlloc.h>
+#include <stdio.h>
 
 #include <map>
 #include <unordered_map>
 #include <vector>
 
-#include "ChunkyTriMesh.h"
-#include "PerfTimer.h"
+
 #include "fastlz/fastlz.h"
+#include "TriMeshBuilder.h"
+#include "TriMeshPartition.h"
 
-
-
-struct FastLZCompressor : public dtTileCacheCompressor {
-    inline dtTileCacheCompressor *asSuper() {
-        return this;
-    }
-    virtual int maxCompressedSize(const int bufferSize) {
-        return (int)(bufferSize * 1.05f);
-    }
-
-    virtual dtStatus compress(const unsigned char *buffer, const int bufferSize,
-                              unsigned char *compressed, const int /*maxCompressedSize*/, int *compressedSize) {
-        *compressedSize = fastlz_compress((const void *const)buffer, bufferSize, compressed);
-        return DT_SUCCESS;
-    }
-
-    virtual dtStatus decompress(const unsigned char *compressed, const int compressedSize,
-                                unsigned char *buffer, const int maxBufferSize, int *bufferSize) {
-        *bufferSize = fastlz_decompress(compressed, compressedSize, buffer, maxBufferSize);
-        return *bufferSize < 0 ? DT_FAILURE : DT_SUCCESS;
-    }
-};
-
-struct LinearAllocator : public dtTileCacheAlloc {
-    unsigned char *buffer;
-    size_t capacity;
-    size_t top;
-    size_t high;
-
-    inline dtTileCacheAlloc *asSuper() {
-        return this;
-    }
-
-    LinearAllocator(const size_t cap) : buffer(0), capacity(0), top(0), high(0) {
-        resize(cap);
-    }
-
-    virtual ~LinearAllocator() {
-        dtFree(buffer);
-    }
-
-    void resize(const size_t cap) {
-        if (buffer) dtFree(buffer);
-        buffer = (unsigned char *)dtAlloc(cap, DT_ALLOC_PERM);
-        capacity = cap;
-    }
-
-    virtual void reset() {
-        high = dtMax(high, top);
-        top = 0;
-    }
-
-    virtual void *alloc(const size_t size) {
-        if (!buffer)
-            return 0;
-        if (top + size > capacity)
-            return 0;
-        unsigned char *mem = &buffer[top];
-        top += size;
-        return mem;
-    }
-
-    virtual void free(void * /*ptr*/) {
-        // Empty
-    }
-};
-
-struct RemapProcessor : public dtTileCacheMeshProcess {
-   private:
-    std::map<int, int> _areaMap;
-    std::map<int, int> _flagMap;
-    int _flagDefault;
-
-   public:
-    inline RemapProcessor(int flagDefault = 0xffff) {
-        _flagDefault = flagDefault;
-    }
-
-    virtual ~RemapProcessor() {
-    }
-
-    inline dtTileCacheMeshProcess *asSuper() {
-        return this;
-    }
-
-    virtual void process(struct dtNavMeshCreateParams *params, unsigned char *polyAreas, unsigned short *polyFlags) {
-        for (int i = 0; i < params->polyCount; ++i) {
-            auto x = _areaMap.find(polyAreas[i]);
-
-            if (x != _areaMap.end()) {
-                polyAreas[i] = x->second;
-            }
-
-            auto y = _flagMap.find(polyAreas[i]);
-
-            if (y != _flagMap.end()) {
-                polyFlags[i] = y->second;
-            } else {
-                polyFlags[i] = _flagDefault;
-            }
-        }
-    }
-
-    void mapArea(int dtType, int areaType) {
-        _areaMap[dtType] = areaType;
-    }
-
-    void mapFlags(int dtType, int flags) {
-        _flagMap[dtType] = flags;
-    }
-};
-
-struct TileCacheData {
-    unsigned char *data;
-    int dataSize;
-};
+#include "hl-idl-helpers.hpp"
 
 inline static void rcConfigCopy(rcConfig *b, rcConfig *a) {
     memcpy(b, a, sizeof(rcConfig));
@@ -158,15 +44,15 @@ inline T *rcOffset(T *ptr, int length) {
     return ptr + length;
 }
 
-inline int getNodeTriIndex(rcChunkyTriMesh *_this, int nodeIdx) {
+inline int getNodeTriIndex(TriMeshPartition *_this, int nodeIdx) {
     return _this->nodes[nodeIdx].i;
 }
 
-inline int getNodeTriCount(rcChunkyTriMesh *_this, int nodeIdx) {
+inline int getNodeTriCount(TriMeshPartition *_this, int nodeIdx) {
     return _this->nodes[nodeIdx].n;
 }
 
-inline int *getTriVertIndices(rcChunkyTriMesh *_this, int triIndex) {
+inline int *getTriVertIndices(TriMeshPartition *_this, int triIndex) {
     return &_this->tris[triIndex];
 }
 
@@ -181,37 +67,6 @@ enum EStatus {
     IN_PROGRESS = DT_IN_PROGRESS
 };
 
-class PerformanceTimer {
-    TimeVal _start;
-    TimeVal _stop;
-
-   public:
-    PerformanceTimer() {}
-    ~PerformanceTimer() {}
-    void start() {
-        _start = getPerfTime();
-    }
-    void stop() {
-        _stop = getPerfTime();
-    }
-    double deltaSeconds() {
-        int microSeconds = getPerfTimeUsec(_stop - _start);
-
-        return (double)microSeconds / 1000000;
-    }
-
-    double deltaMilliseconds() {
-        int microSeconds = getPerfTimeUsec(_stop - _start);
-
-        return (double)microSeconds / 1000;
-    }
-
-    double deltaMicroseconds() {
-        int microSeconds = getPerfTimeUsec(_stop - _start);
-
-        return (double)microSeconds;
-    }
-};
 
 inline void setToZero(int *a, float *b, double *c, bool *d) {
     *a = 0;
@@ -226,6 +81,7 @@ inline void setToOne(int *a, float *b, double *c, bool *d) {
     *d = true;
 }
 
+/*
 class dtMeshCapture : public duDebugDraw {
    public:
     struct float3 {
@@ -385,7 +241,7 @@ class dtMeshCapture : public duDebugDraw {
         }
     }
 };
-
+*/
 struct iVert {
     unsigned short int x, y, z;
     bool operator==(const iVert &other) const {
@@ -410,8 +266,8 @@ class NavBuffer {
     int _size;
 
    public:
-   inline unsigned char * ptr() { return _ptr; }
-   inline int size() { return _size; }
+    inline unsigned char *ptr() { return _ptr; }
+    inline int size() { return _size; }
     NavBuffer(unsigned char *ptr, int size) : _ptr(ptr), _size(size) {}
     ~NavBuffer() {
         if (_ptr != nullptr)
@@ -420,7 +276,7 @@ class NavBuffer {
 };
 
 class NavMesh : public dtNavMesh {
-    public:
+   public:
     void create(_h_float3 *origin, float tileWidth, float tileHeight, int maxTiles, int maxPolys) {
         dtNavMeshParams params;
         params.orig[0] = origin->x;
@@ -433,19 +289,25 @@ class NavMesh : public dtNavMesh {
 
         init(&params);
     }
-	dtStatus load(NavBuffer *data,  int flags) {
+    dtStatus load(NavBuffer *data, int flags) {
         return init(data->ptr(), data->size(), flags);
     }
-	dtTileRef addTile(NavBuffer *tileData, int flags) {
+    dtTileRef addTile(NavBuffer *tileData, int flags) {
         dtTileRef outRef = 0;
-        dtNavMesh::addTile(tileData->ptr(), tileData->size(), flags, 0, &outRef);
+        dtNavMesh::addTile(tileData->ptr(), tileData->size(), flags | DT_COMPRESSEDTILE_FREE_DATA, 0, &outRef);
         return outRef;
     }
     void replaceTile(NavBuffer *tileData, dtTileRef lastRef, int flags) {
-        dtNavMesh::addTile(tileData->ptr(), tileData->size(), flags, lastRef, nullptr);
+        dtNavMesh::addTile(tileData->ptr(), tileData->size(), flags, lastRef | DT_COMPRESSEDTILE_FREE_DATA, nullptr);
     }
-	dtStatus removeTile(dtTileRef ref) {
+    dtStatus removeTile(dtTileRef ref) {
         return DT_SUCCESS;
+    }
+
+    dtNavMeshQuery *createQuery(int maxNodes) {
+        auto *query = new dtNavMeshQuery();
+        query->init(this, maxNodes);
+        return query;
     }
 };
 
@@ -453,7 +315,6 @@ class NavTileConverter {
     dtNavMeshCreateParams _params;
     std::vector<unsigned short int> _qverts;
     std::vector<unsigned short int> _polyVerts;
-    std::vector<unsigned short int> _polyVertCount;
     std::vector<unsigned short int> _polyFlags;
 
     std::vector<unsigned char> _polyAreas;
@@ -489,7 +350,7 @@ class NavTileConverter {
         _params.offMeshConRad = nullptr;
         _params.offMeshConUserID = nullptr;
         _params.offMeshConCount = 0;
-        
+
         _params.userId = 0;
         _params.cs = 1.0;
         _params.ch = 1.0;
@@ -497,6 +358,8 @@ class NavTileConverter {
     void buildF(float *verts, int totalVerts, int polyCount, int *vertCounts, int *polyType, int *polyFlags) {
         _vertMap.clear();
         _vertIndex.resize(totalVerts);
+        _qverts.clear();
+        _qverts.reserve(totalVerts);
         auto min_x = _params.bmin[0];
         auto min_y = _params.bmin[1];
         auto min_z = _params.bmin[2];
@@ -504,6 +367,7 @@ class NavTileConverter {
         double quantFactor = 1.0 / _params.cs;
 
         // collapse duplicates
+        int writeHead = 0;
         for (int i = 0; i < totalVerts; i++) {
             iVert v;
             auto idx = i * 3;
@@ -515,11 +379,20 @@ class NavTileConverter {
                 _vertIndex[i] = it->second;
                 continue;
             }
-            _vertIndex[i] = i;
-            _vertMap[v] = i;
+            auto vidx = writeHead++;
+            _vertIndex[i] = vidx;
+            _vertMap[v] = vidx;
+            _qverts.push_back(v.x);
+            _qverts.push_back(v.y);
+            _qverts.push_back(v.z);
         }
 
-        _params.vertCount = _vertMap.size();
+        if (totalVerts > 0)
+            _params.verts = &_qverts[0];
+        else
+            _params.verts = nullptr;
+
+        _params.vertCount = (int)_vertMap.size();
         _params.polyCount = polyCount;
 
         int nvp = 3;
@@ -535,7 +408,6 @@ class NavTileConverter {
 
         // build compatible indices
         auto polyIdx = 0;
-        _polyVertCount.resize(polyCount);
         _polyFlags.resize(polyCount);
         _polyAreas.resize(polyCount);
         _polyVerts.clear();
@@ -543,7 +415,6 @@ class NavTileConverter {
 
         for (int p = 0; p < polyCount; p++) {
             auto vertCount = vertCounts[p];
-            _polyVertCount[p] = vertCount;
             _polyFlags[p] = polyFlags[p];
             _polyAreas[p] = polyType[p];
 
@@ -562,6 +433,10 @@ class NavTileConverter {
             }
             polyIdx += vertCount;
         }
+
+        _params.polys = &_polyVerts[0];
+        _params.polyAreas = &_polyAreas[0];
+        _params.polyFlags = &_polyFlags[0];
     }
     void buildD(double *verts, int totalVerts, int *vertCounts, int polyCount) {
     }
@@ -601,15 +476,99 @@ class NavTileConverter {
         int dataSize = 0;
         if (dtCreateNavMeshData(&_params, &data, &dataSize)) {
             return new NavBuffer(data, dataSize);
-            
         }
 
-        return new NavBuffer(nullptr, 0);
+        return nullptr;
     }
 };
 
+#include "NavWorld.h"
+#include "PerformanceTimer.h"
+/*
+class InputGeom
+{
 
+	bool loadMesh(class rcContext* ctx, const std::string& filepath);
+	bool loadGeomSet(class rcContext* ctx, const std::string& filepath);
+public:
+	InputGeom();
+	~InputGeom();
+	
+	
+	bool load(class rcContext* ctx, const std::string& filepath);
+	bool saveGeomSet(const BuildSettings* settings);
+	
+	/// Method to return static mesh data.
+	const TriMeshBuilder* getMesh() const { return m_mesh; }
+	const float* getMeshBoundsMin() const { return m_meshBMin; }
+	const float* getMeshBoundsMax() const { return m_meshBMax; }
+	const float* getNavMeshBoundsMin() const { return m_hasBuildSettings ? m_buildSettings.navMeshBMin : m_meshBMin; }
+	const float* getNavMeshBoundsMax() const { return m_hasBuildSettings ? m_buildSettings.navMeshBMax : m_meshBMax; }
+	const TriMeshPartition* getChunkyMesh() const { return m_chunkyMesh; }
+	const BuildSettings* getBuildSettings() const { return m_hasBuildSettings ? &m_buildSettings : 0; }
+	bool raycastMesh(float* src, float* dst, float& tmin);
 
+	/// @name Off-Mesh connections.
+	///@{
+	int getOffMeshConnectionCount() const { return m_offMeshConCount; }
+	const float* getOffMeshConnectionVerts() const { return m_offMeshConVerts; }
+	const float* getOffMeshConnectionRads() const { return m_offMeshConRads; }
+	const unsigned char* getOffMeshConnectionDirs() const { return m_offMeshConDirs; }
+	const unsigned char* getOffMeshConnectionAreas() const { return m_offMeshConAreas; }
+	const unsigned short* getOffMeshConnectionFlags() const { return m_offMeshConFlags; }
+	const unsigned int* getOffMeshConnectionId() const { return m_offMeshConId; }
+	void addOffMeshConnection(const float* spos, const float* epos, const float rad,
+							  unsigned char bidir, unsigned char area, unsigned short flags);
+	void deleteOffMeshConnection(int i);
+	void drawOffMeshConnections(struct duDebugDraw* dd, bool hilight = false);
+	///@}
+
+	/// @name Box Volumes.
+	///@{
+	int getConvexVolumeCount() const { return m_volumeCount; }
+	const ConvexVolume* getConvexVolumes() const { return m_volumes; }
+	void addConvexVolume(const float* verts, const int nverts,
+						 const float minh, const float maxh, unsigned char area);
+	void deleteConvexVolume(int i);
+	void drawConvexVolumes(struct duDebugDraw* dd, bool hilight = false);
+	///@}
+	
+private:
+	// Explicitly disabled copy constructor and copy assignment operator.
+	InputGeom(const InputGeom&);
+	InputGeom& operator=(const InputGeom&);
+};
+*/
+
+/*
+	TriMeshPartition* m_chunkyMesh;
+	TriMeshBuilder* m_mesh;
+	float m_meshBMin[3], m_meshBMax[3];
+	BuildSettings m_buildSettings;
+	bool m_hasBuildSettings;
+	
+	/// @name Off-Mesh connections.
+	///@{
+	static const int MAX_OFFMESH_CONNECTIONS = 256;
+	float m_offMeshConVerts[MAX_OFFMESH_CONNECTIONS*3*2];
+	float m_offMeshConRads[MAX_OFFMESH_CONNECTIONS];
+	unsigned char m_offMeshConDirs[MAX_OFFMESH_CONNECTIONS];
+	unsigned char m_offMeshConAreas[MAX_OFFMESH_CONNECTIONS];
+	unsigned short m_offMeshConFlags[MAX_OFFMESH_CONNECTIONS];
+	unsigned int m_offMeshConId[MAX_OFFMESH_CONNECTIONS];
+	int m_offMeshConCount;
+	///@}
+
+	/// @name Convex Volumes.
+	///@{
+	static const int MAX_VOLUMES = 256;
+	ConvexVolume m_volumes[MAX_VOLUMES];
+	int m_volumeCount;
+	///@}
+	
+*/
+
+/*
 void dtMeshCapture::captureNavMesh(const dtNavMesh &nm, unsigned short flags) {
     duDebugDrawNavMeshPolysWithFlags(this, nm, flags, 0xffffffff);
 }
@@ -670,6 +629,6 @@ void dtMeshCapture::vertex(const float x, const float y, const float z, unsigned
 
 /// End drawing primitives.
 void dtMeshCapture::end() {}
-
+*/
 
 #endif

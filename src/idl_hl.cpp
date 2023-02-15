@@ -312,11 +312,11 @@ extern "C" {
 
 static rcLogCategory LogCategory__values[] = { RC_LOG_PROGRESS,RC_LOG_WARNING,RC_LOG_ERROR };
 HL_PRIM int HL_NAME(LogCategory_toValue0)( int idx ) {
-	return LogCategory__values[idx];
+	return (int)LogCategory__values[idx];
 }
 DEFINE_PRIM(_I32, LogCategory_toValue0, _I32);
 HL_PRIM int HL_NAME(LogCategory_indexToValue1)( int idx ) {
-	return LogCategory__values[idx];
+	return (int)LogCategory__values[idx];
 }
 DEFINE_PRIM(_I32, LogCategory_indexToValue1, _I32);
 HL_PRIM int HL_NAME(LogCategory_valueToIndex1)( int value ) {
@@ -331,11 +331,11 @@ HL_PRIM int HL_NAME(LogCategory_fromIndex1)( int index ) {return index;}
 DEFINE_PRIM(_I32, LogCategory_fromIndex1, _I32);
 static rcTimerLabel TimerLabel__values[] = { RC_TIMER_TOTAL,RC_TIMER_TEMP,RC_TIMER_RASTERIZE_TRIANGLES,RC_TIMER_BUILD_COMPACTHEIGHTFIELD,RC_TIMER_BUILD_CONTOURS,RC_TIMER_BUILD_CONTOURS_TRACE,RC_TIMER_BUILD_CONTOURS_SIMPLIFY,RC_TIMER_FILTER_BORDER,RC_TIMER_FILTER_WALKABLE,RC_TIMER_MEDIAN_AREA,RC_TIMER_FILTER_LOW_OBSTACLES,RC_TIMER_BUILD_POLYMESH,RC_TIMER_MERGE_POLYMESH,RC_TIMER_ERODE_AREA,RC_TIMER_MARK_BOX_AREA,RC_TIMER_MARK_CYLINDER_AREA,RC_TIMER_MARK_CONVEXPOLY_AREA,RC_TIMER_BUILD_DISTANCEFIELD,RC_TIMER_BUILD_DISTANCEFIELD_DIST,RC_TIMER_BUILD_DISTANCEFIELD_BLUR,RC_TIMER_BUILD_REGIONS,RC_TIMER_BUILD_REGIONS_WATERSHED,RC_TIMER_BUILD_REGIONS_EXPAND,RC_TIMER_BUILD_REGIONS_FLOOD,RC_TIMER_BUILD_REGIONS_FILTER,RC_TIMER_BUILD_LAYERS,RC_TIMER_BUILD_POLYMESHDETAIL,RC_TIMER_MERGE_POLYMESHDETAIL,RC_MAX_TIMERS };
 HL_PRIM int HL_NAME(TimerLabel_toValue0)( int idx ) {
-	return TimerLabel__values[idx];
+	return (int)TimerLabel__values[idx];
 }
 DEFINE_PRIM(_I32, TimerLabel_toValue0, _I32);
 HL_PRIM int HL_NAME(TimerLabel_indexToValue1)( int idx ) {
-	return TimerLabel__values[idx];
+	return (int)TimerLabel__values[idx];
 }
 DEFINE_PRIM(_I32, TimerLabel_indexToValue1, _I32);
 HL_PRIM int HL_NAME(TimerLabel_valueToIndex1)( int value ) {
@@ -353,11 +353,11 @@ HL_PRIM void HL_NAME(NavBuffer_delete)( pref<NavBuffer>* _this ) {
 	free_ref(_this );
 }
 DEFINE_PRIM(_VOID, NavBuffer_delete, _IDL);
-static void finalize_ChunkyTriMesh( pref<rcChunkyTriMesh>* _this ) { free_ref(_this ); }
-HL_PRIM void HL_NAME(ChunkyTriMesh_delete)( pref<rcChunkyTriMesh>* _this ) {
+static void finalize_TriMeshPartition( pref<TriMeshPartition>* _this ) { free_ref(_this ); }
+HL_PRIM void HL_NAME(TriMeshPartition_delete)( pref<TriMeshPartition>* _this ) {
 	free_ref(_this );
 }
-DEFINE_PRIM(_VOID, ChunkyTriMesh_delete, _IDL);
+DEFINE_PRIM(_VOID, TriMeshPartition_delete, _IDL);
 static void finalize_RasterContext( pref<rcContext>* _this ) { free_ref(_this ); }
 HL_PRIM void HL_NAME(RasterContext_delete)( pref<rcContext>* _this ) {
 	free_ref(_this );
@@ -435,11 +435,11 @@ HL_PRIM void HL_NAME(PolyMeshDetail_delete)( pref<rcPolyMeshDetail>* _this ) {
 DEFINE_PRIM(_VOID, PolyMeshDetail_delete, _IDL);
 static rcAllocHint AllocHint__values[] = { RC_ALLOC_PERM,RC_ALLOC_TEMP };
 HL_PRIM int HL_NAME(AllocHint_toValue0)( int idx ) {
-	return AllocHint__values[idx];
+	return (int)AllocHint__values[idx];
 }
 DEFINE_PRIM(_I32, AllocHint_toValue0, _I32);
 HL_PRIM int HL_NAME(AllocHint_indexToValue1)( int idx ) {
-	return AllocHint__values[idx];
+	return (int)AllocHint__values[idx];
 }
 DEFINE_PRIM(_I32, AllocHint_indexToValue1, _I32);
 HL_PRIM int HL_NAME(AllocHint_valueToIndex1)( int value ) {
@@ -479,11 +479,11 @@ HL_PRIM void HL_NAME(TileCacheCompressor_delete)( pref<dtTileCacheCompressor>* _
 DEFINE_PRIM(_VOID, TileCacheCompressor_delete, _IDL);
 static TileCacheLayerHeaderConstants TileCacheLayerHeaderConstants__values[] = { TILECACHE_MAGIC,TILECACHE_VERSION };
 HL_PRIM int HL_NAME(TileCacheLayerHeaderConstants_toValue0)( int idx ) {
-	return TileCacheLayerHeaderConstants__values[idx];
+	return (int)TileCacheLayerHeaderConstants__values[idx];
 }
 DEFINE_PRIM(_I32, TileCacheLayerHeaderConstants_toValue0, _I32);
 HL_PRIM int HL_NAME(TileCacheLayerHeaderConstants_indexToValue1)( int idx ) {
-	return TileCacheLayerHeaderConstants__values[idx];
+	return (int)TileCacheLayerHeaderConstants__values[idx];
 }
 DEFINE_PRIM(_I32, TileCacheLayerHeaderConstants_indexToValue1, _I32);
 HL_PRIM int HL_NAME(TileCacheLayerHeaderConstants_valueToIndex1)( int value ) {
@@ -553,11 +553,11 @@ HL_PRIM void HL_NAME(RemapProcessor_delete)( pref<RemapProcessor>* _this ) {
 DEFINE_PRIM(_VOID, RemapProcessor_delete, _IDL);
 static dtCompressedTileFlags CompressedTileFlags__values[] = { DT_COMPRESSEDTILE_FREE_DATA };
 HL_PRIM int HL_NAME(CompressedTileFlags_toValue0)( int idx ) {
-	return CompressedTileFlags__values[idx];
+	return (int)CompressedTileFlags__values[idx];
 }
 DEFINE_PRIM(_I32, CompressedTileFlags_toValue0, _I32);
 HL_PRIM int HL_NAME(CompressedTileFlags_indexToValue1)( int idx ) {
-	return CompressedTileFlags__values[idx];
+	return (int)CompressedTileFlags__values[idx];
 }
 DEFINE_PRIM(_I32, CompressedTileFlags_indexToValue1, _I32);
 HL_PRIM int HL_NAME(CompressedTileFlags_valueToIndex1)( int value ) {
@@ -572,11 +572,11 @@ HL_PRIM int HL_NAME(CompressedTileFlags_fromIndex1)( int index ) {return index;}
 DEFINE_PRIM(_I32, CompressedTileFlags_fromIndex1, _I32);
 static dtStraightPathFlags StraightPathFlags__values[] = { DT_STRAIGHTPATH_START,DT_STRAIGHTPATH_END,DT_STRAIGHTPATH_OFFMESH_CONNECTION };
 HL_PRIM int HL_NAME(StraightPathFlags_toValue0)( int idx ) {
-	return StraightPathFlags__values[idx];
+	return (int)StraightPathFlags__values[idx];
 }
 DEFINE_PRIM(_I32, StraightPathFlags_toValue0, _I32);
 HL_PRIM int HL_NAME(StraightPathFlags_indexToValue1)( int idx ) {
-	return StraightPathFlags__values[idx];
+	return (int)StraightPathFlags__values[idx];
 }
 DEFINE_PRIM(_I32, StraightPathFlags_indexToValue1, _I32);
 HL_PRIM int HL_NAME(StraightPathFlags_valueToIndex1)( int value ) {
@@ -591,11 +591,11 @@ HL_PRIM int HL_NAME(StraightPathFlags_fromIndex1)( int index ) {return index;}
 DEFINE_PRIM(_I32, StraightPathFlags_fromIndex1, _I32);
 static dtStraightPathOptions StraightPathOptions__values[] = { DT_STRAIGHTPATH_AREA_CROSSINGS,DT_STRAIGHTPATH_ALL_CROSSINGS };
 HL_PRIM int HL_NAME(StraightPathOptions_toValue0)( int idx ) {
-	return StraightPathOptions__values[idx];
+	return (int)StraightPathOptions__values[idx];
 }
 DEFINE_PRIM(_I32, StraightPathOptions_toValue0, _I32);
 HL_PRIM int HL_NAME(StraightPathOptions_indexToValue1)( int idx ) {
-	return StraightPathOptions__values[idx];
+	return (int)StraightPathOptions__values[idx];
 }
 DEFINE_PRIM(_I32, StraightPathOptions_indexToValue1, _I32);
 HL_PRIM int HL_NAME(StraightPathOptions_valueToIndex1)( int value ) {
@@ -608,66 +608,50 @@ HL_PRIM int HL_NAME(StraightPathOptions_fromValue1)( int value ) {
 DEFINE_PRIM(_I32, StraightPathOptions_fromValue1, _I32);
 HL_PRIM int HL_NAME(StraightPathOptions_fromIndex1)( int index ) {return index;}
 DEFINE_PRIM(_I32, StraightPathOptions_fromIndex1, _I32);
-static void finalize_Poly( pref<dtPoly>* _this ) { free_ref(_this ); }
-HL_PRIM void HL_NAME(Poly_delete)( pref<dtPoly>* _this ) {
+static void finalize_TriMeshBuilder( pref<TriMeshBuilder>* _this ) { free_ref(_this ); }
+HL_PRIM void HL_NAME(TriMeshBuilder_delete)( pref<TriMeshBuilder>* _this ) {
 	free_ref(_this );
 }
-DEFINE_PRIM(_VOID, Poly_delete, _IDL);
-static void finalize_PolyDetail( pref<dtPolyDetail>* _this ) { free_ref(_this ); }
-HL_PRIM void HL_NAME(PolyDetail_delete)( pref<dtPolyDetail>* _this ) {
+DEFINE_PRIM(_VOID, TriMeshBuilder_delete, _IDL);
+static void finalize_SourcePolyChunk( pref<NavWorld::SourcePolyChunk>* _this ) { free_ref(_this ); }
+HL_PRIM void HL_NAME(SourcePolyChunk_delete)( pref<NavWorld::SourcePolyChunk>* _this ) {
 	free_ref(_this );
 }
-DEFINE_PRIM(_VOID, PolyDetail_delete, _IDL);
-static void finalize_Link( pref<dtLink>* _this ) { free_ref(_this ); }
-HL_PRIM void HL_NAME(Link_delete)( pref<dtLink>* _this ) {
+DEFINE_PRIM(_VOID, SourcePolyChunk_delete, _IDL);
+static void finalize_TileBuilder( pref<NavWorld::TileBuilder>* _this ) { free_ref(_this ); }
+HL_PRIM void HL_NAME(TileBuilder_delete)( pref<NavWorld::TileBuilder>* _this ) {
 	free_ref(_this );
 }
-DEFINE_PRIM(_VOID, Link_delete, _IDL);
-static void finalize_BVNode( pref<dtBVNode>* _this ) { free_ref(_this ); }
-HL_PRIM void HL_NAME(BVNode_delete)( pref<dtBVNode>* _this ) {
+DEFINE_PRIM(_VOID, TileBuilder_delete, _IDL);
+static void finalize_NavWorld( pref<NavWorld>* _this ) { free_ref(_this ); }
+HL_PRIM void HL_NAME(NavWorld_delete)( pref<NavWorld>* _this ) {
 	free_ref(_this );
 }
-DEFINE_PRIM(_VOID, BVNode_delete, _IDL);
-static void finalize_OffMeshConnection( pref<dtOffMeshConnection>* _this ) { free_ref(_this ); }
-HL_PRIM void HL_NAME(OffMeshConnection_delete)( pref<dtOffMeshConnection>* _this ) {
-	free_ref(_this );
-}
-DEFINE_PRIM(_VOID, OffMeshConnection_delete, _IDL);
-static void finalize_MeshHeader( pref<dtMeshHeader>* _this ) { free_ref(_this ); }
-HL_PRIM void HL_NAME(MeshHeader_delete)( pref<dtMeshHeader>* _this ) {
-	free_ref(_this );
-}
-DEFINE_PRIM(_VOID, MeshHeader_delete, _IDL);
-static void finalize_MeshTile( pref<dtMeshTile>* _this ) { free_ref(_this ); }
-HL_PRIM void HL_NAME(MeshTile_delete)( pref<dtMeshTile>* _this ) {
-	free_ref(_this );
-}
-DEFINE_PRIM(_VOID, MeshTile_delete, _IDL);
+DEFINE_PRIM(_VOID, NavWorld_delete, _IDL);
 static void finalize_NavMesh( pref<NavMesh>* _this ) { free_ref(_this ); }
 HL_PRIM void HL_NAME(NavMesh_delete)( pref<NavMesh>* _this ) {
 	free_ref(_this );
 }
 DEFINE_PRIM(_VOID, NavMesh_delete, _IDL);
-static void finalize_Node( pref<dtNode>* _this ) { free_ref(_this ); }
-HL_PRIM void HL_NAME(Node_delete)( pref<dtNode>* _this ) {
-	free_ref(_this );
+static dtStatus DtStatus__values[] = { DT_FAILURE,DT_SUCCESS,DT_IN_PROGRESS };
+HL_PRIM int HL_NAME(DtStatus_toValue0)( int idx ) {
+	return (int)DtStatus__values[idx];
 }
-DEFINE_PRIM(_VOID, Node_delete, _IDL);
-static void finalize_NodePool( pref<dtNodePool>* _this ) { free_ref(_this ); }
-HL_PRIM void HL_NAME(NodePool_delete)( pref<dtNodePool>* _this ) {
-	free_ref(_this );
+DEFINE_PRIM(_I32, DtStatus_toValue0, _I32);
+HL_PRIM int HL_NAME(DtStatus_indexToValue1)( int idx ) {
+	return (int)DtStatus__values[idx];
 }
-DEFINE_PRIM(_VOID, NodePool_delete, _IDL);
-static void finalize_NodeQueue( pref<dtNodeQueue>* _this ) { free_ref(_this ); }
-HL_PRIM void HL_NAME(NodeQueue_delete)( pref<dtNodeQueue>* _this ) {
-	free_ref(_this );
+DEFINE_PRIM(_I32, DtStatus_indexToValue1, _I32);
+HL_PRIM int HL_NAME(DtStatus_valueToIndex1)( int value ) {
+	for( int i = 0; i < 3; i++ ) if ( value == (int)DtStatus__values[i]) return i; return -1;
 }
-DEFINE_PRIM(_VOID, NodeQueue_delete, _IDL);
-static void finalize_NavMeshCreateParams( pref<dtNavMeshCreateParams>* _this ) { free_ref(_this ); }
-HL_PRIM void HL_NAME(NavMeshCreateParams_delete)( pref<dtNavMeshCreateParams>* _this ) {
-	free_ref(_this );
+DEFINE_PRIM(_I32, DtStatus_valueToIndex1, _I32);
+HL_PRIM int HL_NAME(DtStatus_fromValue1)( int value ) {
+	for( int i = 0; i < 3; i++ ) if ( value == (int)DtStatus__values[i]) return i; return -1;
 }
-DEFINE_PRIM(_VOID, NavMeshCreateParams_delete, _IDL);
+DEFINE_PRIM(_I32, DtStatus_fromValue1, _I32);
+HL_PRIM int HL_NAME(DtStatus_fromIndex1)( int index ) {return index;}
+DEFINE_PRIM(_I32, DtStatus_fromIndex1, _I32);
 static void finalize_QueryFilter( pref<dtQueryFilter>* _this ) { free_ref(_this ); }
 HL_PRIM void HL_NAME(QueryFilter_delete)( pref<dtQueryFilter>* _this ) {
 	free_ref(_this );
@@ -693,53 +677,43 @@ HL_PRIM void HL_NAME(PerformanceTimer_delete)( pref<PerformanceTimer>* _this ) {
 	free_ref(_this );
 }
 DEFINE_PRIM(_VOID, PerformanceTimer_delete, _IDL);
-static void finalize_MeshCapture( pref<dtMeshCapture>* _this ) { free_ref(_this ); }
-HL_PRIM void HL_NAME(MeshCapture_delete)( pref<dtMeshCapture>* _this ) {
-	free_ref(_this );
-}
-DEFINE_PRIM(_VOID, MeshCapture_delete, _IDL);
 static void finalize_NavTileConverter( pref<NavTileConverter>* _this ) { free_ref(_this ); }
 HL_PRIM void HL_NAME(NavTileConverter_delete)( pref<NavTileConverter>* _this ) {
 	free_ref(_this );
 }
 DEFINE_PRIM(_VOID, NavTileConverter_delete, _IDL);
-HL_PRIM pref<rcChunkyTriMesh>* HL_NAME(ChunkyTriMesh_new0)() {
-	return alloc_ref((new rcChunkyTriMesh()),ChunkyTriMesh);
+HL_PRIM pref<TriMeshPartition>* HL_NAME(TriMeshPartition_new0)() {
+	return alloc_ref((new TriMeshPartition()),TriMeshPartition);
 }
-DEFINE_PRIM(_IDL, ChunkyTriMesh_new0,);
+DEFINE_PRIM(_IDL, TriMeshPartition_new0,);
 
-HL_PRIM int HL_NAME(ChunkyTriMesh_get_maxTrisPerChunk)( pref<rcChunkyTriMesh>* _this ) {
+HL_PRIM int HL_NAME(TriMeshPartition_get_maxTrisPerChunk)( pref<TriMeshPartition>* _this ) {
 	return _unref(_this)->maxTrisPerChunk;
 }
-DEFINE_PRIM(_I32,ChunkyTriMesh_get_maxTrisPerChunk,_IDL);
-HL_PRIM int HL_NAME(ChunkyTriMesh_set_maxTrisPerChunk)( pref<rcChunkyTriMesh>* _this, int value ) {
+DEFINE_PRIM(_I32,TriMeshPartition_get_maxTrisPerChunk,_IDL);
+HL_PRIM int HL_NAME(TriMeshPartition_set_maxTrisPerChunk)( pref<TriMeshPartition>* _this, int value ) {
 	_unref(_this)->maxTrisPerChunk = (value);
 	return value;
 }
-DEFINE_PRIM(_I32,ChunkyTriMesh_set_maxTrisPerChunk,_IDL _I32);
+DEFINE_PRIM(_I32,TriMeshPartition_set_maxTrisPerChunk,_IDL _I32);
 
-HL_PRIM int HL_NAME(ChunkyTriMesh_getNodeTriIndex1)(pref<rcChunkyTriMesh>* _this, int nodeIdx) {
+HL_PRIM int HL_NAME(TriMeshPartition_getNodeTriIndex1)(pref<TriMeshPartition>* _this, int nodeIdx) {
 	return (getNodeTriIndex( _unref(_this) , nodeIdx));
 }
-DEFINE_PRIM(_I32, ChunkyTriMesh_getNodeTriIndex1, _IDL _I32);
+DEFINE_PRIM(_I32, TriMeshPartition_getNodeTriIndex1, _IDL _I32);
 
-HL_PRIM int HL_NAME(ChunkyTriMesh_getNodeTriCount1)(pref<rcChunkyTriMesh>* _this, int nodeIdx) {
+HL_PRIM int HL_NAME(TriMeshPartition_getNodeTriCount1)(pref<TriMeshPartition>* _this, int nodeIdx) {
 	return (getNodeTriCount( _unref(_this) , nodeIdx));
 }
-DEFINE_PRIM(_I32, ChunkyTriMesh_getNodeTriCount1, _IDL _I32);
+DEFINE_PRIM(_I32, TriMeshPartition_getNodeTriCount1, _IDL _I32);
 
-HL_PRIM bool HL_NAME(ChunkyTriMesh_build4)(pref<rcChunkyTriMesh>* _this, varray* verts, varray* tris, int ntris, int trisPerChunk) {
-	return (rcCreateChunkyTriMesh( _unref(_this) , hl_aptr(verts,HL_CONST float), hl_aptr(tris,HL_CONST int), ntris, trisPerChunk));
+HL_PRIM int HL_NAME(TriMeshPartition_getChunksOverlappingRect4)(pref<TriMeshPartition>* _this, _h_float2* bmin, _h_float2* bmax, varray* ids, int maxIds) {
+	return (_unref(_this)->getChunksOverlappingRect((float*)(_h_float2*)bmin, (float*)(_h_float2*)bmax, hl_aptr(ids,int), maxIds));
 }
-DEFINE_PRIM(_BOOL, ChunkyTriMesh_build4, _IDL _ARR _ARR _I32 _I32);
+DEFINE_PRIM(_I32, TriMeshPartition_getChunksOverlappingRect4, _IDL _STRUCT _STRUCT _ARR _I32);
 
-HL_PRIM int HL_NAME(ChunkyTriMesh_getOverlappingRect4)(pref<rcChunkyTriMesh>* _this, _h_float2* bmin, _h_float2* bmax, varray* ids, int maxIds) {
-	return (rcGetChunksOverlappingRect( _unref(_this) , (float*)(_h_float2*)bmin, (float*)(_h_float2*)bmax, hl_aptr(ids,int), maxIds));
-}
-DEFINE_PRIM(_I32, ChunkyTriMesh_getOverlappingRect4, _IDL _STRUCT _STRUCT _ARR _I32);
-
-HL_PRIM pref<rcContext>* HL_NAME(RasterContext_new1)(bool state) {
-	return alloc_ref((new rcContext(state)),RasterContext);
+HL_PRIM pref<rcContext>* HL_NAME(RasterContext_new1)(bool loggingAndTimers) {
+	return alloc_ref((new rcContext(loggingAndTimers)),RasterContext);
 }
 DEFINE_PRIM(_IDL, RasterContext_new1, _BOOL);
 
@@ -2665,616 +2639,40 @@ HL_PRIM HL_CONST pref<dtTileCacheMeshProcess>* HL_NAME(RemapProcessor_asSuper0)(
 }
 DEFINE_PRIM(_IDL, RemapProcessor_asSuper0, _IDL);
 
-HL_PRIM int HL_NAME(Poly_get_firstLink)( pref<dtPoly>* _this ) {
-	return _unref(_this)->firstLink;
+HL_PRIM pref<TriMeshBuilder>* HL_NAME(SourcePolyChunk_mesh0)(pref<NavWorld::SourcePolyChunk>* _this) {
+	return alloc_ref((_unref(_this)->meshPtr()),TriMeshBuilder);
 }
-DEFINE_PRIM(_I32,Poly_get_firstLink,_IDL);
-HL_PRIM int HL_NAME(Poly_set_firstLink)( pref<dtPoly>* _this, int value ) {
-	_unref(_this)->firstLink = (value);
-	return value;
-}
-DEFINE_PRIM(_I32,Poly_set_firstLink,_IDL _I32);
+DEFINE_PRIM(_IDL, SourcePolyChunk_mesh0, _IDL);
 
-HL_PRIM unsigned short HL_NAME(Poly_get_flags)( pref<dtPoly>* _this ) {
-	return _unref(_this)->flags;
+HL_PRIM pref<NavWorld>* HL_NAME(NavWorld_create7)(_h_float3* origin, _h_float3* dim, int tileSizeInCells, float cellSize, float cellHeight, int maxTiles, int maxPolys) {
+	return alloc_ref((NavWorld::create((_h_float3*)origin, (_h_float3*)dim, tileSizeInCells, cellSize, cellHeight, maxTiles, maxPolys)),NavWorld);
 }
-DEFINE_PRIM(_I16,Poly_get_flags,_IDL);
-HL_PRIM unsigned short HL_NAME(Poly_set_flags)( pref<dtPoly>* _this, unsigned short value ) {
-	_unref(_this)->flags = (value);
-	return value;
-}
-DEFINE_PRIM(_I16,Poly_set_flags,_IDL _I16);
+DEFINE_PRIM(_IDL, NavWorld_create7, _STRUCT _STRUCT _I32 _F32 _F32 _I32 _I32);
 
-HL_PRIM unsigned char HL_NAME(Poly_get_vertCount)( pref<dtPoly>* _this ) {
-	return _unref(_this)->vertCount;
+HL_PRIM HL_CONST pref<NavWorld::SourcePolyChunk>* HL_NAME(NavWorld_addChunk0)(pref<NavWorld>* _this) {
+	return alloc_ref_const((_unref(_this)->addChunk()),SourcePolyChunk);
 }
-DEFINE_PRIM(_I8,Poly_get_vertCount,_IDL);
-HL_PRIM unsigned char HL_NAME(Poly_set_vertCount)( pref<dtPoly>* _this, unsigned char value ) {
-	_unref(_this)->vertCount = (value);
-	return value;
-}
-DEFINE_PRIM(_I8,Poly_set_vertCount,_IDL _I8);
+DEFINE_PRIM(_IDL, NavWorld_addChunk0, _IDL);
 
-HL_PRIM unsigned char HL_NAME(Poly_get_areaAndtype)( pref<dtPoly>* _this ) {
-	return _unref(_this)->areaAndtype;
+HL_PRIM HL_CONST pref<NavWorld::TileBuilder>* HL_NAME(NavWorld_getTileBuilder2)(pref<NavWorld>* _this, int x, int y) {
+	return alloc_ref_const((_unref(_this)->getTileBuilder(x, y)),TileBuilder);
 }
-DEFINE_PRIM(_I8,Poly_get_areaAndtype,_IDL);
-HL_PRIM unsigned char HL_NAME(Poly_set_areaAndtype)( pref<dtPoly>* _this, unsigned char value ) {
-	_unref(_this)->areaAndtype = (value);
-	return value;
-}
-DEFINE_PRIM(_I8,Poly_set_areaAndtype,_IDL _I8);
+DEFINE_PRIM(_IDL, NavWorld_getTileBuilder2, _IDL _I32 _I32);
 
-HL_PRIM void HL_NAME(Poly_setArea1)(pref<dtPoly>* _this, unsigned char a) {
-	(_unref(_this)->setArea(a));
+HL_PRIM void HL_NAME(NavWorld_setAgentParameters4)(pref<NavWorld>* _this, float walkableSlopeAngle, float walkableClimb, float walkableRadius, float walkableHeight) {
+	(_unref(_this)->setAgentParameters(walkableSlopeAngle, walkableClimb, walkableRadius, walkableHeight));
 }
-DEFINE_PRIM(_VOID, Poly_setArea1, _IDL _I8);
-
-HL_PRIM void HL_NAME(Poly_setType1)(pref<dtPoly>* _this, unsigned char t) {
-	(_unref(_this)->setType(t));
-}
-DEFINE_PRIM(_VOID, Poly_setType1, _IDL _I8);
-
-HL_PRIM HL_CONST unsigned char HL_NAME(Poly_getArea0)(pref<dtPoly>* _this) {
-	return (_unref(_this)->getArea());
-}
-DEFINE_PRIM(_I8, Poly_getArea0, _IDL);
-
-HL_PRIM HL_CONST unsigned char HL_NAME(Poly_getType0)(pref<dtPoly>* _this) {
-	return (_unref(_this)->getType());
-}
-DEFINE_PRIM(_I8, Poly_getType0, _IDL);
-
-HL_PRIM int HL_NAME(PolyDetail_get_vertBase)( pref<dtPolyDetail>* _this ) {
-	return _unref(_this)->vertBase;
-}
-DEFINE_PRIM(_I32,PolyDetail_get_vertBase,_IDL);
-HL_PRIM int HL_NAME(PolyDetail_set_vertBase)( pref<dtPolyDetail>* _this, int value ) {
-	_unref(_this)->vertBase = (value);
-	return value;
-}
-DEFINE_PRIM(_I32,PolyDetail_set_vertBase,_IDL _I32);
-
-HL_PRIM int HL_NAME(PolyDetail_get_triBase)( pref<dtPolyDetail>* _this ) {
-	return _unref(_this)->triBase;
-}
-DEFINE_PRIM(_I32,PolyDetail_get_triBase,_IDL);
-HL_PRIM int HL_NAME(PolyDetail_set_triBase)( pref<dtPolyDetail>* _this, int value ) {
-	_unref(_this)->triBase = (value);
-	return value;
-}
-DEFINE_PRIM(_I32,PolyDetail_set_triBase,_IDL _I32);
-
-HL_PRIM unsigned char HL_NAME(PolyDetail_get_vertCount)( pref<dtPolyDetail>* _this ) {
-	return _unref(_this)->vertCount;
-}
-DEFINE_PRIM(_I8,PolyDetail_get_vertCount,_IDL);
-HL_PRIM unsigned char HL_NAME(PolyDetail_set_vertCount)( pref<dtPolyDetail>* _this, unsigned char value ) {
-	_unref(_this)->vertCount = (value);
-	return value;
-}
-DEFINE_PRIM(_I8,PolyDetail_set_vertCount,_IDL _I8);
-
-HL_PRIM unsigned char HL_NAME(PolyDetail_get_triCount)( pref<dtPolyDetail>* _this ) {
-	return _unref(_this)->triCount;
-}
-DEFINE_PRIM(_I8,PolyDetail_get_triCount,_IDL);
-HL_PRIM unsigned char HL_NAME(PolyDetail_set_triCount)( pref<dtPolyDetail>* _this, unsigned char value ) {
-	_unref(_this)->triCount = (value);
-	return value;
-}
-DEFINE_PRIM(_I8,PolyDetail_set_triCount,_IDL _I8);
-
-HL_PRIM unsigned int HL_NAME(Link_get_ref)( pref<dtLink>* _this ) {
-	return _unref(_this)->ref;
-}
-DEFINE_PRIM(_I32,Link_get_ref,_IDL);
-HL_PRIM unsigned int HL_NAME(Link_set_ref)( pref<dtLink>* _this, unsigned int value ) {
-	_unref(_this)->ref = (value);
-	return value;
-}
-DEFINE_PRIM(_I32,Link_set_ref,_IDL _I32);
-
-HL_PRIM int HL_NAME(Link_get_next)( pref<dtLink>* _this ) {
-	return _unref(_this)->next;
-}
-DEFINE_PRIM(_I32,Link_get_next,_IDL);
-HL_PRIM int HL_NAME(Link_set_next)( pref<dtLink>* _this, int value ) {
-	_unref(_this)->next = (value);
-	return value;
-}
-DEFINE_PRIM(_I32,Link_set_next,_IDL _I32);
-
-HL_PRIM unsigned char HL_NAME(Link_get_edge)( pref<dtLink>* _this ) {
-	return _unref(_this)->edge;
-}
-DEFINE_PRIM(_I8,Link_get_edge,_IDL);
-HL_PRIM unsigned char HL_NAME(Link_set_edge)( pref<dtLink>* _this, unsigned char value ) {
-	_unref(_this)->edge = (value);
-	return value;
-}
-DEFINE_PRIM(_I8,Link_set_edge,_IDL _I8);
-
-HL_PRIM unsigned char HL_NAME(Link_get_side)( pref<dtLink>* _this ) {
-	return _unref(_this)->side;
-}
-DEFINE_PRIM(_I8,Link_get_side,_IDL);
-HL_PRIM unsigned char HL_NAME(Link_set_side)( pref<dtLink>* _this, unsigned char value ) {
-	_unref(_this)->side = (value);
-	return value;
-}
-DEFINE_PRIM(_I8,Link_set_side,_IDL _I8);
-
-HL_PRIM unsigned char HL_NAME(Link_get_bmin)( pref<dtLink>* _this ) {
-	return _unref(_this)->bmin;
-}
-DEFINE_PRIM(_I8,Link_get_bmin,_IDL);
-HL_PRIM unsigned char HL_NAME(Link_set_bmin)( pref<dtLink>* _this, unsigned char value ) {
-	_unref(_this)->bmin = (value);
-	return value;
-}
-DEFINE_PRIM(_I8,Link_set_bmin,_IDL _I8);
-
-HL_PRIM unsigned char HL_NAME(Link_get_bmax)( pref<dtLink>* _this ) {
-	return _unref(_this)->bmax;
-}
-DEFINE_PRIM(_I8,Link_get_bmax,_IDL);
-HL_PRIM unsigned char HL_NAME(Link_set_bmax)( pref<dtLink>* _this, unsigned char value ) {
-	_unref(_this)->bmax = (value);
-	return value;
-}
-DEFINE_PRIM(_I8,Link_set_bmax,_IDL _I8);
-
-HL_PRIM int HL_NAME(BVNode_get_i)( pref<dtBVNode>* _this ) {
-	return _unref(_this)->i;
-}
-DEFINE_PRIM(_I32,BVNode_get_i,_IDL);
-HL_PRIM int HL_NAME(BVNode_set_i)( pref<dtBVNode>* _this, int value ) {
-	_unref(_this)->i = (value);
-	return value;
-}
-DEFINE_PRIM(_I32,BVNode_set_i,_IDL _I32);
-
-HL_PRIM float HL_NAME(OffMeshConnection_get_rad)( pref<dtOffMeshConnection>* _this ) {
-	return _unref(_this)->rad;
-}
-DEFINE_PRIM(_F32,OffMeshConnection_get_rad,_IDL);
-HL_PRIM float HL_NAME(OffMeshConnection_set_rad)( pref<dtOffMeshConnection>* _this, float value ) {
-	_unref(_this)->rad = (value);
-	return value;
-}
-DEFINE_PRIM(_F32,OffMeshConnection_set_rad,_IDL _F32);
-
-HL_PRIM unsigned short HL_NAME(OffMeshConnection_get_poly)( pref<dtOffMeshConnection>* _this ) {
-	return _unref(_this)->poly;
-}
-DEFINE_PRIM(_I16,OffMeshConnection_get_poly,_IDL);
-HL_PRIM unsigned short HL_NAME(OffMeshConnection_set_poly)( pref<dtOffMeshConnection>* _this, unsigned short value ) {
-	_unref(_this)->poly = (value);
-	return value;
-}
-DEFINE_PRIM(_I16,OffMeshConnection_set_poly,_IDL _I16);
-
-HL_PRIM unsigned char HL_NAME(OffMeshConnection_get_flags)( pref<dtOffMeshConnection>* _this ) {
-	return _unref(_this)->flags;
-}
-DEFINE_PRIM(_I8,OffMeshConnection_get_flags,_IDL);
-HL_PRIM unsigned char HL_NAME(OffMeshConnection_set_flags)( pref<dtOffMeshConnection>* _this, unsigned char value ) {
-	_unref(_this)->flags = (value);
-	return value;
-}
-DEFINE_PRIM(_I8,OffMeshConnection_set_flags,_IDL _I8);
-
-HL_PRIM unsigned char HL_NAME(OffMeshConnection_get_side)( pref<dtOffMeshConnection>* _this ) {
-	return _unref(_this)->side;
-}
-DEFINE_PRIM(_I8,OffMeshConnection_get_side,_IDL);
-HL_PRIM unsigned char HL_NAME(OffMeshConnection_set_side)( pref<dtOffMeshConnection>* _this, unsigned char value ) {
-	_unref(_this)->side = (value);
-	return value;
-}
-DEFINE_PRIM(_I8,OffMeshConnection_set_side,_IDL _I8);
-
-HL_PRIM int HL_NAME(OffMeshConnection_get_userId)( pref<dtOffMeshConnection>* _this ) {
-	return _unref(_this)->userId;
-}
-DEFINE_PRIM(_I32,OffMeshConnection_get_userId,_IDL);
-HL_PRIM int HL_NAME(OffMeshConnection_set_userId)( pref<dtOffMeshConnection>* _this, int value ) {
-	_unref(_this)->userId = (value);
-	return value;
-}
-DEFINE_PRIM(_I32,OffMeshConnection_set_userId,_IDL _I32);
-
-HL_PRIM int HL_NAME(MeshHeader_get_magic)( pref<dtMeshHeader>* _this ) {
-	return _unref(_this)->magic;
-}
-DEFINE_PRIM(_I32,MeshHeader_get_magic,_IDL);
-HL_PRIM int HL_NAME(MeshHeader_set_magic)( pref<dtMeshHeader>* _this, int value ) {
-	_unref(_this)->magic = (value);
-	return value;
-}
-DEFINE_PRIM(_I32,MeshHeader_set_magic,_IDL _I32);
-
-HL_PRIM int HL_NAME(MeshHeader_get_version)( pref<dtMeshHeader>* _this ) {
-	return _unref(_this)->version;
-}
-DEFINE_PRIM(_I32,MeshHeader_get_version,_IDL);
-HL_PRIM int HL_NAME(MeshHeader_set_version)( pref<dtMeshHeader>* _this, int value ) {
-	_unref(_this)->version = (value);
-	return value;
-}
-DEFINE_PRIM(_I32,MeshHeader_set_version,_IDL _I32);
-
-HL_PRIM int HL_NAME(MeshHeader_get_x)( pref<dtMeshHeader>* _this ) {
-	return _unref(_this)->x;
-}
-DEFINE_PRIM(_I32,MeshHeader_get_x,_IDL);
-HL_PRIM int HL_NAME(MeshHeader_set_x)( pref<dtMeshHeader>* _this, int value ) {
-	_unref(_this)->x = (value);
-	return value;
-}
-DEFINE_PRIM(_I32,MeshHeader_set_x,_IDL _I32);
-
-HL_PRIM int HL_NAME(MeshHeader_get_y)( pref<dtMeshHeader>* _this ) {
-	return _unref(_this)->y;
-}
-DEFINE_PRIM(_I32,MeshHeader_get_y,_IDL);
-HL_PRIM int HL_NAME(MeshHeader_set_y)( pref<dtMeshHeader>* _this, int value ) {
-	_unref(_this)->y = (value);
-	return value;
-}
-DEFINE_PRIM(_I32,MeshHeader_set_y,_IDL _I32);
-
-HL_PRIM int HL_NAME(MeshHeader_get_layer)( pref<dtMeshHeader>* _this ) {
-	return _unref(_this)->layer;
-}
-DEFINE_PRIM(_I32,MeshHeader_get_layer,_IDL);
-HL_PRIM int HL_NAME(MeshHeader_set_layer)( pref<dtMeshHeader>* _this, int value ) {
-	_unref(_this)->layer = (value);
-	return value;
-}
-DEFINE_PRIM(_I32,MeshHeader_set_layer,_IDL _I32);
-
-HL_PRIM int HL_NAME(MeshHeader_get_userId)( pref<dtMeshHeader>* _this ) {
-	return _unref(_this)->userId;
-}
-DEFINE_PRIM(_I32,MeshHeader_get_userId,_IDL);
-HL_PRIM int HL_NAME(MeshHeader_set_userId)( pref<dtMeshHeader>* _this, int value ) {
-	_unref(_this)->userId = (value);
-	return value;
-}
-DEFINE_PRIM(_I32,MeshHeader_set_userId,_IDL _I32);
-
-HL_PRIM int HL_NAME(MeshHeader_get_polyCount)( pref<dtMeshHeader>* _this ) {
-	return _unref(_this)->polyCount;
-}
-DEFINE_PRIM(_I32,MeshHeader_get_polyCount,_IDL);
-HL_PRIM int HL_NAME(MeshHeader_set_polyCount)( pref<dtMeshHeader>* _this, int value ) {
-	_unref(_this)->polyCount = (value);
-	return value;
-}
-DEFINE_PRIM(_I32,MeshHeader_set_polyCount,_IDL _I32);
-
-HL_PRIM int HL_NAME(MeshHeader_get_vertCount)( pref<dtMeshHeader>* _this ) {
-	return _unref(_this)->vertCount;
-}
-DEFINE_PRIM(_I32,MeshHeader_get_vertCount,_IDL);
-HL_PRIM int HL_NAME(MeshHeader_set_vertCount)( pref<dtMeshHeader>* _this, int value ) {
-	_unref(_this)->vertCount = (value);
-	return value;
-}
-DEFINE_PRIM(_I32,MeshHeader_set_vertCount,_IDL _I32);
-
-HL_PRIM int HL_NAME(MeshHeader_get_maxLinkCount)( pref<dtMeshHeader>* _this ) {
-	return _unref(_this)->maxLinkCount;
-}
-DEFINE_PRIM(_I32,MeshHeader_get_maxLinkCount,_IDL);
-HL_PRIM int HL_NAME(MeshHeader_set_maxLinkCount)( pref<dtMeshHeader>* _this, int value ) {
-	_unref(_this)->maxLinkCount = (value);
-	return value;
-}
-DEFINE_PRIM(_I32,MeshHeader_set_maxLinkCount,_IDL _I32);
-
-HL_PRIM int HL_NAME(MeshHeader_get_detailMeshCount)( pref<dtMeshHeader>* _this ) {
-	return _unref(_this)->detailMeshCount;
-}
-DEFINE_PRIM(_I32,MeshHeader_get_detailMeshCount,_IDL);
-HL_PRIM int HL_NAME(MeshHeader_set_detailMeshCount)( pref<dtMeshHeader>* _this, int value ) {
-	_unref(_this)->detailMeshCount = (value);
-	return value;
-}
-DEFINE_PRIM(_I32,MeshHeader_set_detailMeshCount,_IDL _I32);
-
-HL_PRIM int HL_NAME(MeshHeader_get_detailVertCount)( pref<dtMeshHeader>* _this ) {
-	return _unref(_this)->detailVertCount;
-}
-DEFINE_PRIM(_I32,MeshHeader_get_detailVertCount,_IDL);
-HL_PRIM int HL_NAME(MeshHeader_set_detailVertCount)( pref<dtMeshHeader>* _this, int value ) {
-	_unref(_this)->detailVertCount = (value);
-	return value;
-}
-DEFINE_PRIM(_I32,MeshHeader_set_detailVertCount,_IDL _I32);
-
-HL_PRIM int HL_NAME(MeshHeader_get_detailTriCount)( pref<dtMeshHeader>* _this ) {
-	return _unref(_this)->detailTriCount;
-}
-DEFINE_PRIM(_I32,MeshHeader_get_detailTriCount,_IDL);
-HL_PRIM int HL_NAME(MeshHeader_set_detailTriCount)( pref<dtMeshHeader>* _this, int value ) {
-	_unref(_this)->detailTriCount = (value);
-	return value;
-}
-DEFINE_PRIM(_I32,MeshHeader_set_detailTriCount,_IDL _I32);
-
-HL_PRIM int HL_NAME(MeshHeader_get_bvNodeCount)( pref<dtMeshHeader>* _this ) {
-	return _unref(_this)->bvNodeCount;
-}
-DEFINE_PRIM(_I32,MeshHeader_get_bvNodeCount,_IDL);
-HL_PRIM int HL_NAME(MeshHeader_set_bvNodeCount)( pref<dtMeshHeader>* _this, int value ) {
-	_unref(_this)->bvNodeCount = (value);
-	return value;
-}
-DEFINE_PRIM(_I32,MeshHeader_set_bvNodeCount,_IDL _I32);
-
-HL_PRIM int HL_NAME(MeshHeader_get_offMeshConCount)( pref<dtMeshHeader>* _this ) {
-	return _unref(_this)->offMeshConCount;
-}
-DEFINE_PRIM(_I32,MeshHeader_get_offMeshConCount,_IDL);
-HL_PRIM int HL_NAME(MeshHeader_set_offMeshConCount)( pref<dtMeshHeader>* _this, int value ) {
-	_unref(_this)->offMeshConCount = (value);
-	return value;
-}
-DEFINE_PRIM(_I32,MeshHeader_set_offMeshConCount,_IDL _I32);
-
-HL_PRIM int HL_NAME(MeshHeader_get_offMeshBase)( pref<dtMeshHeader>* _this ) {
-	return _unref(_this)->offMeshBase;
-}
-DEFINE_PRIM(_I32,MeshHeader_get_offMeshBase,_IDL);
-HL_PRIM int HL_NAME(MeshHeader_set_offMeshBase)( pref<dtMeshHeader>* _this, int value ) {
-	_unref(_this)->offMeshBase = (value);
-	return value;
-}
-DEFINE_PRIM(_I32,MeshHeader_set_offMeshBase,_IDL _I32);
-
-HL_PRIM float HL_NAME(MeshHeader_get_walkableHeight)( pref<dtMeshHeader>* _this ) {
-	return _unref(_this)->walkableHeight;
-}
-DEFINE_PRIM(_F32,MeshHeader_get_walkableHeight,_IDL);
-HL_PRIM float HL_NAME(MeshHeader_set_walkableHeight)( pref<dtMeshHeader>* _this, float value ) {
-	_unref(_this)->walkableHeight = (value);
-	return value;
-}
-DEFINE_PRIM(_F32,MeshHeader_set_walkableHeight,_IDL _F32);
-
-HL_PRIM float HL_NAME(MeshHeader_get_walkableRadius)( pref<dtMeshHeader>* _this ) {
-	return _unref(_this)->walkableRadius;
-}
-DEFINE_PRIM(_F32,MeshHeader_get_walkableRadius,_IDL);
-HL_PRIM float HL_NAME(MeshHeader_set_walkableRadius)( pref<dtMeshHeader>* _this, float value ) {
-	_unref(_this)->walkableRadius = (value);
-	return value;
-}
-DEFINE_PRIM(_F32,MeshHeader_set_walkableRadius,_IDL _F32);
-
-HL_PRIM float HL_NAME(MeshHeader_get_walkableClimb)( pref<dtMeshHeader>* _this ) {
-	return _unref(_this)->walkableClimb;
-}
-DEFINE_PRIM(_F32,MeshHeader_get_walkableClimb,_IDL);
-HL_PRIM float HL_NAME(MeshHeader_set_walkableClimb)( pref<dtMeshHeader>* _this, float value ) {
-	_unref(_this)->walkableClimb = (value);
-	return value;
-}
-DEFINE_PRIM(_F32,MeshHeader_set_walkableClimb,_IDL _F32);
-
-HL_PRIM _h_float3* HL_NAME(MeshHeader_get_bmin)( pref<dtMeshHeader>* _this ) {
-	return (_h_float3* )(_unref(_this)->bmin);
-}
-HL_PRIM void HL_NAME(MeshHeader_getbminv)( pref<dtMeshHeader>* _this, _h_float3* value ) {
-	 float *src = (float*) & (_unref(_this)->bmin)[0];
-	 float *dst = (float*) value;
-	dst[0] = src[0]; dst[1] = src[1]; dst[2] = src[2];
-}
-DEFINE_PRIM(_VOID,MeshHeader_getbminv,_IDL _STRUCT  );
-DEFINE_PRIM(_STRUCT,MeshHeader_get_bmin,_IDL);
-HL_PRIM _h_float3* HL_NAME(MeshHeader_set_bmin)( pref<dtMeshHeader>* _this, _h_float3* value ) {
-	 float *dst = (float*) & (_unref(_this)->bmin)[0];
-	 float *src = (float*) value;
-	dst[0] = src[0]; dst[1] = src[1]; dst[2] = src[2];
-	return value;
-}
-HL_PRIM void HL_NAME(MeshHeader_setbmin3)( pref<dtMeshHeader>* _this,  float value0, float value1, float value2 ) {
-	 float *p = (_unref(_this)->bmin);
-	p[0] = value0; p[1] = value1; p[2] = value2;
-}
-DEFINE_PRIM(_VOID,MeshHeader_setbmin3,_IDL _F32 _F32 _F32 );
-DEFINE_PRIM(_STRUCT,MeshHeader_set_bmin,_IDL _STRUCT);
-
-HL_PRIM _h_float3* HL_NAME(MeshHeader_get_bmax)( pref<dtMeshHeader>* _this ) {
-	return (_h_float3* )(_unref(_this)->bmax);
-}
-HL_PRIM void HL_NAME(MeshHeader_getbmaxv)( pref<dtMeshHeader>* _this, _h_float3* value ) {
-	 float *src = (float*) & (_unref(_this)->bmax)[0];
-	 float *dst = (float*) value;
-	dst[0] = src[0]; dst[1] = src[1]; dst[2] = src[2];
-}
-DEFINE_PRIM(_VOID,MeshHeader_getbmaxv,_IDL _STRUCT  );
-DEFINE_PRIM(_STRUCT,MeshHeader_get_bmax,_IDL);
-HL_PRIM _h_float3* HL_NAME(MeshHeader_set_bmax)( pref<dtMeshHeader>* _this, _h_float3* value ) {
-	 float *dst = (float*) & (_unref(_this)->bmax)[0];
-	 float *src = (float*) value;
-	dst[0] = src[0]; dst[1] = src[1]; dst[2] = src[2];
-	return value;
-}
-HL_PRIM void HL_NAME(MeshHeader_setbmax3)( pref<dtMeshHeader>* _this,  float value0, float value1, float value2 ) {
-	 float *p = (_unref(_this)->bmax);
-	p[0] = value0; p[1] = value1; p[2] = value2;
-}
-DEFINE_PRIM(_VOID,MeshHeader_setbmax3,_IDL _F32 _F32 _F32 );
-DEFINE_PRIM(_STRUCT,MeshHeader_set_bmax,_IDL _STRUCT);
-
-HL_PRIM float HL_NAME(MeshHeader_get_bvQuantFactor)( pref<dtMeshHeader>* _this ) {
-	return _unref(_this)->bvQuantFactor;
-}
-DEFINE_PRIM(_F32,MeshHeader_get_bvQuantFactor,_IDL);
-HL_PRIM float HL_NAME(MeshHeader_set_bvQuantFactor)( pref<dtMeshHeader>* _this, float value ) {
-	_unref(_this)->bvQuantFactor = (value);
-	return value;
-}
-DEFINE_PRIM(_F32,MeshHeader_set_bvQuantFactor,_IDL _F32);
-
-HL_PRIM int HL_NAME(MeshTile_get_salt)( pref<dtMeshTile>* _this ) {
-	return _unref(_this)->salt;
-}
-DEFINE_PRIM(_I32,MeshTile_get_salt,_IDL);
-HL_PRIM int HL_NAME(MeshTile_set_salt)( pref<dtMeshTile>* _this, int value ) {
-	_unref(_this)->salt = (value);
-	return value;
-}
-DEFINE_PRIM(_I32,MeshTile_set_salt,_IDL _I32);
-
-HL_PRIM int HL_NAME(MeshTile_get_linksFreeList)( pref<dtMeshTile>* _this ) {
-	return _unref(_this)->linksFreeList;
-}
-DEFINE_PRIM(_I32,MeshTile_get_linksFreeList,_IDL);
-HL_PRIM int HL_NAME(MeshTile_set_linksFreeList)( pref<dtMeshTile>* _this, int value ) {
-	_unref(_this)->linksFreeList = (value);
-	return value;
-}
-DEFINE_PRIM(_I32,MeshTile_set_linksFreeList,_IDL _I32);
-
-HL_PRIM pref<dtMeshHeader>* HL_NAME(MeshTile_get_header)( pref<dtMeshTile>* _this ) {
-	return alloc_ref(_unref(_this)->header,MeshHeader);
-}
-DEFINE_PRIM(_IDL,MeshTile_get_header,_IDL);
-HL_PRIM pref<dtMeshHeader>* HL_NAME(MeshTile_set_header)( pref<dtMeshTile>* _this, pref<dtMeshHeader>* value ) {
-	_unref(_this)->header = _unref_ptr_safe(value);
-	return value;
-}
-DEFINE_PRIM(_IDL,MeshTile_set_header,_IDL _IDL);
-
-HL_PRIM pref<dtPoly>* HL_NAME(MeshTile_get_polys)( pref<dtMeshTile>* _this ) {
-	return alloc_ref(_unref(_this)->polys,Poly);
-}
-DEFINE_PRIM(_IDL,MeshTile_get_polys,_IDL);
-HL_PRIM pref<dtPoly>* HL_NAME(MeshTile_set_polys)( pref<dtMeshTile>* _this, pref<dtPoly>* value ) {
-	_unref(_this)->polys = _unref_ptr_safe(value);
-	return value;
-}
-DEFINE_PRIM(_IDL,MeshTile_set_polys,_IDL _IDL);
-
-HL_PRIM vbyte* HL_NAME(MeshTile_get_verts)( pref<dtMeshTile>* _this ) {
-	return (vbyte *)(&_unref(_this)->verts[0]);
-}
-DEFINE_PRIM(_BYTES,MeshTile_get_verts,_IDL);
-HL_PRIM vbyte* HL_NAME(MeshTile_set_verts)( pref<dtMeshTile>* _this, vbyte* value ) {
-	_unref(_this)->verts = (float*)(value);
-	return value;
-}
-DEFINE_PRIM(_BYTES,MeshTile_set_verts,_IDL _BYTES);
-
-HL_PRIM pref<dtLink>* HL_NAME(MeshTile_get_links)( pref<dtMeshTile>* _this ) {
-	return alloc_ref(_unref(_this)->links,Link);
-}
-DEFINE_PRIM(_IDL,MeshTile_get_links,_IDL);
-HL_PRIM pref<dtLink>* HL_NAME(MeshTile_set_links)( pref<dtMeshTile>* _this, pref<dtLink>* value ) {
-	_unref(_this)->links = _unref_ptr_safe(value);
-	return value;
-}
-DEFINE_PRIM(_IDL,MeshTile_set_links,_IDL _IDL);
-
-HL_PRIM pref<dtPolyDetail>* HL_NAME(MeshTile_get_detailMeshes)( pref<dtMeshTile>* _this ) {
-	return alloc_ref(_unref(_this)->detailMeshes,PolyDetail);
-}
-DEFINE_PRIM(_IDL,MeshTile_get_detailMeshes,_IDL);
-HL_PRIM pref<dtPolyDetail>* HL_NAME(MeshTile_set_detailMeshes)( pref<dtMeshTile>* _this, pref<dtPolyDetail>* value ) {
-	_unref(_this)->detailMeshes = _unref_ptr_safe(value);
-	return value;
-}
-DEFINE_PRIM(_IDL,MeshTile_set_detailMeshes,_IDL _IDL);
-
-HL_PRIM vbyte* HL_NAME(MeshTile_get_detailVerts)( pref<dtMeshTile>* _this ) {
-	return (vbyte *)(&_unref(_this)->detailVerts[0]);
-}
-DEFINE_PRIM(_BYTES,MeshTile_get_detailVerts,_IDL);
-HL_PRIM vbyte* HL_NAME(MeshTile_set_detailVerts)( pref<dtMeshTile>* _this, vbyte* value ) {
-	_unref(_this)->detailVerts = (float*)(value);
-	return value;
-}
-DEFINE_PRIM(_BYTES,MeshTile_set_detailVerts,_IDL _BYTES);
-
-HL_PRIM vbyte* HL_NAME(MeshTile_get_detailTris)( pref<dtMeshTile>* _this ) {
-	return (vbyte *)(&_unref(_this)->detailTris[0]);
-}
-DEFINE_PRIM(_BYTES,MeshTile_get_detailTris,_IDL);
-HL_PRIM vbyte* HL_NAME(MeshTile_set_detailTris)( pref<dtMeshTile>* _this, vbyte* value ) {
-	_unref(_this)->detailTris = (unsigned char*)(value);
-	return value;
-}
-DEFINE_PRIM(_BYTES,MeshTile_set_detailTris,_IDL _BYTES);
-
-HL_PRIM pref<dtBVNode>* HL_NAME(MeshTile_get_bvTree)( pref<dtMeshTile>* _this ) {
-	return alloc_ref(_unref(_this)->bvTree,BVNode);
-}
-DEFINE_PRIM(_IDL,MeshTile_get_bvTree,_IDL);
-HL_PRIM pref<dtBVNode>* HL_NAME(MeshTile_set_bvTree)( pref<dtMeshTile>* _this, pref<dtBVNode>* value ) {
-	_unref(_this)->bvTree = _unref_ptr_safe(value);
-	return value;
-}
-DEFINE_PRIM(_IDL,MeshTile_set_bvTree,_IDL _IDL);
-
-HL_PRIM pref<dtOffMeshConnection>* HL_NAME(MeshTile_get_offMeshCons)( pref<dtMeshTile>* _this ) {
-	return alloc_ref(_unref(_this)->offMeshCons,OffMeshConnection);
-}
-DEFINE_PRIM(_IDL,MeshTile_get_offMeshCons,_IDL);
-HL_PRIM pref<dtOffMeshConnection>* HL_NAME(MeshTile_set_offMeshCons)( pref<dtMeshTile>* _this, pref<dtOffMeshConnection>* value ) {
-	_unref(_this)->offMeshCons = _unref_ptr_safe(value);
-	return value;
-}
-DEFINE_PRIM(_IDL,MeshTile_set_offMeshCons,_IDL _IDL);
-
-HL_PRIM int HL_NAME(MeshTile_get_dataSize)( pref<dtMeshTile>* _this ) {
-	return _unref(_this)->dataSize;
-}
-DEFINE_PRIM(_I32,MeshTile_get_dataSize,_IDL);
-HL_PRIM int HL_NAME(MeshTile_set_dataSize)( pref<dtMeshTile>* _this, int value ) {
-	_unref(_this)->dataSize = (value);
-	return value;
-}
-DEFINE_PRIM(_I32,MeshTile_set_dataSize,_IDL _I32);
-
-HL_PRIM int HL_NAME(MeshTile_get_flags)( pref<dtMeshTile>* _this ) {
-	return _unref(_this)->flags;
-}
-DEFINE_PRIM(_I32,MeshTile_get_flags,_IDL);
-HL_PRIM int HL_NAME(MeshTile_set_flags)( pref<dtMeshTile>* _this, int value ) {
-	_unref(_this)->flags = (value);
-	return value;
-}
-DEFINE_PRIM(_I32,MeshTile_set_flags,_IDL _I32);
-
-HL_PRIM pref<dtMeshTile>* HL_NAME(MeshTile_get_next)( pref<dtMeshTile>* _this ) {
-	return alloc_ref(_unref(_this)->next,MeshTile);
-}
-DEFINE_PRIM(_IDL,MeshTile_get_next,_IDL);
-HL_PRIM pref<dtMeshTile>* HL_NAME(MeshTile_set_next)( pref<dtMeshTile>* _this, pref<dtMeshTile>* value ) {
-	_unref(_this)->next = _unref_ptr_safe(value);
-	return value;
-}
-DEFINE_PRIM(_IDL,MeshTile_set_next,_IDL _IDL);
-
-HL_PRIM pref<NavMesh>* HL_NAME(NavMesh_new0)() {
-	return alloc_ref((new NavMesh()),NavMesh);
-}
-DEFINE_PRIM(_IDL, NavMesh_new0,);
+DEFINE_PRIM(_VOID, NavWorld_setAgentParameters4, _IDL _F32 _F32 _F32 _F32);
 
 HL_PRIM void HL_NAME(NavMesh_create5)(pref<NavMesh>* _this, _h_float3* origin, float tileWidth, float tileHeight, int maxTiles, int maxPolys) {
 	(_unref(_this)->create((_h_float3*)origin, tileWidth, tileHeight, maxTiles, maxPolys));
 }
 DEFINE_PRIM(_VOID, NavMesh_create5, _IDL _STRUCT _F32 _F32 _I32 _I32);
 
-HL_PRIM unsigned int HL_NAME(NavMesh_load2)(pref<NavMesh>* _this, pref<NavBuffer>* data, int flags) {
-	return (_unref(_this)->load(_unref_ptr_safe(data), flags));
+HL_PRIM void HL_NAME(NavMesh_load2)(pref<NavMesh>* _this, pref<NavBuffer>* data, int flags) {
+	(_unref(_this)->load(_unref_ptr_safe(data), flags));
 }
-DEFINE_PRIM(_I32, NavMesh_load2, _IDL _IDL _I32);
+DEFINE_PRIM(_VOID, NavMesh_load2, _IDL _IDL _I32);
 
 HL_PRIM unsigned int HL_NAME(NavMesh_addTile2)(pref<NavMesh>* _this, pref<NavBuffer>* data, int flags) {
 	return (_unref(_this)->addTile(_unref_ptr_safe(data), flags));
@@ -3291,20 +2689,15 @@ HL_PRIM unsigned int HL_NAME(NavMesh_removeTile1)(pref<NavMesh>* _this, unsigned
 }
 DEFINE_PRIM(_I32, NavMesh_removeTile1, _IDL _I32);
 
+HL_PRIM pref<dtNavMeshQuery>* HL_NAME(NavMesh_createQuery1)(pref<NavMesh>* _this, int maxNodes) {
+	return alloc_ref((_unref(_this)->createQuery(maxNodes)),NavMeshQuery);
+}
+DEFINE_PRIM(_IDL, NavMesh_createQuery1, _IDL _I32);
+
 HL_PRIM bool HL_NAME(NavMesh_isValidPolyRef1)(pref<NavMesh>* _this, unsigned int ref) {
 	return (_unref(_this)->isValidPolyRef(ref));
 }
 DEFINE_PRIM(_BOOL, NavMesh_isValidPolyRef1, _IDL _I32);
-
-HL_PRIM unsigned int HL_NAME(NavMesh_getOffMeshConnectionPolyEndPoints4)(pref<NavMesh>* _this, unsigned int prevRef, unsigned int polyRef, varray* startPos, varray* endPos) {
-	return (_unref(_this)->getOffMeshConnectionPolyEndPoints(prevRef, polyRef, hl_aptr(startPos,float), hl_aptr(endPos,float)));
-}
-DEFINE_PRIM(_I32, NavMesh_getOffMeshConnectionPolyEndPoints4, _IDL _I32 _I32 _ARR _ARR);
-
-HL_PRIM HL_CONST pref<dtOffMeshConnection>* HL_NAME(NavMesh_getOffMeshConnectionByRef1)(pref<NavMesh>* _this, unsigned int ref) {
-	return alloc_ref_const((_unref(_this)->getOffMeshConnectionByRef(ref)),OffMeshConnection);
-}
-DEFINE_PRIM(_IDL, NavMesh_getOffMeshConnectionByRef1, _IDL _I32);
 
 HL_PRIM unsigned int HL_NAME(NavMesh_setPolyFlags2)(pref<NavMesh>* _this, unsigned int ref, unsigned short flags) {
 	return (_unref(_this)->setPolyFlags(ref, flags));
@@ -3325,535 +2718,6 @@ HL_PRIM unsigned int HL_NAME(NavMesh_getPolyArea2)(pref<NavMesh>* _this, unsigne
 	return (_unref(_this)->getPolyArea(ref, hl_aptr(resultArea,unsigned char)));
 }
 DEFINE_PRIM(_I32, NavMesh_getPolyArea2, _IDL _I32 _ARR);
-
-HL_PRIM _h_float3* HL_NAME(Node_get_pos)( pref<dtNode>* _this ) {
-	return (_h_float3* )(_unref(_this)->pos);
-}
-HL_PRIM void HL_NAME(Node_getposv)( pref<dtNode>* _this, _h_float3* value ) {
-	 float *src = (float*) & (_unref(_this)->pos)[0];
-	 float *dst = (float*) value;
-	dst[0] = src[0]; dst[1] = src[1]; dst[2] = src[2];
-}
-DEFINE_PRIM(_VOID,Node_getposv,_IDL _STRUCT  );
-DEFINE_PRIM(_STRUCT,Node_get_pos,_IDL);
-HL_PRIM _h_float3* HL_NAME(Node_set_pos)( pref<dtNode>* _this, _h_float3* value ) {
-	 float *dst = (float*) & (_unref(_this)->pos)[0];
-	 float *src = (float*) value;
-	dst[0] = src[0]; dst[1] = src[1]; dst[2] = src[2];
-	return value;
-}
-HL_PRIM void HL_NAME(Node_setpos3)( pref<dtNode>* _this,  float value0, float value1, float value2 ) {
-	 float *p = (_unref(_this)->pos);
-	p[0] = value0; p[1] = value1; p[2] = value2;
-}
-DEFINE_PRIM(_VOID,Node_setpos3,_IDL _F32 _F32 _F32 );
-DEFINE_PRIM(_STRUCT,Node_set_pos,_IDL _STRUCT);
-
-HL_PRIM float HL_NAME(Node_get_cost)( pref<dtNode>* _this ) {
-	return _unref(_this)->cost;
-}
-DEFINE_PRIM(_F32,Node_get_cost,_IDL);
-HL_PRIM float HL_NAME(Node_set_cost)( pref<dtNode>* _this, float value ) {
-	_unref(_this)->cost = (value);
-	return value;
-}
-DEFINE_PRIM(_F32,Node_set_cost,_IDL _F32);
-
-HL_PRIM float HL_NAME(Node_get_total)( pref<dtNode>* _this ) {
-	return _unref(_this)->total;
-}
-DEFINE_PRIM(_F32,Node_get_total,_IDL);
-HL_PRIM float HL_NAME(Node_set_total)( pref<dtNode>* _this, float value ) {
-	_unref(_this)->total = (value);
-	return value;
-}
-DEFINE_PRIM(_F32,Node_set_total,_IDL _F32);
-
-HL_PRIM unsigned int HL_NAME(Node_get_pidx)( pref<dtNode>* _this ) {
-	return _unref(_this)->pidx;
-}
-DEFINE_PRIM(_I32,Node_get_pidx,_IDL);
-HL_PRIM unsigned int HL_NAME(Node_set_pidx)( pref<dtNode>* _this, unsigned int value ) {
-	_unref(_this)->pidx = (value);
-	return value;
-}
-DEFINE_PRIM(_I32,Node_set_pidx,_IDL _I32);
-
-HL_PRIM unsigned int HL_NAME(Node_get_state)( pref<dtNode>* _this ) {
-	return _unref(_this)->state;
-}
-DEFINE_PRIM(_I32,Node_get_state,_IDL);
-HL_PRIM unsigned int HL_NAME(Node_set_state)( pref<dtNode>* _this, unsigned int value ) {
-	_unref(_this)->state = (value);
-	return value;
-}
-DEFINE_PRIM(_I32,Node_set_state,_IDL _I32);
-
-HL_PRIM unsigned int HL_NAME(Node_get_flags)( pref<dtNode>* _this ) {
-	return _unref(_this)->flags;
-}
-DEFINE_PRIM(_I32,Node_get_flags,_IDL);
-HL_PRIM unsigned int HL_NAME(Node_set_flags)( pref<dtNode>* _this, unsigned int value ) {
-	_unref(_this)->flags = (value);
-	return value;
-}
-DEFINE_PRIM(_I32,Node_set_flags,_IDL _I32);
-
-HL_PRIM unsigned int HL_NAME(Node_get_id)( pref<dtNode>* _this ) {
-	return _unref(_this)->id;
-}
-DEFINE_PRIM(_I32,Node_get_id,_IDL);
-HL_PRIM unsigned int HL_NAME(Node_set_id)( pref<dtNode>* _this, unsigned int value ) {
-	_unref(_this)->id = (value);
-	return value;
-}
-DEFINE_PRIM(_I32,Node_set_id,_IDL _I32);
-
-HL_PRIM pref<dtNodePool>* HL_NAME(NodePool_new2)(int maxNodes, int hashSize) {
-	return alloc_ref((new dtNodePool(maxNodes, hashSize)),NodePool);
-}
-DEFINE_PRIM(_IDL, NodePool_new2, _I32 _I32);
-
-HL_PRIM void HL_NAME(NodePool_clear0)(pref<dtNodePool>* _this) {
-	(_unref(_this)->clear());
-}
-DEFINE_PRIM(_VOID, NodePool_clear0, _IDL);
-
-HL_PRIM pref<dtNode>* HL_NAME(NodePool_getNode2)(pref<dtNodePool>* _this, unsigned int id, unsigned char state) {
-	return alloc_ref((_unref(_this)->getNode(id, state)),Node);
-}
-DEFINE_PRIM(_IDL, NodePool_getNode2, _IDL _I32 _I8);
-
-HL_PRIM pref<dtNode>* HL_NAME(NodePool_findNode2)(pref<dtNodePool>* _this, unsigned int id, unsigned char state) {
-	return alloc_ref((_unref(_this)->findNode(id, state)),Node);
-}
-DEFINE_PRIM(_IDL, NodePool_findNode2, _IDL _I32 _I8);
-
-HL_PRIM unsigned int HL_NAME(NodePool_getNodeIdx1)(pref<dtNodePool>* _this, pref<dtNode>* node) {
-	return (_unref(_this)->getNodeIdx(_unref_ptr_safe(node)));
-}
-DEFINE_PRIM(_I32, NodePool_getNodeIdx1, _IDL _IDL);
-
-HL_PRIM pref<dtNode>* HL_NAME(NodePool_getNodeAtIdx1)(pref<dtNodePool>* _this, unsigned int idx) {
-	return alloc_ref((_unref(_this)->getNodeAtIdx(idx)),Node);
-}
-DEFINE_PRIM(_IDL, NodePool_getNodeAtIdx1, _IDL _I32);
-
-HL_PRIM int HL_NAME(NodePool_getMemUsed0)(pref<dtNodePool>* _this) {
-	return (_unref(_this)->getMemUsed());
-}
-DEFINE_PRIM(_I32, NodePool_getMemUsed0, _IDL);
-
-HL_PRIM int HL_NAME(NodePool_getMaxNodes0)(pref<dtNodePool>* _this) {
-	return (_unref(_this)->getMaxNodes());
-}
-DEFINE_PRIM(_I32, NodePool_getMaxNodes0, _IDL);
-
-HL_PRIM int HL_NAME(NodePool_getHashSize0)(pref<dtNodePool>* _this) {
-	return (_unref(_this)->getHashSize());
-}
-DEFINE_PRIM(_I32, NodePool_getHashSize0, _IDL);
-
-HL_PRIM unsigned short HL_NAME(NodePool_getFirst1)(pref<dtNodePool>* _this, int bucket) {
-	return (_unref(_this)->getFirst(bucket));
-}
-DEFINE_PRIM(_I16, NodePool_getFirst1, _IDL _I32);
-
-HL_PRIM unsigned short HL_NAME(NodePool_getNext1)(pref<dtNodePool>* _this, int i) {
-	return (_unref(_this)->getNext(i));
-}
-DEFINE_PRIM(_I16, NodePool_getNext1, _IDL _I32);
-
-HL_PRIM int HL_NAME(NodePool_getNodeCount0)(pref<dtNodePool>* _this) {
-	return (_unref(_this)->getNodeCount());
-}
-DEFINE_PRIM(_I32, NodePool_getNodeCount0, _IDL);
-
-HL_PRIM pref<dtNodeQueue>* HL_NAME(NodeQueue_new1)(int n) {
-	return alloc_ref((new dtNodeQueue(n)),NodeQueue);
-}
-DEFINE_PRIM(_IDL, NodeQueue_new1, _I32);
-
-HL_PRIM void HL_NAME(NodeQueue_clear0)(pref<dtNodeQueue>* _this) {
-	(_unref(_this)->clear());
-}
-DEFINE_PRIM(_VOID, NodeQueue_clear0, _IDL);
-
-HL_PRIM pref<dtNode>* HL_NAME(NodeQueue_top0)(pref<dtNodeQueue>* _this) {
-	return alloc_ref((_unref(_this)->top()),Node);
-}
-DEFINE_PRIM(_IDL, NodeQueue_top0, _IDL);
-
-HL_PRIM pref<dtNode>* HL_NAME(NodeQueue_pop0)(pref<dtNodeQueue>* _this) {
-	return alloc_ref((_unref(_this)->pop()),Node);
-}
-DEFINE_PRIM(_IDL, NodeQueue_pop0, _IDL);
-
-HL_PRIM void HL_NAME(NodeQueue_push1)(pref<dtNodeQueue>* _this, pref<dtNode>* node) {
-	(_unref(_this)->push(_unref_ptr_safe(node)));
-}
-DEFINE_PRIM(_VOID, NodeQueue_push1, _IDL _IDL);
-
-HL_PRIM void HL_NAME(NodeQueue_modify1)(pref<dtNodeQueue>* _this, pref<dtNode>* node) {
-	(_unref(_this)->modify(_unref_ptr_safe(node)));
-}
-DEFINE_PRIM(_VOID, NodeQueue_modify1, _IDL _IDL);
-
-HL_PRIM bool HL_NAME(NodeQueue_empty0)(pref<dtNodeQueue>* _this) {
-	return (_unref(_this)->empty());
-}
-DEFINE_PRIM(_BOOL, NodeQueue_empty0, _IDL);
-
-HL_PRIM int HL_NAME(NodeQueue_getMemUsed0)(pref<dtNodeQueue>* _this) {
-	return (_unref(_this)->getMemUsed());
-}
-DEFINE_PRIM(_I32, NodeQueue_getMemUsed0, _IDL);
-
-HL_PRIM int HL_NAME(NodeQueue_getCapacity0)(pref<dtNodeQueue>* _this) {
-	return (_unref(_this)->getCapacity());
-}
-DEFINE_PRIM(_I32, NodeQueue_getCapacity0, _IDL);
-
-HL_PRIM pref<dtNavMeshCreateParams>* HL_NAME(NavMeshCreateParams_new0)() {
-	return alloc_ref((new dtNavMeshCreateParams()),NavMeshCreateParams);
-}
-DEFINE_PRIM(_IDL, NavMeshCreateParams_new0,);
-
-HL_PRIM vbyte* HL_NAME(NavMeshCreateParams_get_verts)( pref<dtNavMeshCreateParams>* _this ) {
-	return (vbyte *)(&_unref(_this)->verts[0]);
-}
-DEFINE_PRIM(_BYTES,NavMeshCreateParams_get_verts,_IDL);
-HL_PRIM vbyte* HL_NAME(NavMeshCreateParams_set_verts)( pref<dtNavMeshCreateParams>* _this, vbyte* value ) {
-	_unref(_this)->verts = (unsigned short*)(value);
-	return value;
-}
-DEFINE_PRIM(_BYTES,NavMeshCreateParams_set_verts,_IDL _BYTES);
-
-HL_PRIM int HL_NAME(NavMeshCreateParams_get_vertCount)( pref<dtNavMeshCreateParams>* _this ) {
-	return _unref(_this)->vertCount;
-}
-DEFINE_PRIM(_I32,NavMeshCreateParams_get_vertCount,_IDL);
-HL_PRIM int HL_NAME(NavMeshCreateParams_set_vertCount)( pref<dtNavMeshCreateParams>* _this, int value ) {
-	_unref(_this)->vertCount = (value);
-	return value;
-}
-DEFINE_PRIM(_I32,NavMeshCreateParams_set_vertCount,_IDL _I32);
-
-HL_PRIM HL_CONST vbyte* HL_NAME(NavMeshCreateParams_get_polys)( pref<dtNavMeshCreateParams>* _this ) {
-	return (vbyte *)(&_unref(_this)->polys[0]);
-}
-DEFINE_PRIM(_BYTES,NavMeshCreateParams_get_polys,_IDL);
-HL_PRIM HL_CONST vbyte* HL_NAME(NavMeshCreateParams_set_polys)( pref<dtNavMeshCreateParams>* _this, HL_CONST vbyte* value ) {
-	_unref(_this)->polys = (unsigned short*)(value);
-	return value;
-}
-DEFINE_PRIM(_BYTES,NavMeshCreateParams_set_polys,_IDL _BYTES);
-
-HL_PRIM HL_CONST vbyte* HL_NAME(NavMeshCreateParams_get_polyFlags)( pref<dtNavMeshCreateParams>* _this ) {
-	return (vbyte *)(&_unref(_this)->polyFlags[0]);
-}
-DEFINE_PRIM(_BYTES,NavMeshCreateParams_get_polyFlags,_IDL);
-HL_PRIM HL_CONST vbyte* HL_NAME(NavMeshCreateParams_set_polyFlags)( pref<dtNavMeshCreateParams>* _this, HL_CONST vbyte* value ) {
-	_unref(_this)->polyFlags = (unsigned short*)(value);
-	return value;
-}
-DEFINE_PRIM(_BYTES,NavMeshCreateParams_set_polyFlags,_IDL _BYTES);
-
-HL_PRIM HL_CONST vbyte* HL_NAME(NavMeshCreateParams_get_polyAreas)( pref<dtNavMeshCreateParams>* _this ) {
-	return (vbyte *)(&_unref(_this)->polyAreas[0]);
-}
-DEFINE_PRIM(_BYTES,NavMeshCreateParams_get_polyAreas,_IDL);
-HL_PRIM HL_CONST vbyte* HL_NAME(NavMeshCreateParams_set_polyAreas)( pref<dtNavMeshCreateParams>* _this, HL_CONST vbyte* value ) {
-	_unref(_this)->polyAreas = (unsigned char*)(value);
-	return value;
-}
-DEFINE_PRIM(_BYTES,NavMeshCreateParams_set_polyAreas,_IDL _BYTES);
-
-HL_PRIM int HL_NAME(NavMeshCreateParams_get_polyCount)( pref<dtNavMeshCreateParams>* _this ) {
-	return _unref(_this)->polyCount;
-}
-DEFINE_PRIM(_I32,NavMeshCreateParams_get_polyCount,_IDL);
-HL_PRIM int HL_NAME(NavMeshCreateParams_set_polyCount)( pref<dtNavMeshCreateParams>* _this, int value ) {
-	_unref(_this)->polyCount = (value);
-	return value;
-}
-DEFINE_PRIM(_I32,NavMeshCreateParams_set_polyCount,_IDL _I32);
-
-HL_PRIM int HL_NAME(NavMeshCreateParams_get_nvp)( pref<dtNavMeshCreateParams>* _this ) {
-	return _unref(_this)->nvp;
-}
-DEFINE_PRIM(_I32,NavMeshCreateParams_get_nvp,_IDL);
-HL_PRIM int HL_NAME(NavMeshCreateParams_set_nvp)( pref<dtNavMeshCreateParams>* _this, int value ) {
-	_unref(_this)->nvp = (value);
-	return value;
-}
-DEFINE_PRIM(_I32,NavMeshCreateParams_set_nvp,_IDL _I32);
-
-HL_PRIM HL_CONST vbyte* HL_NAME(NavMeshCreateParams_get_detailMeshes)( pref<dtNavMeshCreateParams>* _this ) {
-	return (vbyte *)(&_unref(_this)->detailMeshes[0]);
-}
-DEFINE_PRIM(_BYTES,NavMeshCreateParams_get_detailMeshes,_IDL);
-HL_PRIM HL_CONST vbyte* HL_NAME(NavMeshCreateParams_set_detailMeshes)( pref<dtNavMeshCreateParams>* _this, HL_CONST vbyte* value ) {
-	_unref(_this)->detailMeshes = (unsigned int*)(value);
-	return value;
-}
-DEFINE_PRIM(_BYTES,NavMeshCreateParams_set_detailMeshes,_IDL _BYTES);
-
-HL_PRIM HL_CONST vbyte* HL_NAME(NavMeshCreateParams_get_detailVerts)( pref<dtNavMeshCreateParams>* _this ) {
-	return (vbyte *)(&_unref(_this)->detailVerts[0]);
-}
-DEFINE_PRIM(_BYTES,NavMeshCreateParams_get_detailVerts,_IDL);
-HL_PRIM HL_CONST vbyte* HL_NAME(NavMeshCreateParams_set_detailVerts)( pref<dtNavMeshCreateParams>* _this, HL_CONST vbyte* value ) {
-	_unref(_this)->detailVerts = (float*)(value);
-	return value;
-}
-DEFINE_PRIM(_BYTES,NavMeshCreateParams_set_detailVerts,_IDL _BYTES);
-
-HL_PRIM int HL_NAME(NavMeshCreateParams_get_detailVertsCount)( pref<dtNavMeshCreateParams>* _this ) {
-	return _unref(_this)->detailVertsCount;
-}
-DEFINE_PRIM(_I32,NavMeshCreateParams_get_detailVertsCount,_IDL);
-HL_PRIM int HL_NAME(NavMeshCreateParams_set_detailVertsCount)( pref<dtNavMeshCreateParams>* _this, int value ) {
-	_unref(_this)->detailVertsCount = (value);
-	return value;
-}
-DEFINE_PRIM(_I32,NavMeshCreateParams_set_detailVertsCount,_IDL _I32);
-
-HL_PRIM HL_CONST vbyte* HL_NAME(NavMeshCreateParams_get_detailTris)( pref<dtNavMeshCreateParams>* _this ) {
-	return (vbyte *)(&_unref(_this)->detailTris[0]);
-}
-DEFINE_PRIM(_BYTES,NavMeshCreateParams_get_detailTris,_IDL);
-HL_PRIM HL_CONST vbyte* HL_NAME(NavMeshCreateParams_set_detailTris)( pref<dtNavMeshCreateParams>* _this, HL_CONST vbyte* value ) {
-	_unref(_this)->detailTris = (unsigned char*)(value);
-	return value;
-}
-DEFINE_PRIM(_BYTES,NavMeshCreateParams_set_detailTris,_IDL _BYTES);
-
-HL_PRIM int HL_NAME(NavMeshCreateParams_get_detailTriCount)( pref<dtNavMeshCreateParams>* _this ) {
-	return _unref(_this)->detailTriCount;
-}
-DEFINE_PRIM(_I32,NavMeshCreateParams_get_detailTriCount,_IDL);
-HL_PRIM int HL_NAME(NavMeshCreateParams_set_detailTriCount)( pref<dtNavMeshCreateParams>* _this, int value ) {
-	_unref(_this)->detailTriCount = (value);
-	return value;
-}
-DEFINE_PRIM(_I32,NavMeshCreateParams_set_detailTriCount,_IDL _I32);
-
-HL_PRIM HL_CONST vbyte* HL_NAME(NavMeshCreateParams_get_offMeshConVerts)( pref<dtNavMeshCreateParams>* _this ) {
-	return (vbyte *)(&_unref(_this)->offMeshConVerts[0]);
-}
-DEFINE_PRIM(_BYTES,NavMeshCreateParams_get_offMeshConVerts,_IDL);
-HL_PRIM HL_CONST vbyte* HL_NAME(NavMeshCreateParams_set_offMeshConVerts)( pref<dtNavMeshCreateParams>* _this, HL_CONST vbyte* value ) {
-	_unref(_this)->offMeshConVerts = (float*)(value);
-	return value;
-}
-DEFINE_PRIM(_BYTES,NavMeshCreateParams_set_offMeshConVerts,_IDL _BYTES);
-
-HL_PRIM HL_CONST vbyte* HL_NAME(NavMeshCreateParams_get_offMeshConRad)( pref<dtNavMeshCreateParams>* _this ) {
-	return (vbyte *)(&_unref(_this)->offMeshConRad[0]);
-}
-DEFINE_PRIM(_BYTES,NavMeshCreateParams_get_offMeshConRad,_IDL);
-HL_PRIM HL_CONST vbyte* HL_NAME(NavMeshCreateParams_set_offMeshConRad)( pref<dtNavMeshCreateParams>* _this, HL_CONST vbyte* value ) {
-	_unref(_this)->offMeshConRad = (float*)(value);
-	return value;
-}
-DEFINE_PRIM(_BYTES,NavMeshCreateParams_set_offMeshConRad,_IDL _BYTES);
-
-HL_PRIM HL_CONST vbyte* HL_NAME(NavMeshCreateParams_get_offMeshConFlags)( pref<dtNavMeshCreateParams>* _this ) {
-	return (vbyte *)(&_unref(_this)->offMeshConFlags[0]);
-}
-DEFINE_PRIM(_BYTES,NavMeshCreateParams_get_offMeshConFlags,_IDL);
-HL_PRIM HL_CONST vbyte* HL_NAME(NavMeshCreateParams_set_offMeshConFlags)( pref<dtNavMeshCreateParams>* _this, HL_CONST vbyte* value ) {
-	_unref(_this)->offMeshConFlags = (unsigned short*)(value);
-	return value;
-}
-DEFINE_PRIM(_BYTES,NavMeshCreateParams_set_offMeshConFlags,_IDL _BYTES);
-
-HL_PRIM HL_CONST vbyte* HL_NAME(NavMeshCreateParams_get_offMeshConAreas)( pref<dtNavMeshCreateParams>* _this ) {
-	return (vbyte *)(&_unref(_this)->offMeshConAreas[0]);
-}
-DEFINE_PRIM(_BYTES,NavMeshCreateParams_get_offMeshConAreas,_IDL);
-HL_PRIM HL_CONST vbyte* HL_NAME(NavMeshCreateParams_set_offMeshConAreas)( pref<dtNavMeshCreateParams>* _this, HL_CONST vbyte* value ) {
-	_unref(_this)->offMeshConAreas = (unsigned char*)(value);
-	return value;
-}
-DEFINE_PRIM(_BYTES,NavMeshCreateParams_set_offMeshConAreas,_IDL _BYTES);
-
-HL_PRIM HL_CONST vbyte* HL_NAME(NavMeshCreateParams_get_offMeshConDir)( pref<dtNavMeshCreateParams>* _this ) {
-	return (vbyte *)(&_unref(_this)->offMeshConDir[0]);
-}
-DEFINE_PRIM(_BYTES,NavMeshCreateParams_get_offMeshConDir,_IDL);
-HL_PRIM HL_CONST vbyte* HL_NAME(NavMeshCreateParams_set_offMeshConDir)( pref<dtNavMeshCreateParams>* _this, HL_CONST vbyte* value ) {
-	_unref(_this)->offMeshConDir = (unsigned char*)(value);
-	return value;
-}
-DEFINE_PRIM(_BYTES,NavMeshCreateParams_set_offMeshConDir,_IDL _BYTES);
-
-HL_PRIM HL_CONST vbyte* HL_NAME(NavMeshCreateParams_get_offMeshConUserID)( pref<dtNavMeshCreateParams>* _this ) {
-	return (vbyte *)(&_unref(_this)->offMeshConUserID[0]);
-}
-DEFINE_PRIM(_BYTES,NavMeshCreateParams_get_offMeshConUserID,_IDL);
-HL_PRIM HL_CONST vbyte* HL_NAME(NavMeshCreateParams_set_offMeshConUserID)( pref<dtNavMeshCreateParams>* _this, HL_CONST vbyte* value ) {
-	_unref(_this)->offMeshConUserID = (unsigned int*)(value);
-	return value;
-}
-DEFINE_PRIM(_BYTES,NavMeshCreateParams_set_offMeshConUserID,_IDL _BYTES);
-
-HL_PRIM int HL_NAME(NavMeshCreateParams_get_offMeshConCount)( pref<dtNavMeshCreateParams>* _this ) {
-	return _unref(_this)->offMeshConCount;
-}
-DEFINE_PRIM(_I32,NavMeshCreateParams_get_offMeshConCount,_IDL);
-HL_PRIM int HL_NAME(NavMeshCreateParams_set_offMeshConCount)( pref<dtNavMeshCreateParams>* _this, int value ) {
-	_unref(_this)->offMeshConCount = (value);
-	return value;
-}
-DEFINE_PRIM(_I32,NavMeshCreateParams_set_offMeshConCount,_IDL _I32);
-
-HL_PRIM unsigned int HL_NAME(NavMeshCreateParams_get_userId)( pref<dtNavMeshCreateParams>* _this ) {
-	return _unref(_this)->userId;
-}
-DEFINE_PRIM(_I32,NavMeshCreateParams_get_userId,_IDL);
-HL_PRIM unsigned int HL_NAME(NavMeshCreateParams_set_userId)( pref<dtNavMeshCreateParams>* _this, unsigned int value ) {
-	_unref(_this)->userId = (value);
-	return value;
-}
-DEFINE_PRIM(_I32,NavMeshCreateParams_set_userId,_IDL _I32);
-
-HL_PRIM int HL_NAME(NavMeshCreateParams_get_tileX)( pref<dtNavMeshCreateParams>* _this ) {
-	return _unref(_this)->tileX;
-}
-DEFINE_PRIM(_I32,NavMeshCreateParams_get_tileX,_IDL);
-HL_PRIM int HL_NAME(NavMeshCreateParams_set_tileX)( pref<dtNavMeshCreateParams>* _this, int value ) {
-	_unref(_this)->tileX = (value);
-	return value;
-}
-DEFINE_PRIM(_I32,NavMeshCreateParams_set_tileX,_IDL _I32);
-
-HL_PRIM int HL_NAME(NavMeshCreateParams_get_tileY)( pref<dtNavMeshCreateParams>* _this ) {
-	return _unref(_this)->tileY;
-}
-DEFINE_PRIM(_I32,NavMeshCreateParams_get_tileY,_IDL);
-HL_PRIM int HL_NAME(NavMeshCreateParams_set_tileY)( pref<dtNavMeshCreateParams>* _this, int value ) {
-	_unref(_this)->tileY = (value);
-	return value;
-}
-DEFINE_PRIM(_I32,NavMeshCreateParams_set_tileY,_IDL _I32);
-
-HL_PRIM int HL_NAME(NavMeshCreateParams_get_tileLayer)( pref<dtNavMeshCreateParams>* _this ) {
-	return _unref(_this)->tileLayer;
-}
-DEFINE_PRIM(_I32,NavMeshCreateParams_get_tileLayer,_IDL);
-HL_PRIM int HL_NAME(NavMeshCreateParams_set_tileLayer)( pref<dtNavMeshCreateParams>* _this, int value ) {
-	_unref(_this)->tileLayer = (value);
-	return value;
-}
-DEFINE_PRIM(_I32,NavMeshCreateParams_set_tileLayer,_IDL _I32);
-
-HL_PRIM _h_float3* HL_NAME(NavMeshCreateParams_get_bmin)( pref<dtNavMeshCreateParams>* _this ) {
-	return (_h_float3* )(_unref(_this)->bmin);
-}
-HL_PRIM void HL_NAME(NavMeshCreateParams_getbminv)( pref<dtNavMeshCreateParams>* _this, _h_float3* value ) {
-	 float *src = (float*) & (_unref(_this)->bmin)[0];
-	 float *dst = (float*) value;
-	dst[0] = src[0]; dst[1] = src[1]; dst[2] = src[2];
-}
-DEFINE_PRIM(_VOID,NavMeshCreateParams_getbminv,_IDL _STRUCT  );
-DEFINE_PRIM(_STRUCT,NavMeshCreateParams_get_bmin,_IDL);
-HL_PRIM _h_float3* HL_NAME(NavMeshCreateParams_set_bmin)( pref<dtNavMeshCreateParams>* _this, _h_float3* value ) {
-	 float *dst = (float*) & (_unref(_this)->bmin)[0];
-	 float *src = (float*) value;
-	dst[0] = src[0]; dst[1] = src[1]; dst[2] = src[2];
-	return value;
-}
-HL_PRIM void HL_NAME(NavMeshCreateParams_setbmin3)( pref<dtNavMeshCreateParams>* _this,  float value0, float value1, float value2 ) {
-	 float *p = (_unref(_this)->bmin);
-	p[0] = value0; p[1] = value1; p[2] = value2;
-}
-DEFINE_PRIM(_VOID,NavMeshCreateParams_setbmin3,_IDL _F32 _F32 _F32 );
-DEFINE_PRIM(_STRUCT,NavMeshCreateParams_set_bmin,_IDL _STRUCT);
-
-HL_PRIM _h_float3* HL_NAME(NavMeshCreateParams_get_bmax)( pref<dtNavMeshCreateParams>* _this ) {
-	return (_h_float3* )(_unref(_this)->bmax);
-}
-HL_PRIM void HL_NAME(NavMeshCreateParams_getbmaxv)( pref<dtNavMeshCreateParams>* _this, _h_float3* value ) {
-	 float *src = (float*) & (_unref(_this)->bmax)[0];
-	 float *dst = (float*) value;
-	dst[0] = src[0]; dst[1] = src[1]; dst[2] = src[2];
-}
-DEFINE_PRIM(_VOID,NavMeshCreateParams_getbmaxv,_IDL _STRUCT  );
-DEFINE_PRIM(_STRUCT,NavMeshCreateParams_get_bmax,_IDL);
-HL_PRIM _h_float3* HL_NAME(NavMeshCreateParams_set_bmax)( pref<dtNavMeshCreateParams>* _this, _h_float3* value ) {
-	 float *dst = (float*) & (_unref(_this)->bmax)[0];
-	 float *src = (float*) value;
-	dst[0] = src[0]; dst[1] = src[1]; dst[2] = src[2];
-	return value;
-}
-HL_PRIM void HL_NAME(NavMeshCreateParams_setbmax3)( pref<dtNavMeshCreateParams>* _this,  float value0, float value1, float value2 ) {
-	 float *p = (_unref(_this)->bmax);
-	p[0] = value0; p[1] = value1; p[2] = value2;
-}
-DEFINE_PRIM(_VOID,NavMeshCreateParams_setbmax3,_IDL _F32 _F32 _F32 );
-DEFINE_PRIM(_STRUCT,NavMeshCreateParams_set_bmax,_IDL _STRUCT);
-
-HL_PRIM float HL_NAME(NavMeshCreateParams_get_walkableHeight)( pref<dtNavMeshCreateParams>* _this ) {
-	return _unref(_this)->walkableHeight;
-}
-DEFINE_PRIM(_F32,NavMeshCreateParams_get_walkableHeight,_IDL);
-HL_PRIM float HL_NAME(NavMeshCreateParams_set_walkableHeight)( pref<dtNavMeshCreateParams>* _this, float value ) {
-	_unref(_this)->walkableHeight = (value);
-	return value;
-}
-DEFINE_PRIM(_F32,NavMeshCreateParams_set_walkableHeight,_IDL _F32);
-
-HL_PRIM float HL_NAME(NavMeshCreateParams_get_walkableRadius)( pref<dtNavMeshCreateParams>* _this ) {
-	return _unref(_this)->walkableRadius;
-}
-DEFINE_PRIM(_F32,NavMeshCreateParams_get_walkableRadius,_IDL);
-HL_PRIM float HL_NAME(NavMeshCreateParams_set_walkableRadius)( pref<dtNavMeshCreateParams>* _this, float value ) {
-	_unref(_this)->walkableRadius = (value);
-	return value;
-}
-DEFINE_PRIM(_F32,NavMeshCreateParams_set_walkableRadius,_IDL _F32);
-
-HL_PRIM float HL_NAME(NavMeshCreateParams_get_walkableClimb)( pref<dtNavMeshCreateParams>* _this ) {
-	return _unref(_this)->walkableClimb;
-}
-DEFINE_PRIM(_F32,NavMeshCreateParams_get_walkableClimb,_IDL);
-HL_PRIM float HL_NAME(NavMeshCreateParams_set_walkableClimb)( pref<dtNavMeshCreateParams>* _this, float value ) {
-	_unref(_this)->walkableClimb = (value);
-	return value;
-}
-DEFINE_PRIM(_F32,NavMeshCreateParams_set_walkableClimb,_IDL _F32);
-
-HL_PRIM float HL_NAME(NavMeshCreateParams_get_cs)( pref<dtNavMeshCreateParams>* _this ) {
-	return _unref(_this)->cs;
-}
-DEFINE_PRIM(_F32,NavMeshCreateParams_get_cs,_IDL);
-HL_PRIM float HL_NAME(NavMeshCreateParams_set_cs)( pref<dtNavMeshCreateParams>* _this, float value ) {
-	_unref(_this)->cs = (value);
-	return value;
-}
-DEFINE_PRIM(_F32,NavMeshCreateParams_set_cs,_IDL _F32);
-
-HL_PRIM float HL_NAME(NavMeshCreateParams_get_ch)( pref<dtNavMeshCreateParams>* _this ) {
-	return _unref(_this)->ch;
-}
-DEFINE_PRIM(_F32,NavMeshCreateParams_get_ch,_IDL);
-HL_PRIM float HL_NAME(NavMeshCreateParams_set_ch)( pref<dtNavMeshCreateParams>* _this, float value ) {
-	_unref(_this)->ch = (value);
-	return value;
-}
-DEFINE_PRIM(_F32,NavMeshCreateParams_set_ch,_IDL _F32);
-
-HL_PRIM bool HL_NAME(NavMeshCreateParams_get_buildBvTree)( pref<dtNavMeshCreateParams>* _this ) {
-	return _unref(_this)->buildBvTree;
-}
-DEFINE_PRIM(_BOOL,NavMeshCreateParams_get_buildBvTree,_IDL);
-HL_PRIM bool HL_NAME(NavMeshCreateParams_set_buildBvTree)( pref<dtNavMeshCreateParams>* _this, bool value ) {
-	_unref(_this)->buildBvTree = (value);
-	return value;
-}
-DEFINE_PRIM(_BOOL,NavMeshCreateParams_set_buildBvTree,_IDL _BOOL);
 
 HL_PRIM pref<dtQueryFilter>* HL_NAME(QueryFilter_new0)() {
 	return alloc_ref((new dtQueryFilter()),QueryFilter);
@@ -3983,23 +2847,18 @@ HL_PRIM pref<NavMesh>* HL_NAME(NavMeshQuery_getAttachedNavMesh0)(pref<dtNavMeshQ
 }
 DEFINE_PRIM(_IDL, NavMeshQuery_getAttachedNavMesh0, _IDL);
 
-HL_PRIM unsigned int HL_NAME(NavMeshQuery_init2)(pref<dtNavMeshQuery>* _this, pref<NavMesh>* nav, int maxNodes) {
-	return (_unref(_this)->init(_unref_ptr_safe(nav), maxNodes));
-}
-DEFINE_PRIM(_I32, NavMeshQuery_init2, _IDL _IDL _I32);
-
 HL_PRIM unsigned int HL_NAME(NavMeshQuery_findPath8)(pref<dtNavMeshQuery>* _this, unsigned int startRef, unsigned int endRef, _h_float3* startPos, _h_float3* endPos, pref<dtQueryFilter>* filter, varray* path, int* pathCount, int maxPath) {
 	return (_unref(_this)->findPath(startRef, endRef, (float*)(_h_float3*)startPos, (float*)(_h_float3*)endPos, _unref_ptr_safe(filter), hl_aptr(path,unsigned int), pathCount, maxPath));
 }
 DEFINE_PRIM(_I32, NavMeshQuery_findPath8, _IDL _I32 _I32 _STRUCT _STRUCT _IDL _ARR _REF(_I32) _I32);
 
-HL_PRIM unsigned int HL_NAME(NavMeshQuery_findNearestPoly5)(pref<dtNavMeshQuery>* _this, _h_float3* center, _h_float3* halfExtents, pref<dtQueryFilter>* filter, unsigned int* nearestRef, _h_float3* nearestPt) {
-	return (_unref(_this)->findNearestPoly((float*)(_h_float3*)center, (float*)(_h_float3*)halfExtents, _unref_ptr_safe(filter), nearestRef, (float*)(_h_float3*)nearestPt));
+HL_PRIM int HL_NAME(NavMeshQuery_findNearestPoly5)(pref<dtNavMeshQuery>* _this, _h_float3* center, _h_float3* halfExtents, pref<dtQueryFilter>* filter, unsigned int* nearestRef, _h_float3* nearestPt) {
+	return HL_NAME(DtStatus_valueToIndex1)(_unref(_this)->findNearestPoly((float*)(_h_float3*)center, (float*)(_h_float3*)halfExtents, _unref_ptr_safe(filter), nearestRef, (float*)(_h_float3*)nearestPt));
 }
 DEFINE_PRIM(_I32, NavMeshQuery_findNearestPoly5, _IDL _STRUCT _STRUCT _IDL _REF(_I32) _STRUCT);
 
-HL_PRIM unsigned int HL_NAME(NavMeshQuery_findNearestPoly6)(pref<dtNavMeshQuery>* _this, _h_float3* center, _h_float3* halfExtents, pref<dtQueryFilter>* filter, unsigned int* nearestRef, _h_float3* nearestPt, bool* isOverPoly) {
-	return (_unref(_this)->findNearestPoly((float*)(_h_float3*)center, (float*)(_h_float3*)halfExtents, _unref_ptr_safe(filter), nearestRef, (float*)(_h_float3*)nearestPt, isOverPoly));
+HL_PRIM int HL_NAME(NavMeshQuery_findNearestPoly6)(pref<dtNavMeshQuery>* _this, _h_float3* center, _h_float3* halfExtents, pref<dtQueryFilter>* filter, unsigned int* nearestRef, _h_float3* nearestPt, bool* isOverPoly) {
+	return HL_NAME(DtStatus_valueToIndex1)(_unref(_this)->findNearestPoly((float*)(_h_float3*)center, (float*)(_h_float3*)halfExtents, _unref_ptr_safe(filter), nearestRef, (float*)(_h_float3*)nearestPt, isOverPoly));
 }
 DEFINE_PRIM(_I32, NavMeshQuery_findNearestPoly6, _IDL _STRUCT _STRUCT _IDL _REF(_I32) _STRUCT _REF(_BOOL));
 
@@ -4142,61 +3001,6 @@ HL_PRIM double HL_NAME(PerformanceTimer_deltaMicroseconds0)(pref<PerformanceTime
 	return (_unref(_this)->deltaMicroseconds());
 }
 DEFINE_PRIM(_F64, PerformanceTimer_deltaMicroseconds0, _IDL);
-
-HL_PRIM void HL_NAME(Tests_setToZero4)(int* a, float* b, double* c, bool* d) {
-	(setToZero(a, b, c, d));
-}
-DEFINE_PRIM(_VOID, Tests_setToZero4, _REF(_I32) _REF(_F32) _REF(_F64) _REF(_BOOL));
-
-HL_PRIM void HL_NAME(Tests_setToOne4)(int* a, float* b, double* c, bool* d) {
-	(setToOne(a, b, c, d));
-}
-DEFINE_PRIM(_VOID, Tests_setToOne4, _REF(_I32) _REF(_F32) _REF(_F64) _REF(_BOOL));
-
-HL_PRIM pref<dtMeshCapture>* HL_NAME(MeshCapture_new1)(bool isSurface) {
-	return alloc_ref((new dtMeshCapture(isSurface)),MeshCapture);
-}
-DEFINE_PRIM(_IDL, MeshCapture_new1, _BOOL);
-
-HL_PRIM void HL_NAME(MeshCapture_captureNavMesh2)(pref<dtMeshCapture>* _this, pref<NavMesh>* nm, int flags) {
-	(_unref(_this)->captureNavMesh(*_unref_ptr_safe(nm), flags));
-}
-DEFINE_PRIM(_VOID, MeshCapture_captureNavMesh2, _IDL _IDL _I32);
-
-HL_PRIM void HL_NAME(MeshCapture_captureHeightField1)(pref<dtMeshCapture>* _this, pref<rcHeightfield>* hf) {
-	(_unref(_this)->captureHeightField(*_unref_ptr_safe(hf)));
-}
-DEFINE_PRIM(_VOID, MeshCapture_captureHeightField1, _IDL _IDL);
-
-HL_PRIM void HL_NAME(MeshCapture_captureCompactHeightField1)(pref<dtMeshCapture>* _this, pref<rcCompactHeightfield>* chf) {
-	(_unref(_this)->captureCompactHeightField(*_unref_ptr_safe(chf)));
-}
-DEFINE_PRIM(_VOID, MeshCapture_captureCompactHeightField1, _IDL _IDL);
-
-HL_PRIM void HL_NAME(MeshCapture_captureHeighfieldLayerSet1)(pref<dtMeshCapture>* _this, pref<rcHeightfieldLayerSet>* hfls) {
-	(_unref(_this)->captureHeighfieldLayerSet(*_unref_ptr_safe(hfls)));
-}
-DEFINE_PRIM(_VOID, MeshCapture_captureHeighfieldLayerSet1, _IDL _IDL);
-
-HL_PRIM int HL_NAME(MeshCapture_numVerts0)(pref<dtMeshCapture>* _this) {
-	return (_unref(_this)->numVerts());
-}
-DEFINE_PRIM(_I32, MeshCapture_numVerts0, _IDL);
-
-HL_PRIM int HL_NAME(MeshCapture_numSurfacePrims0)(pref<dtMeshCapture>* _this) {
-	return (_unref(_this)->numSurfacePrims());
-}
-DEFINE_PRIM(_I32, MeshCapture_numSurfacePrims0, _IDL);
-
-HL_PRIM bool HL_NAME(MeshCapture_isSurface0)(pref<dtMeshCapture>* _this) {
-	return (_unref(_this)->isSurface());
-}
-DEFINE_PRIM(_BOOL, MeshCapture_isSurface0, _IDL);
-
-HL_PRIM void HL_NAME(MeshCapture_getVert2)(pref<dtMeshCapture>* _this, int idx, _h_float3* pos) {
-	(_unref(_this)->getVert(idx, (float*)(_h_float3*)pos));
-}
-DEFINE_PRIM(_VOID, MeshCapture_getVert2, _IDL _I32 _STRUCT);
 
 HL_PRIM pref<NavTileConverter>* HL_NAME(NavTileConverter_new0)() {
 	return alloc_ref((new NavTileConverter()),NavTileConverter);
