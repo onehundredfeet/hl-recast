@@ -161,6 +161,8 @@ class NavWorld {
         TriMeshBuilder _mesh;
 
        public:
+        bool finalize();
+
         TriMeshBuilder &mesh() { return _mesh; }
         TriMeshBuilder *meshPtr() { return &_mesh; }
         TriMeshPartition &partition() { return _partition; }
@@ -177,9 +179,9 @@ class NavWorld {
         NavWorld *_world;
         rcHeightfield _solid;
         rcCompactHeightfield _chf;
-        rcContourSet *_cset;
-        rcPolyMesh *_pmesh;
-        rcPolyMeshDetail *_dmesh;
+//        rcContourSet *_cset;
+  //      rcPolyMesh *_pmesh;
+    //    rcPolyMeshDetail *_dmesh;
         dtTileCache _tileCache;
         LinearAllocator _talloc;
         FastLZCompressor _tcomp;
@@ -210,15 +212,16 @@ class NavWorld {
         void clearCachedTiles() {
             _tileCacheData.clear();
         }
- void dispose() {
+        void dispose() {
             _chf.dispose();
+            /*
             rcFreeContourSet(_cset);
             _cset = 0;
             rcFreePolyMesh(_pmesh);
             _pmesh = 0;
             rcFreePolyMeshDetail(_dmesh);
             _dmesh = 0;
-
+*/
             _solid.dispose();
         }
 
@@ -230,28 +233,9 @@ class NavWorld {
         ~TileBuilder() {
             dispose();
         }
-
-       /*
-        bool build(int &dataSize);
-        unsigned char *_data;
-        int _dataSize;
-        bool swap() {
-            // Remove any previous data (navmesh owns and deletes the data).
-            _world->_navMesh.removeTile(_world->_navMesh.getTileRefAt(_x, _y, 0), 0, 0);
-
-            // Add tile, or leave the location empty.
-            if (_data) {
-                // Let the navmesh own the data.
-                dtStatus status = _world->_navMesh.addTile(_data, _dataSize, DT_TILE_FREE_DATA, 0, 0);
-                if (dtStatusFailed(status)) {
-                    dtFree(_data);
-                    _data = nullptr;
-                } else
-                    return true;
-            }
-            return false;
+        void retire() {
+            _world->retire(this);
         }
-        */
     };
 
     int maxTrisPerChunk() {
@@ -262,6 +246,10 @@ class NavWorld {
         return maxTris;
     }
 
+    NavWorld() {
+        _maxTrisPerPartitionChunk = DEFAULT_TRIS_PER_PARTITION_CHUNK;
+    }
+
    private:
     dtNavMesh _navMesh;
 
@@ -269,6 +257,8 @@ class NavWorld {
     float _cellSize;
     float _cellHeight;
     int _tileSizeInCells;
+    static const int DEFAULT_TRIS_PER_PARTITION_CHUNK = 64;
+    int _maxTrisPerPartitionChunk;
 
     float _walkableSlopeAngle;
     float _walkableClimb;
@@ -291,6 +281,9 @@ class NavWorld {
     std::vector<TileBuilder *> _dormantBuilders;
     std::vector<ConvexVolume> _convexVolumes;
 
+    void retire( TileBuilder *builder) {
+        _dormantBuilders.push_back(builder);
+    }
    public:
     SourcePolyChunk *addChunk() {
         auto layer = new SourcePolyChunk();
@@ -298,6 +291,14 @@ class NavWorld {
         _chunks.push_back(layer);
         return layer;
     }
+    
+    void getTileRegion( _h_float2 *bmin, _h_float2 *bmax, _h_int2 *tmin, _h_int2 *tmax) {
+        tmin->x = (int)floorf((bmin->x - _origin[0]) / _tileSize);
+        tmin->y = (int)floorf((bmin->y - _origin[2]) / _tileSize);
+        tmax->x = (int)floorf((bmax->x - _origin[0]) / _tileSize);
+        tmax->y = (int)floorf((bmax->y - _origin[2]) / _tileSize);
+    }
+
     TileBuilder *getTileBuilder(int x, int y) {
         if (_dormantBuilders.size() > 0) {
             auto builder = _dormantBuilders.back();
@@ -307,6 +308,7 @@ class NavWorld {
             return builder;
         }
         auto builder = new TileBuilder();
+        builder->_world = this;
         builder->bind(x, y);
         _activeBuilders.push_back(builder);
         return builder;

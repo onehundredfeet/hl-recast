@@ -668,11 +668,12 @@ interface TriMeshBuilder {
 interface SourcePolyChunk {
 	[Internal="meshPtr"]
 	TriMeshBuilder mesh();
+	bool finalize();
 };
 
 [Internal="NavWorld::TileBuilder"]
 interface TileBuilder {
-
+	void retire();
 };
 
 interface NavWorld {
@@ -686,6 +687,9 @@ interface NavWorld {
                             float walkableClimb,
                             float walkableRadius,
                             float walkableHeight);
+
+	void getTileRegion( float2 in_bmin, float2 in_bmax, int2 out_tmin, int2 out_tmax);
+
 };
 
 

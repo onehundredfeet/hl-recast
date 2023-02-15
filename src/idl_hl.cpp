@@ -2696,6 +2696,16 @@ HL_PRIM pref<TriMeshBuilder>* HL_NAME(SourcePolyChunk_mesh0)(pref<NavWorld::Sour
 }
 DEFINE_PRIM(_IDL, SourcePolyChunk_mesh0, _IDL);
 
+HL_PRIM bool HL_NAME(SourcePolyChunk_finalize0)(pref<NavWorld::SourcePolyChunk>* _this) {
+	return (_unref(_this)->finalize());
+}
+DEFINE_PRIM(_BOOL, SourcePolyChunk_finalize0, _IDL);
+
+HL_PRIM void HL_NAME(TileBuilder_retire0)(pref<NavWorld::TileBuilder>* _this) {
+	(_unref(_this)->retire());
+}
+DEFINE_PRIM(_VOID, TileBuilder_retire0, _IDL);
+
 HL_PRIM pref<NavWorld>* HL_NAME(NavWorld_create7)(_h_float3* origin, _h_float3* dim, int tileSizeInCells, float cellSize, float cellHeight, int maxTiles, int maxPolys) {
 	return alloc_ref((NavWorld::create((_h_float3*)origin, (_h_float3*)dim, tileSizeInCells, cellSize, cellHeight, maxTiles, maxPolys)),NavWorld);
 }
@@ -2715,6 +2725,11 @@ HL_PRIM void HL_NAME(NavWorld_setAgentParameters4)(pref<NavWorld>* _this, float 
 	(_unref(_this)->setAgentParameters(walkableSlopeAngle, walkableClimb, walkableRadius, walkableHeight));
 }
 DEFINE_PRIM(_VOID, NavWorld_setAgentParameters4, _IDL _F32 _F32 _F32 _F32);
+
+HL_PRIM void HL_NAME(NavWorld_getTileRegion4)(pref<NavWorld>* _this, _h_float2* in_bmin, _h_float2* in_bmax, _h_int2* out_tmin, _h_int2* out_tmax) {
+	(_unref(_this)->getTileRegion((_h_float2*)in_bmin, (_h_float2*)in_bmax, (_h_int2*)out_tmin, (_h_int2*)out_tmax));
+}
+DEFINE_PRIM(_VOID, NavWorld_getTileRegion4, _IDL _STRUCT _STRUCT _STRUCT _STRUCT);
 
 HL_PRIM void HL_NAME(NavMesh_create5)(pref<NavMesh>* _this, _h_float3* origin, float tileWidth, float tileHeight, int maxTiles, int maxPolys) {
 	(_unref(_this)->create((_h_float3*)origin, tileWidth, tileHeight, maxTiles, maxPolys));
