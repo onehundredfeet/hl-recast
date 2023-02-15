@@ -235,6 +235,7 @@ class NavWorld {
         void retire() {
             _world->retire(this);
         }
+        void reset();
         void queueForSwap() {
             //            _world->queueForSwap(this);
         }
@@ -303,7 +304,7 @@ class NavWorld {
     std::vector<ConvexVolume> _convexVolumes;
 
     void retire(TileBuilder *builder) {
-        builder->dispose();
+        builder->reset();
         _dormantBuilders.push_back(builder);
     }
 

@@ -56,6 +56,12 @@ NavWorld *NavWorld::create(_h_float3 *origin, _h_float3 *dim, int tileSizeInCell
     return x;
 }
 
+void NavWorld::TileBuilder::reset() {
+    _solid.reset();
+    _tileCacheData.clear();
+    _talloc.reset();
+}
+
 void NavWorld::TileBuilder::bind(int x, int y) {
     _x = x;
     _y = y;
@@ -65,10 +71,9 @@ void NavWorld::TileBuilder::bind(int x, int y) {
 
     if (borderSize != _borderSize) {
         _borderSize = borderSize;
-        dispose();
+        _chf.dispose();
+        _lset.dispose();
     }
-    _tileCacheData.clear();
-    _talloc.reset();
 
     auto width = _world->_tileSizeInCells + _borderSize * 2;
     auto height = _world->_tileSizeInCells + _borderSize * 2;

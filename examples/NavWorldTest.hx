@@ -56,7 +56,7 @@ class NavWorldTest {
       //          trace('inserted ${inserted}');
                 var inflated =  tb.inflate();
         //        trace('inflated ${inflated}');
-                //tb.retire();
+                tb.retire();
             }
         });
         trace('empty ${empty} vs ${notEmpty} | emptySource ${emptySource} max ${maxSource}');
