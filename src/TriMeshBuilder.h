@@ -19,15 +19,16 @@ public:
     void reserve(int verts, int tris);
 	
     void addVertex(float x, float y, float z);
-    void setNormal(int vidx, float x, float y, float z);
     
     void addTriangle(int a, int b, int c);
+    void setNormal(int tidx, float x, float y, float z);
     void setFlags(int tidx, unsigned short flags);
 	
     // bulk
     void setVerts(float *verts, int count);
     void setTris(int *tris, int count);
 
+    bool loadObj( const char* filename );
 private:
 	// Explicitly disabled copy constructor and copy assignment operator.
 	TriMeshBuilder(const TriMeshBuilder&);

@@ -1,0 +1,6 @@
+-lib hl-idl
+-lib hvector
+-cp lib
+-cp examples
+-main NavWorldTest
+-hl bin/navworld.hl

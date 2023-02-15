@@ -636,7 +636,32 @@ enum StraightPathOptions
 //
 
 interface TriMeshBuilder {
+	/*
+	const float* getVerts() const { return &_verts[0]; }
+	const float* getNormals() const { return &_normals[0]; }
+	const int* getTris() const { return &_tris[0]; }
+	int getVertCount() const { return _vertCount; }
+	int getTriCount() const { return _triCount; }
 
+    void reserve(int verts, int tris);
+    // bulk
+	*/
+
+	bool loadObj(string filename);
+
+    void reserve(int verts, int tris);
+
+	void setVerts(float *verts, int count);
+    void setTris(int *tris, int count);
+	
+	int getVertCount();
+	int getTriCount();
+
+	void addVertex(float x, float y, float z);
+    void setNormal(int vidx, float x, float y, float z);
+    
+    void addTriangle(int a, int b, int c);
+    void setFlags(int tidx, int flags);
 };
 
 [Internal="NavWorld::SourcePolyChunk"]

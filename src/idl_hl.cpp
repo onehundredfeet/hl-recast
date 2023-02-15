@@ -2639,6 +2639,58 @@ HL_PRIM HL_CONST pref<dtTileCacheMeshProcess>* HL_NAME(RemapProcessor_asSuper0)(
 }
 DEFINE_PRIM(_IDL, RemapProcessor_asSuper0, _IDL);
 
+HL_PRIM bool HL_NAME(TriMeshBuilder_loadObj1)(pref<TriMeshBuilder>* _this, vstring * filename) {
+	const char* filename__cstr = (filename == nullptr) ? "" : hl_to_utf8( filename->bytes ); // Should be garbage collected
+	auto ___retvalue = (_unref(_this)->loadObj(filename__cstr));
+	return (___retvalue);
+}
+DEFINE_PRIM(_BOOL, TriMeshBuilder_loadObj1, _IDL _STRING);
+
+HL_PRIM void HL_NAME(TriMeshBuilder_reserve2)(pref<TriMeshBuilder>* _this, int verts, int tris) {
+	(_unref(_this)->reserve(verts, tris));
+}
+DEFINE_PRIM(_VOID, TriMeshBuilder_reserve2, _IDL _I32 _I32);
+
+HL_PRIM void HL_NAME(TriMeshBuilder_setVerts2)(pref<TriMeshBuilder>* _this, vbyte* verts, int count) {
+	(_unref(_this)->setVerts((float*)verts, count));
+}
+DEFINE_PRIM(_VOID, TriMeshBuilder_setVerts2, _IDL _BYTES _I32);
+
+HL_PRIM void HL_NAME(TriMeshBuilder_setTris2)(pref<TriMeshBuilder>* _this, vbyte* tris, int count) {
+	(_unref(_this)->setTris((int*)tris, count));
+}
+DEFINE_PRIM(_VOID, TriMeshBuilder_setTris2, _IDL _BYTES _I32);
+
+HL_PRIM int HL_NAME(TriMeshBuilder_getVertCount0)(pref<TriMeshBuilder>* _this) {
+	return (_unref(_this)->getVertCount());
+}
+DEFINE_PRIM(_I32, TriMeshBuilder_getVertCount0, _IDL);
+
+HL_PRIM int HL_NAME(TriMeshBuilder_getTriCount0)(pref<TriMeshBuilder>* _this) {
+	return (_unref(_this)->getTriCount());
+}
+DEFINE_PRIM(_I32, TriMeshBuilder_getTriCount0, _IDL);
+
+HL_PRIM void HL_NAME(TriMeshBuilder_addVertex3)(pref<TriMeshBuilder>* _this, float x, float y, float z) {
+	(_unref(_this)->addVertex(x, y, z));
+}
+DEFINE_PRIM(_VOID, TriMeshBuilder_addVertex3, _IDL _F32 _F32 _F32);
+
+HL_PRIM void HL_NAME(TriMeshBuilder_setNormal4)(pref<TriMeshBuilder>* _this, int vidx, float x, float y, float z) {
+	(_unref(_this)->setNormal(vidx, x, y, z));
+}
+DEFINE_PRIM(_VOID, TriMeshBuilder_setNormal4, _IDL _I32 _F32 _F32 _F32);
+
+HL_PRIM void HL_NAME(TriMeshBuilder_addTriangle3)(pref<TriMeshBuilder>* _this, int a, int b, int c) {
+	(_unref(_this)->addTriangle(a, b, c));
+}
+DEFINE_PRIM(_VOID, TriMeshBuilder_addTriangle3, _IDL _I32 _I32 _I32);
+
+HL_PRIM void HL_NAME(TriMeshBuilder_setFlags2)(pref<TriMeshBuilder>* _this, int tidx, int flags) {
+	(_unref(_this)->setFlags(tidx, flags));
+}
+DEFINE_PRIM(_VOID, TriMeshBuilder_setFlags2, _IDL _I32 _I32);
+
 HL_PRIM pref<TriMeshBuilder>* HL_NAME(SourcePolyChunk_mesh0)(pref<NavWorld::SourcePolyChunk>* _this) {
 	return alloc_ref((_unref(_this)->meshPtr()),TriMeshBuilder);
 }
