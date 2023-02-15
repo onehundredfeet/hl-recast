@@ -1,9 +1,10 @@
 #include "NavWorld.h"
 #pragma once
 
-NavWorld *NavWorld::create(_h_float3 *origin, _h_float3 *dim, int tileSizeInCells, float cellSize, float cellHeight, int maxTiles, int maxPolys) {
+NavWorld *NavWorld::create(_h_float3 *origin, _h_float3 *dim, int tileSizeInCells, float cellSize, float cellHeight, int maxTiles, int maxPolys, int maxObstacles, AgentParameters *ap) {
     auto *x = new NavWorld();
-    
+    memcpy(&x->_agentParams, ap, sizeof(AgentParameters));
+
     x->_tileSize = tileSizeInCells * cellSize;
     x->_cellSize = cellSize;
     x->_cellHeight = cellHeight;
@@ -21,15 +22,37 @@ NavWorld *NavWorld::create(_h_float3 *origin, _h_float3 *dim, int tileSizeInCell
     x->_bmax[1] = origin->y + dim->y;
     x->_bmax[2] = origin->z + dim->z;
 
-    dtNavMeshParams params;
-    params.orig[0] = origin->x;
-    params.orig[1] = origin->y;
-    params.orig[2] = origin->z;
-    params.tileWidth = x->_tileSize;
-    params.tileHeight = x->_tileSize;
-    params.maxTiles = maxTiles;
-    params.maxPolys = maxPolys;
-    x->_navMesh.init(&params);
+    x->_tileCountWidth = (int)ceilf(dim->x / x->_tileSize);
+    x->_tileCountHeight = (int)ceilf(dim->z / x->_tileSize);
+
+    dtTileCacheParams tc_params;
+    memset(&tc_params, 0, sizeof(tc_params));
+    tc_params.ch = cellHeight;
+    tc_params.cs = cellSize;
+    dtVcopy( tc_params.orig, x->_origin );
+    tc_params.maxObstacles = maxObstacles;
+    tc_params.maxTiles = maxTiles;
+    tc_params.width = tileSizeInCells;
+    tc_params.height = tileSizeInCells;
+
+    tc_params.maxSimplificationError = 1.3f;
+    tc_params.walkableClimb = x->_agentParams.walkableClimb;
+    tc_params.walkableHeight =x->_agentParams.walkableHeight;
+    tc_params.walkableRadius = x->_agentParams.walkableRadius;
+
+    x->_tileCache.init( &tc_params, &x->_talloc, &x->_tcomp, &x->_tmproc);
+
+    dtNavMeshParams nm_params;
+    memset(&nm_params, 0, sizeof(nm_params));
+    nm_params.orig[0] = origin->x;
+    nm_params.orig[1] = origin->y;
+    nm_params.orig[2] = origin->z;
+    nm_params.tileWidth = x->_tileSize;
+    nm_params.tileHeight = x->_tileSize;
+    nm_params.maxTiles = maxTiles;
+    nm_params.maxPolys = maxPolys;
+    
+    x->_navMesh.init(&nm_params);
     return x;
 }
 
@@ -37,20 +60,21 @@ void NavWorld::TileBuilder::bind(int x, int y) {
     _x = x;
     _y = y;
     _totalSourceChunks = 0;
-    
-    auto borderSize = ceil(_world->_walkableRadius / _world->_cellSize);
 
-    _tileCacheData.clear();
+    auto borderSize = ceil(_world->_agentParams.walkableRadius / _world->_cellSize);
 
     if (borderSize != _borderSize) {
         _borderSize = borderSize;
         dispose();
-        auto width = _world->_tileSizeInCells + _borderSize * 2;
-        auto height = _world->_tileSizeInCells + _borderSize * 2;
+    }
+    _tileCacheData.clear();
+    _talloc.reset();
 
-        if (!rcCreateHeightfield(&_context, _solid, width, height, _bmin, _bmax, _world->_cellSize, _world->_cellHeight)) {
-            _context.log(RC_LOG_ERROR, "buildNavigation: Could not create solid heightfield.");
-        }
+    auto width = _world->_tileSizeInCells + _borderSize * 2;
+    auto height = _world->_tileSizeInCells + _borderSize * 2;
+    // Should be able to avoid these allocations.
+    if (!rcCreateHeightfield(&_context, _solid, width, height, _bmin, _bmax, _world->_cellSize, _world->_cellHeight)) {
+        _context.log(RC_LOG_ERROR, "buildNavigation: Could not create solid heightfield.");
     }
 
     _bmin[0] = _world->_bmin[0] + x * _world->_tileSize;
@@ -67,12 +91,12 @@ void NavWorld::TileBuilder::bind(int x, int y) {
     _triAreas.resize(_world->maxTrisPerChunk());
 
     // TODO CALCULATE MIN AND MAX
-    rcVcopy(_solid.bmin, _bmax);
-    rcVcopy(_solid.bmax, _bmin);
+    rcVcopy(_solid.bmin, _bmin);
+    rcVcopy(_solid.bmax, _bmax);
 }
 
 bool NavWorld::SourcePolyChunk::finalize() {
-    return _partition.partition(_mesh.getVerts(),  _mesh.getTris(), _mesh.getTriCount(), _world->_maxTrisPerPartitionChunk);
+    return _partition.partition(_mesh.getVerts(), _mesh.getTris(), _mesh.getTriCount(), _world->_maxTrisPerPartitionChunk);
 }
 
 bool NavWorld::TileBuilder::buildTileColumnCacheData() {
@@ -113,10 +137,10 @@ bool NavWorld::TileBuilder::buildTileColumnCacheData() {
             const int ntris = node.n;
 
             memset(&_triAreas[0], 0, ntris * sizeof(unsigned char));
-            rcMarkWalkableTriangles(&_context, _world->_walkableSlopeAngle,
+            rcMarkWalkableTriangles(&_context, _world->_agentParams.walkableSlopeAngle,
                                     verts, nverts, tris, ntris, &_triAreas[0]);
 
-            if (!rcRasterizeTriangles(&_context, verts, nverts, tris, &_triAreas[0], ntris, _solid, _world->_walkableClimb))
+            if (!rcRasterizeTriangles(&_context, verts, nverts, tris, &_triAreas[0], ntris, _solid, _world->_agentParams.walkableClimb))
                 return false;
         }
     }
@@ -128,19 +152,19 @@ bool NavWorld::TileBuilder::buildTileColumnCacheData() {
     // remove unwanted overhangs caused by the conservative rasterization
     // as well as filter spans where the character cannot possibly stand.
     if (_world->_filterLowHangingObstacles)
-        rcFilterLowHangingWalkableObstacles(&_context, _world->_walkableClimb, _solid);
+        rcFilterLowHangingWalkableObstacles(&_context, _world->_agentParams.walkableClimb, _solid);
     if (_world->_filterLedgeSpans)
-        rcFilterLedgeSpans(&_context, _world->_walkableHeight, _world->_walkableClimb, _solid);
+        rcFilterLedgeSpans(&_context, _world->_agentParams.walkableHeight, _world->_agentParams.walkableClimb, _solid);
     if (_world->_filterWalkableLowHeightSpans)
-        rcFilterWalkableLowHeightSpans(&_context, _world->_walkableHeight, _solid);
+        rcFilterWalkableLowHeightSpans(&_context, _world->_agentParams.walkableHeight, _solid);
 
-    if (!rcBuildCompactHeightfield(&_context, _world->_walkableHeight, _world->_walkableClimb, _solid, _chf)) {
+    if (!rcBuildCompactHeightfield(&_context, _world->_agentParams.walkableHeight, _world->_agentParams.walkableClimb, _solid, _chf)) {
         _context.log(RC_LOG_ERROR, "buildNavigation: Could not build compact data.");
         return false;
     }
 
     // Erode the walkable area by agent radius.
-    if (!rcErodeWalkableArea(&_context, _world->_walkableRadius, _chf)) {
+    if (!rcErodeWalkableArea(&_context, _world->_agentParams.walkableRadius, _chf)) {
         _context.log(RC_LOG_ERROR, "buildNavigation: Could not erode.");
         return false;
     }
@@ -153,11 +177,12 @@ bool NavWorld::TileBuilder::buildTileColumnCacheData() {
                              (unsigned char)v.area, _chf);
     }
 
-    if (!rcBuildHeightfieldLayers(&_context, _chf, _borderSize, _world->_walkableHeight, _lset)) {
+    if (!rcBuildHeightfieldLayers(&_context, _chf, _borderSize, _world->_agentParams.walkableHeight, _lset)) {
         _context.log(RC_LOG_ERROR, "buildNavigation: Could not build heighfield layers.");
         return 0;
     }
 
+//    printf("Number of layers: %d\n", _lset.nlayers);
     for (int i = 0; i < _lset.nlayers; ++i) {
         _tileCacheData.push_back({});
         TileCacheData &tile = _tileCacheData.back();
@@ -194,6 +219,38 @@ bool NavWorld::TileBuilder::buildTileColumnCacheData() {
 
     return true;
 }
+
+bool NavWorld::TileBuilder::insertIntoCache() {
+    // remove old tiles
+    dtCompressedTileRef oldTiles[64];
+    auto numTiles = _world->_tileCache.getTilesAt(_x, _y, &oldTiles[0], 64);
+
+    for (int i = 0; i < numTiles; ++i) {
+        _world->_tileCache.removeTile(oldTiles[i], 0, 0);
+    }
+
+    bool additionSuccess = true;
+
+//    printf("Inserting %lu tiles into cache\n", _tileCacheData.size());
+    for (int i = 0; i < _tileCacheData.size(); ++i) {
+        TileCacheData *tile = &_tileCacheData[i];
+
+        auto status = _world->_tileCache.addTile(tile->data, tile->dataSize, DT_COMPRESSEDTILE_FREE_DATA, 0);
+        if (dtStatusFailed(status)) {
+            dtFree(tile->data);
+            tile->data = 0;
+            additionSuccess = false;
+            continue;
+        }
+    }
+    return additionSuccess;
+}
+
+bool NavWorld::TileBuilder::inflate() {
+     auto status =_world->_tileCache.buildNavMeshTilesAt(_x,_y, &_world->_navMesh);
+    return dtStatusSucceed(status);
+}
+
 /*
 bool NavWorld::TileBuilder::build(int &dataSize) {
 

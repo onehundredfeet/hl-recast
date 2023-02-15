@@ -17,8 +17,10 @@
 
 #include <map>
 #include <unordered_map>
+#include <unordered_set>
 #include <vector>
 
+#include "NavVerts.h"
 #include "PerfTimer.h"
 #include "TriMeshBuilder.h"
 #include "TriMeshPartition.h"
@@ -148,6 +150,12 @@ struct ConvexVolume {
     int area;
 };
 
+struct AgentParameters {
+    float walkableSlopeAngle = 45.0f;
+    float walkableClimb = 0.9f;
+    float walkableRadius = 0.6f;
+    float walkableHeight = 2.0f;
+};
 ////////////////////////////////////////////////////////////////////////
 // NAV WORLD
 //////////////////////////////////////////////////////////////////////////
@@ -159,10 +167,12 @@ class NavWorld {
         NavWorld *_world;
         TriMeshPartition _partition;
         TriMeshBuilder _mesh;
+        bool _enabled = true;
 
        public:
         bool finalize();
-
+        bool isEnabled() { return _enabled; }
+        bool setEnabled(bool v) { return _enabled = v; }
         TriMeshBuilder &mesh() { return _mesh; }
         TriMeshBuilder *meshPtr() { return &_mesh; }
         TriMeshPartition &partition() { return _partition; }
@@ -179,10 +189,6 @@ class NavWorld {
         NavWorld *_world;
         rcHeightfield _solid;
         rcCompactHeightfield _chf;
-//        rcContourSet *_cset;
-  //      rcPolyMesh *_pmesh;
-    //    rcPolyMeshDetail *_dmesh;
-        dtTileCache _tileCache;
         LinearAllocator _talloc;
         FastLZCompressor _tcomp;
         RemapProcessor _tmproc;
@@ -214,15 +220,8 @@ class NavWorld {
         }
         void dispose() {
             _chf.dispose();
-            /*
-            rcFreeContourSet(_cset);
-            _cset = 0;
-            rcFreePolyMesh(_pmesh);
-            _pmesh = 0;
-            rcFreePolyMeshDetail(_dmesh);
-            _dmesh = 0;
-*/
             _solid.dispose();
+            _lset.dispose();
         }
 
        public:
@@ -236,9 +235,18 @@ class NavWorld {
         void retire() {
             _world->retire(this);
         }
-        
+        void queueForSwap() {
+            //            _world->queueForSwap(this);
+        }
+        int numSourceChunks() { return _totalSourceChunks; }
+        bool isEmpty() {
+            return _tileCacheData.size() == 0;
+        }
+
         bool buildTileColumnCacheData();
 
+        bool insertIntoCache();
+        bool inflate();
     };
 
     int maxTrisPerChunk() {
@@ -249,25 +257,35 @@ class NavWorld {
         return maxTris;
     }
 
-    NavWorld() {
+    static const int DEFAULT_TEMP_MEMORY = 32 * 1024;
+    NavWorld() : _talloc(DEFAULT_TEMP_MEMORY) {
         _maxTrisPerPartitionChunk = DEFAULT_TRIS_PER_PARTITION_CHUNK;
     }
 
    private:
     dtNavMesh _navMesh;
+    dtTileCache _tileCache;
+
+    LinearAllocator _talloc;
+    FastLZCompressor _tcomp;
+    RemapProcessor _tmproc;
 
     float _tileSize;
     float _cellSize;
     float _cellHeight;
+    int _tileCountWidth;
+    int _tileCountHeight;
     int _tileSizeInCells;
     static const int DEFAULT_TRIS_PER_PARTITION_CHUNK = 64;
     int _maxTrisPerPartitionChunk;
 
+    AgentParameters _agentParams;
+    /*
     float _walkableSlopeAngle;
     float _walkableClimb;
     float _walkableRadius;
     float _walkableHeight;
-
+*/
     bool _filterLowHangingObstacles;
     bool _filterLedgeSpans;
     bool _filterWalkableLowHeightSpans;
@@ -284,9 +302,11 @@ class NavWorld {
     std::vector<TileBuilder *> _dormantBuilders;
     std::vector<ConvexVolume> _convexVolumes;
 
-    void retire( TileBuilder *builder) {
+    void retire(TileBuilder *builder) {
+        builder->dispose();
         _dormantBuilders.push_back(builder);
     }
+
    public:
     SourcePolyChunk *addChunk() {
         auto layer = new SourcePolyChunk();
@@ -294,12 +314,17 @@ class NavWorld {
         _chunks.push_back(layer);
         return layer;
     }
-    
-    void getTileRegion( _h_float2 *bmin, _h_float2 *bmax, _h_int2 *tmin, _h_int2 *tmax) {
+
+    void getTileRegion(_h_float2 *bmin, _h_float2 *bmax, _h_int2 *tmin, _h_int2 *tmax) {
         tmin->x = (int)floorf((bmin->x - _origin[0]) / _tileSize);
         tmin->y = (int)floorf((bmin->y - _origin[2]) / _tileSize);
         tmax->x = (int)floorf((bmax->x - _origin[0]) / _tileSize);
         tmax->y = (int)floorf((bmax->y - _origin[2]) / _tileSize);
+
+        tmin->x = dtClamp(tmin->x, 0, dtMin(_tileCountWidth - 1, tmax->x));
+        tmin->y = dtClamp(tmin->y, 0, dtMin(_tileCountHeight - 1, tmax->y));
+        tmax->x = dtClamp(tmax->x, tmin->x, _tileCountWidth - 1);
+        tmax->y = dtClamp(tmax->y, tmin->y, _tileCountHeight - 1);
     }
 
     TileBuilder *getTileBuilder(int x, int y) {
@@ -316,33 +341,34 @@ class NavWorld {
         _activeBuilders.push_back(builder);
         return builder;
     }
-    void setAgentParameters(float walkableSlopeAngle,
-                            float walkableClimb,
-                            float walkableRadius,
-                            float walkableHeight) {
-        _walkableSlopeAngle = walkableSlopeAngle;
-        _walkableClimb = walkableClimb;
-        _walkableRadius = walkableRadius;
-        _walkableHeight = walkableHeight;
-    }
     /*
-    void rebuildTile(int tx, int ty) {
-        int dataSize = 0;
-        unsigned char *data = buildTileMesh(tx, ty, _lastBuiltTileBmin, _lastBuiltTileBmax, dataSize);
+void setAgentParameters(float walkableSlopeAngle,
+                        float walkableClimb,
+                        float walkableRadius,
+                        float walkableHeight) {
+    _walkableSlopeAngle = walkableSlopeAngle;
+    _walkableClimb = walkableClimb;
+    _walkableRadius = walkableRadius;
+    _walkableHeight = walkableHeight;
+}
 
-        // Remove any previous data (navmesh owns and deletes the data).
-        _navMesh.removeTile(_navMesh.getTileRefAt(tx, ty, 0), 0, 0);
+void rebuildTile(int tx, int ty) {
+    int dataSize = 0;
+    unsigned char *data = buildTileMesh(tx, ty, _lastBuiltTileBmin, _lastBuiltTileBmax, dataSize);
 
-        // Add tile, or leave the location empty.
-        if (data) {
-            // Let the navmesh own the data.
-            dtStatus status = _navMesh.addTile(data, dataSize, DT_TILE_FREE_DATA, 0, 0);
-            if (dtStatusFailed(status))
-                dtFree(data);
-        }
+    // Remove any previous data (navmesh owns and deletes the data).
+    _navMesh.removeTile(_navMesh.getTileRefAt(tx, ty, 0), 0, 0);
+
+    // Add tile, or leave the location empty.
+    if (data) {
+        // Let the navmesh own the data.
+        dtStatus status = _navMesh.addTile(data, dataSize, DT_TILE_FREE_DATA, 0, 0);
+        if (dtStatusFailed(status))
+            dtFree(data);
     }
-    */
-    static NavWorld *create(_h_float3 *origin, _h_float3 *dim, int tileSizeInCells, float cellSize, float cellHeight, int maxTiles, int maxPolys);
+}
+*/
+    static NavWorld *create(_h_float3 *origin, _h_float3 *dim, int tileSizeInCells, float cellSize, float cellHeight, int maxTiles, int maxPolys, int maxObstacles, AgentParameters *);
 };
 
 #include "NavWorld.cpp"

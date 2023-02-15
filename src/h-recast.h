@@ -24,7 +24,7 @@
 #include "TriMeshPartition.h"
 
 #include "hl-idl-helpers.hpp"
-
+#include "NavVerts.h"
 inline static void rcConfigCopy(rcConfig *b, rcConfig *a) {
     memcpy(b, a, sizeof(rcConfig));
 }
@@ -242,22 +242,7 @@ class dtMeshCapture : public duDebugDraw {
     }
 };
 */
-struct iVert {
-    unsigned short int x, y, z;
-    bool operator==(const iVert &other) const {
-        return x == other.x && y == other.y && z == other.z;
-    }
-};
-// The specialized hash function for `unordered_map` keys
-struct ivert_hash_fn {
-    std::size_t operator()(const iVert &node) const {
-        std::size_t h1 = std::hash<unsigned short int>()(node.x);
-        std::size_t h2 = std::hash<unsigned short int>()(node.y);
-        std::size_t h3 = std::hash<unsigned short int>()(node.z);
 
-        return h1 << 32 | h2 << 16 | h3;
-    }
-};
 
 static unsigned short MESH_NULL_IDX = 0xffff;
 

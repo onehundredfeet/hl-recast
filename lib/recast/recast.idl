@@ -1,12 +1,4 @@
-//--------------------------------------------------------------------------------------------
-// DetourStatus.h
-//--------------------------------------------------------------------------------------------
-
 typedef StatusCode uint;
-
-//--------------------------------------------------------------------------------------------
-// Recast.h
-//--------------------------------------------------------------------------------------------
 
 [Internal="rcLogCategory"]
 enum LogCategory
@@ -79,9 +71,17 @@ enum TimerLabel
 	"RC_MAX_TIMERS"
 };
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Abstration for an opaque sized byte buffer
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 interface NavBuffer {
 
 };
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Tool for fast lookup of source meshes 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 interface TriMeshPartition {
 
@@ -105,7 +105,9 @@ interface TriMeshPartition {
 	int getChunksOverlappingRect([Cast="float*"]float2 bmin, [Cast="float*"]float2 bmax, int[] ids, int maxIds);
 };
 
-
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Temporary context to help with recast buidling
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 [Internal="rcContext"]
 interface RasterContext 
@@ -197,10 +199,7 @@ interface RasterContext
 	[CObject, Internal="rcBuildHeightfieldLayers"] bool buildHeightfieldLayers([Deref] CompactHeightfield chf, int borderSize, int walkableHeight, [Deref] HeightfieldLayerSet lset);
 };
 
-interface rcScopedTimer 
-{
-	void rcScopedTimer(RasterContext ctx, TimerLabel label);
-};
+
 
 [Internal="rcConfig"]
 interface RasterConfig {
@@ -232,30 +231,12 @@ interface RasterConfig {
 	attribute float detailSampleMaxError;
 };
 
-[Internal="rcSpan"]
-interface Span 
-{
-	attribute long smin;
-	attribute long smax;
-	attribute long area; 
-
-	// Who is managing this memory?
-	attribute Span next; 
-};
-
-[Internal="rcSpanPool"]
-interface SpanPool 
-{
-	attribute SpanPool next;					
-	// How should this get translated?
-	//Span items[RC_SPANS_PER_POOL]; //TODO 
-};
 
 [Internal="rcHeightfield"]
 interface Heightfield
 {
 	void Heightfield();
-
+/*
 	attribute int width;		
 	attribute int height;		
 	attribute float3 bmin;  	
@@ -268,26 +249,14 @@ interface Heightfield
 	// Workaround for Span **spans;
 	[CObject, Internal="rcHeightfield_rcSpanIsValidAt"] bool spanIsValidAt(int pos);
 	[CObject, Internal="rcHeightfield_rcSpanAt"] Span spanAt(int pos);
-};
-
-interface rcCompactCell
-{
-	attribute int index;
-	attribute int count;
-};
-
-interface rcCompactSpan
-{
-	attribute short y;	
-	attribute short reg;
-	attribute int con;	
-	attribute int h;	
+	*/
 };
 
 [Internal="rcCompactHeightfield"]
 interface CompactHeightfield
 {
 	void CompactHeightfield();
+	/*
 	attribute int width;			
 	attribute int height;			
 	attribute int spanCount;		
@@ -304,11 +273,13 @@ interface CompactHeightfield
 	attribute rcCompactSpan spans;	
 	attribute short * dist;		
 	attribute char * areas;		
+	*/
 };
 
 [Internal="rcHeightfieldLayer"]
 interface HeightfieldLayer
 {
+	/*
 	attribute float3 bmin;
 	attribute float3 bmax;
 	attribute float cs;		
@@ -326,6 +297,7 @@ interface HeightfieldLayer
 	attribute char * heights;
 	attribute char * areas;
 	attribute char * cons;
+	*/
 };
 
 [Internal="rcHeightfieldLayerSet"]
@@ -339,18 +311,21 @@ interface HeightfieldLayerSet
 
 interface rcContour
 {
+	/*
 	attribute int * verts;		
 	attribute int nverts;	
     attribute int * rverts;
 	attribute int nrverts;	
 	attribute int reg;
 	attribute char area;
+	*/
 };
 
 
 interface rcContourSet
 {
 	void rcContourSet();
+	/*
 	attribute rcContour conts;
 	attribute int nconts;
 	attribute float3 bmin;  	
@@ -361,12 +336,14 @@ interface rcContourSet
 	attribute int height;		
 	attribute int borderSize;
 	attribute float maxError;	
+	*/
 };
 
 [Internal="rcPolyMesh"]
 interface PolyMesh
 {
 	void PolyMesh();
+	/*
 	attribute short* verts;	
 	attribute short* polys;	
 	attribute short* regs;	
@@ -382,17 +359,20 @@ interface PolyMesh
 	attribute float ch;			
 	attribute int borderSize;
 	attribute float maxEdgeError;
+	*/
 };
 [Internal="rcPolyMeshDetail"]
 interface PolyMeshDetail
 {
 	void PolyMeshDetail();
+	/*
 	attribute uint * meshes;
 	attribute float* verts;		
 	attribute char* tris;
 	attribute long nmeshes;			
 	attribute long nverts;			
-	attribute long ntris;			
+	attribute long ntris;	
+	*/		
 };
 
 
@@ -495,17 +475,18 @@ interface TileCacheAlloc {
 
 [Internal="dtTileCacheCompressor"]
 interface TileCacheCompressor {
-
+	/*
 	[CObject, Internal="dtBuildTileCacheLayer"] byte *buildTileCacheLayer(
 							   TileCacheLayerHeader header,
 							   [Const] byte* heights,
 							   [Const] byte* areas,
 							   [Const] byte* cons,
 								[Return, Cast="unsigned char **"] byte* outData, [Out] int outDataSize); 
+								*/
 // unsigned char** outData
 
 };
-
+/*
 enum TileCacheLayerHeaderConstants {
 	"TILECACHE_MAGIC",
 	"TILECACHE_VERSION"
@@ -534,7 +515,7 @@ interface TileCacheLayerHeader {
 
 	[Static] int sizeof([Virtual] VoidPointer  dtTileCacheLayerHeader );
 };
-
+*/
 [Internal="dtTileCacheLayer"]
 interface TileCacheLayer {
 
@@ -580,8 +561,8 @@ interface TileCacheParams {
 interface TileCacheData {
 	void TileCacheData();
 
-	attribute long dataSize;
-	attribute byte *data; //[Cast="unsigned char *"] 
+	//attribute long dataSize;
+	//attribute byte *data; //[Cast="unsigned char *"] 
 };
 
 interface FastLZCompressor {
@@ -628,25 +609,11 @@ enum StraightPathOptions
 	"DT_STRAIGHTPATH_ALL_CROSSINGS"
 };
 
-
-//
-// Unified nav mesh builder
-// Holds world geo and nav mesh data
-// Will ultimately separate the world geo out again, but easier for now
-//
+///////////////////////////////////////////////////////////////////////////
+/// Nav world section
+///////////////////////////////////////////////////////////////////////////
 
 interface TriMeshBuilder {
-	/*
-	const float* getVerts() const { return &_verts[0]; }
-	const float* getNormals() const { return &_normals[0]; }
-	const int* getTris() const { return &_tris[0]; }
-	int getVertCount() const { return _vertCount; }
-	int getTriCount() const { return _triCount; }
-
-    void reserve(int verts, int tris);
-    // bulk
-	*/
-
 	bool loadObj(string filename, float3 offset);
 
     void reserve(int verts, int tris);
@@ -669,36 +636,60 @@ interface SourcePolyChunk {
 	[Internal="meshPtr"]
 	TriMeshBuilder mesh();
 	bool finalize();
+	bool isEnabled();
+	void setEnabled(bool enabled);
 };
 
 [Internal="NavWorld::TileBuilder"]
 interface TileBuilder {
-	void retire();
 	// Do work to make the tile valid
+	// Fully thread safe
 	bool buildTileColumnCacheData();
+	void retire();
+	void queueForSwap();
+	bool isEmpty();
+	int numSourceChunks();
+	//Not thread safe
+	bool insertIntoCache(); // inserts the built data into the cache
+
+	//takes cached data and over-writes the tile data
+	bool inflate();	
 };
 
+//
+// Unified nav mesh builder
+// Holds world geo and nav mesh data
+// Will ultimately separate the world geo out again, but easier for now
+//
+
+interface AgentParameters {
+	void AgentParameters();
+    attribute float walkableSlopeAngle;
+    attribute float walkableClimb;
+    attribute float walkableRadius;
+    attribute float walkableHeight;
+};
+
+
+
 interface NavWorld {
-	[Static, Internal="NavWorld::create"] NavWorld create(float3 origin, float3 dim, int tileSizeInCells, float cellSize, float cellHeight, int maxTiles, int maxPolys);
+	[Static, Internal="NavWorld::create"] NavWorld create(float3 origin, float3 dim, int tileSizeInCells, float cellSize, float cellHeight, int maxTiles, int maxPolys, int maxObstacles, AgentParameters agentParams);
     [Const] SourcePolyChunk addChunk();
 	// This should likely be internal, but we'll see how it goes exposed
 	// Allows for easier threading this way.
     [Const] TileBuilder getTileBuilder(int x, int y);
 
-    void setAgentParameters(float walkableSlopeAngle,
-                            float walkableClimb,
-                            float walkableRadius,
-                            float walkableHeight);
+
 
 	void getTileRegion( float2 in_bmin, float2 in_bmax, int2 out_tmin, int2 out_tmax);
 
 };
 
 
+///////////////////////////////////////////////////////////////////////////
+/// Nav mesh section
+///////////////////////////////////////////////////////////////////////////
 
-//--------------------------------------------------------------------------------------------
-// DetourNavMesh.h
-//--------------------------------------------------------------------------------------------
 typedef PolyRef uint;
 typedef TileRef uint;
 
@@ -772,9 +763,6 @@ interface NavMesh
 
 
 
-//--------------------------------------------------------------------------------------------
-// DetourNode.h
-//--------------------------------------------------------------------------------------------
 typedef NodeIndex short;
 
 
@@ -786,9 +774,6 @@ enum DtStatus {
 };
 
 
-//--------------------------------------------------------------------------------------------
-// DetourNavMeshQuery.h
-//--------------------------------------------------------------------------------------------
 [Internal="dtQueryFilter"]
 interface QueryFilter
 {
@@ -975,6 +960,9 @@ interface MeshCapture {
 
 */
 
+//////////////////////////////////////
+// Used to build a single compressed tile from a set of input geometry.
+//////////////////////////////////////
 interface NavTileConverter {
 	void NavTileConverter();
 

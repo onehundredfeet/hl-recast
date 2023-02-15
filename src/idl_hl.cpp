@@ -363,41 +363,16 @@ HL_PRIM void HL_NAME(RasterContext_delete)( pref<rcContext>* _this ) {
 	free_ref(_this );
 }
 DEFINE_PRIM(_VOID, RasterContext_delete, _IDL);
-static void finalize_rcScopedTimer( pref<rcScopedTimer>* _this ) { free_ref(_this ); }
-HL_PRIM void HL_NAME(rcScopedTimer_delete)( pref<rcScopedTimer>* _this ) {
-	free_ref(_this );
-}
-DEFINE_PRIM(_VOID, rcScopedTimer_delete, _IDL);
 static void finalize_RasterConfig( pref<rcConfig>* _this ) { free_ref(_this ); }
 HL_PRIM void HL_NAME(RasterConfig_delete)( pref<rcConfig>* _this ) {
 	free_ref(_this );
 }
 DEFINE_PRIM(_VOID, RasterConfig_delete, _IDL);
-static void finalize_Span( pref<rcSpan>* _this ) { free_ref(_this ); }
-HL_PRIM void HL_NAME(Span_delete)( pref<rcSpan>* _this ) {
-	free_ref(_this );
-}
-DEFINE_PRIM(_VOID, Span_delete, _IDL);
-static void finalize_SpanPool( pref<rcSpanPool>* _this ) { free_ref(_this ); }
-HL_PRIM void HL_NAME(SpanPool_delete)( pref<rcSpanPool>* _this ) {
-	free_ref(_this );
-}
-DEFINE_PRIM(_VOID, SpanPool_delete, _IDL);
 static void finalize_Heightfield( pref<rcHeightfield>* _this ) { free_ref(_this ); }
 HL_PRIM void HL_NAME(Heightfield_delete)( pref<rcHeightfield>* _this ) {
 	free_ref(_this );
 }
 DEFINE_PRIM(_VOID, Heightfield_delete, _IDL);
-static void finalize_rcCompactCell( pref<rcCompactCell>* _this ) { free_ref(_this ); }
-HL_PRIM void HL_NAME(rcCompactCell_delete)( pref<rcCompactCell>* _this ) {
-	free_ref(_this );
-}
-DEFINE_PRIM(_VOID, rcCompactCell_delete, _IDL);
-static void finalize_rcCompactSpan( pref<rcCompactSpan>* _this ) { free_ref(_this ); }
-HL_PRIM void HL_NAME(rcCompactSpan_delete)( pref<rcCompactSpan>* _this ) {
-	free_ref(_this );
-}
-DEFINE_PRIM(_VOID, rcCompactSpan_delete, _IDL);
 static void finalize_CompactHeightfield( pref<rcCompactHeightfield>* _this ) { free_ref(_this ); }
 HL_PRIM void HL_NAME(CompactHeightfield_delete)( pref<rcCompactHeightfield>* _this ) {
 	free_ref(_this );
@@ -477,30 +452,6 @@ HL_PRIM void HL_NAME(TileCacheCompressor_delete)( pref<dtTileCacheCompressor>* _
 	free_ref(_this );
 }
 DEFINE_PRIM(_VOID, TileCacheCompressor_delete, _IDL);
-static TileCacheLayerHeaderConstants TileCacheLayerHeaderConstants__values[] = { TILECACHE_MAGIC,TILECACHE_VERSION };
-HL_PRIM int HL_NAME(TileCacheLayerHeaderConstants_toValue0)( int idx ) {
-	return (int)TileCacheLayerHeaderConstants__values[idx];
-}
-DEFINE_PRIM(_I32, TileCacheLayerHeaderConstants_toValue0, _I32);
-HL_PRIM int HL_NAME(TileCacheLayerHeaderConstants_indexToValue1)( int idx ) {
-	return (int)TileCacheLayerHeaderConstants__values[idx];
-}
-DEFINE_PRIM(_I32, TileCacheLayerHeaderConstants_indexToValue1, _I32);
-HL_PRIM int HL_NAME(TileCacheLayerHeaderConstants_valueToIndex1)( int value ) {
-	for( int i = 0; i < 2; i++ ) if ( value == (int)TileCacheLayerHeaderConstants__values[i]) return i; return -1;
-}
-DEFINE_PRIM(_I32, TileCacheLayerHeaderConstants_valueToIndex1, _I32);
-HL_PRIM int HL_NAME(TileCacheLayerHeaderConstants_fromValue1)( int value ) {
-	for( int i = 0; i < 2; i++ ) if ( value == (int)TileCacheLayerHeaderConstants__values[i]) return i; return -1;
-}
-DEFINE_PRIM(_I32, TileCacheLayerHeaderConstants_fromValue1, _I32);
-HL_PRIM int HL_NAME(TileCacheLayerHeaderConstants_fromIndex1)( int index ) {return index;}
-DEFINE_PRIM(_I32, TileCacheLayerHeaderConstants_fromIndex1, _I32);
-static void finalize_TileCacheLayerHeader( pref<dtTileCacheLayerHeader>* _this ) { free_ref(_this ); }
-HL_PRIM void HL_NAME(TileCacheLayerHeader_delete)( pref<dtTileCacheLayerHeader>* _this ) {
-	free_ref(_this );
-}
-DEFINE_PRIM(_VOID, TileCacheLayerHeader_delete, _IDL);
 static void finalize_TileCacheLayer( pref<dtTileCacheLayer>* _this ) { free_ref(_this ); }
 HL_PRIM void HL_NAME(TileCacheLayer_delete)( pref<dtTileCacheLayer>* _this ) {
 	free_ref(_this );
@@ -623,6 +574,11 @@ HL_PRIM void HL_NAME(TileBuilder_delete)( pref<NavWorld::TileBuilder>* _this ) {
 	free_ref(_this );
 }
 DEFINE_PRIM(_VOID, TileBuilder_delete, _IDL);
+static void finalize_AgentParameters( pref<AgentParameters>* _this ) { free_ref(_this ); }
+HL_PRIM void HL_NAME(AgentParameters_delete)( pref<AgentParameters>* _this ) {
+	free_ref(_this );
+}
+DEFINE_PRIM(_VOID, AgentParameters_delete, _IDL);
 static void finalize_NavWorld( pref<NavWorld>* _this ) { free_ref(_this ); }
 HL_PRIM void HL_NAME(NavWorld_delete)( pref<NavWorld>* _this ) {
 	free_ref(_this );
@@ -867,11 +823,6 @@ HL_PRIM bool HL_NAME(RasterContext_buildHeightfieldLayers4)(pref<rcContext>* _th
 }
 DEFINE_PRIM(_BOOL, RasterContext_buildHeightfieldLayers4, _IDL _IDL _I32 _I32 _IDL);
 
-HL_PRIM pref<rcScopedTimer>* HL_NAME(rcScopedTimer_new2)(pref<rcContext>* ctx, int label) {
-	return alloc_ref((new rcScopedTimer(_unref_ptr_safe(ctx), TimerLabel__values[label])),rcScopedTimer);
-}
-DEFINE_PRIM(_IDL, rcScopedTimer_new2, _IDL _I32);
-
 HL_PRIM pref<rcConfig>* HL_NAME(RasterConfig_new0)() {
 	return alloc_ref((new rcConfig()),RasterConfig);
 }
@@ -1098,603 +1049,15 @@ HL_PRIM float HL_NAME(RasterConfig_set_detailSampleMaxError)( pref<rcConfig>* _t
 }
 DEFINE_PRIM(_F32,RasterConfig_set_detailSampleMaxError,_IDL _F32);
 
-HL_PRIM int HL_NAME(Span_get_smin)( pref<rcSpan>* _this ) {
-	return _unref(_this)->smin;
-}
-DEFINE_PRIM(_I32,Span_get_smin,_IDL);
-HL_PRIM int HL_NAME(Span_set_smin)( pref<rcSpan>* _this, int value ) {
-	_unref(_this)->smin = (value);
-	return value;
-}
-DEFINE_PRIM(_I32,Span_set_smin,_IDL _I32);
-
-HL_PRIM int HL_NAME(Span_get_smax)( pref<rcSpan>* _this ) {
-	return _unref(_this)->smax;
-}
-DEFINE_PRIM(_I32,Span_get_smax,_IDL);
-HL_PRIM int HL_NAME(Span_set_smax)( pref<rcSpan>* _this, int value ) {
-	_unref(_this)->smax = (value);
-	return value;
-}
-DEFINE_PRIM(_I32,Span_set_smax,_IDL _I32);
-
-HL_PRIM int HL_NAME(Span_get_area)( pref<rcSpan>* _this ) {
-	return _unref(_this)->area;
-}
-DEFINE_PRIM(_I32,Span_get_area,_IDL);
-HL_PRIM int HL_NAME(Span_set_area)( pref<rcSpan>* _this, int value ) {
-	_unref(_this)->area = (value);
-	return value;
-}
-DEFINE_PRIM(_I32,Span_set_area,_IDL _I32);
-
-HL_PRIM pref<rcSpan>* HL_NAME(Span_get_next)( pref<rcSpan>* _this ) {
-	return alloc_ref(_unref(_this)->next,Span);
-}
-DEFINE_PRIM(_IDL,Span_get_next,_IDL);
-HL_PRIM pref<rcSpan>* HL_NAME(Span_set_next)( pref<rcSpan>* _this, pref<rcSpan>* value ) {
-	_unref(_this)->next = _unref_ptr_safe(value);
-	return value;
-}
-DEFINE_PRIM(_IDL,Span_set_next,_IDL _IDL);
-
-HL_PRIM pref<rcSpanPool>* HL_NAME(SpanPool_get_next)( pref<rcSpanPool>* _this ) {
-	return alloc_ref(_unref(_this)->next,SpanPool);
-}
-DEFINE_PRIM(_IDL,SpanPool_get_next,_IDL);
-HL_PRIM pref<rcSpanPool>* HL_NAME(SpanPool_set_next)( pref<rcSpanPool>* _this, pref<rcSpanPool>* value ) {
-	_unref(_this)->next = _unref_ptr_safe(value);
-	return value;
-}
-DEFINE_PRIM(_IDL,SpanPool_set_next,_IDL _IDL);
-
 HL_PRIM pref<rcHeightfield>* HL_NAME(Heightfield_new0)() {
 	return alloc_ref((new rcHeightfield()),Heightfield);
 }
 DEFINE_PRIM(_IDL, Heightfield_new0,);
 
-HL_PRIM int HL_NAME(Heightfield_get_width)( pref<rcHeightfield>* _this ) {
-	return _unref(_this)->width;
-}
-DEFINE_PRIM(_I32,Heightfield_get_width,_IDL);
-HL_PRIM int HL_NAME(Heightfield_set_width)( pref<rcHeightfield>* _this, int value ) {
-	_unref(_this)->width = (value);
-	return value;
-}
-DEFINE_PRIM(_I32,Heightfield_set_width,_IDL _I32);
-
-HL_PRIM int HL_NAME(Heightfield_get_height)( pref<rcHeightfield>* _this ) {
-	return _unref(_this)->height;
-}
-DEFINE_PRIM(_I32,Heightfield_get_height,_IDL);
-HL_PRIM int HL_NAME(Heightfield_set_height)( pref<rcHeightfield>* _this, int value ) {
-	_unref(_this)->height = (value);
-	return value;
-}
-DEFINE_PRIM(_I32,Heightfield_set_height,_IDL _I32);
-
-HL_PRIM _h_float3* HL_NAME(Heightfield_get_bmin)( pref<rcHeightfield>* _this ) {
-	return (_h_float3* )(_unref(_this)->bmin);
-}
-HL_PRIM void HL_NAME(Heightfield_getbminv)( pref<rcHeightfield>* _this, _h_float3* value ) {
-	 float *src = (float*) & (_unref(_this)->bmin)[0];
-	 float *dst = (float*) value;
-	dst[0] = src[0]; dst[1] = src[1]; dst[2] = src[2];
-}
-DEFINE_PRIM(_VOID,Heightfield_getbminv,_IDL _STRUCT  );
-DEFINE_PRIM(_STRUCT,Heightfield_get_bmin,_IDL);
-HL_PRIM _h_float3* HL_NAME(Heightfield_set_bmin)( pref<rcHeightfield>* _this, _h_float3* value ) {
-	 float *dst = (float*) & (_unref(_this)->bmin)[0];
-	 float *src = (float*) value;
-	dst[0] = src[0]; dst[1] = src[1]; dst[2] = src[2];
-	return value;
-}
-HL_PRIM void HL_NAME(Heightfield_setbmin3)( pref<rcHeightfield>* _this,  float value0, float value1, float value2 ) {
-	 float *p = (_unref(_this)->bmin);
-	p[0] = value0; p[1] = value1; p[2] = value2;
-}
-DEFINE_PRIM(_VOID,Heightfield_setbmin3,_IDL _F32 _F32 _F32 );
-DEFINE_PRIM(_STRUCT,Heightfield_set_bmin,_IDL _STRUCT);
-
-HL_PRIM _h_float3* HL_NAME(Heightfield_get_bmax)( pref<rcHeightfield>* _this ) {
-	return (_h_float3* )(_unref(_this)->bmax);
-}
-HL_PRIM void HL_NAME(Heightfield_getbmaxv)( pref<rcHeightfield>* _this, _h_float3* value ) {
-	 float *src = (float*) & (_unref(_this)->bmax)[0];
-	 float *dst = (float*) value;
-	dst[0] = src[0]; dst[1] = src[1]; dst[2] = src[2];
-}
-DEFINE_PRIM(_VOID,Heightfield_getbmaxv,_IDL _STRUCT  );
-DEFINE_PRIM(_STRUCT,Heightfield_get_bmax,_IDL);
-HL_PRIM _h_float3* HL_NAME(Heightfield_set_bmax)( pref<rcHeightfield>* _this, _h_float3* value ) {
-	 float *dst = (float*) & (_unref(_this)->bmax)[0];
-	 float *src = (float*) value;
-	dst[0] = src[0]; dst[1] = src[1]; dst[2] = src[2];
-	return value;
-}
-HL_PRIM void HL_NAME(Heightfield_setbmax3)( pref<rcHeightfield>* _this,  float value0, float value1, float value2 ) {
-	 float *p = (_unref(_this)->bmax);
-	p[0] = value0; p[1] = value1; p[2] = value2;
-}
-DEFINE_PRIM(_VOID,Heightfield_setbmax3,_IDL _F32 _F32 _F32 );
-DEFINE_PRIM(_STRUCT,Heightfield_set_bmax,_IDL _STRUCT);
-
-HL_PRIM float HL_NAME(Heightfield_get_cs)( pref<rcHeightfield>* _this ) {
-	return _unref(_this)->cs;
-}
-DEFINE_PRIM(_F32,Heightfield_get_cs,_IDL);
-HL_PRIM float HL_NAME(Heightfield_set_cs)( pref<rcHeightfield>* _this, float value ) {
-	_unref(_this)->cs = (value);
-	return value;
-}
-DEFINE_PRIM(_F32,Heightfield_set_cs,_IDL _F32);
-
-HL_PRIM float HL_NAME(Heightfield_get_ch)( pref<rcHeightfield>* _this ) {
-	return _unref(_this)->ch;
-}
-DEFINE_PRIM(_F32,Heightfield_get_ch,_IDL);
-HL_PRIM float HL_NAME(Heightfield_set_ch)( pref<rcHeightfield>* _this, float value ) {
-	_unref(_this)->ch = (value);
-	return value;
-}
-DEFINE_PRIM(_F32,Heightfield_set_ch,_IDL _F32);
-
-HL_PRIM pref<rcSpanPool>* HL_NAME(Heightfield_get_pools)( pref<rcHeightfield>* _this ) {
-	return alloc_ref(_unref(_this)->pools,SpanPool);
-}
-DEFINE_PRIM(_IDL,Heightfield_get_pools,_IDL);
-HL_PRIM pref<rcSpanPool>* HL_NAME(Heightfield_set_pools)( pref<rcHeightfield>* _this, pref<rcSpanPool>* value ) {
-	_unref(_this)->pools = _unref_ptr_safe(value);
-	return value;
-}
-DEFINE_PRIM(_IDL,Heightfield_set_pools,_IDL _IDL);
-
-HL_PRIM pref<rcSpan>* HL_NAME(Heightfield_get_freelist)( pref<rcHeightfield>* _this ) {
-	return alloc_ref(_unref(_this)->freelist,Span);
-}
-DEFINE_PRIM(_IDL,Heightfield_get_freelist,_IDL);
-HL_PRIM pref<rcSpan>* HL_NAME(Heightfield_set_freelist)( pref<rcHeightfield>* _this, pref<rcSpan>* value ) {
-	_unref(_this)->freelist = _unref_ptr_safe(value);
-	return value;
-}
-DEFINE_PRIM(_IDL,Heightfield_set_freelist,_IDL _IDL);
-
-HL_PRIM bool HL_NAME(Heightfield_spanIsValidAt1)(pref<rcHeightfield>* _this, int pos) {
-	return (rcHeightfield_rcSpanIsValidAt( _unref(_this) , pos));
-}
-DEFINE_PRIM(_BOOL, Heightfield_spanIsValidAt1, _IDL _I32);
-
-HL_PRIM pref<rcSpan>* HL_NAME(Heightfield_spanAt1)(pref<rcHeightfield>* _this, int pos) {
-	return alloc_ref((rcHeightfield_rcSpanAt( _unref(_this) , pos)),Span);
-}
-DEFINE_PRIM(_IDL, Heightfield_spanAt1, _IDL _I32);
-
-HL_PRIM int HL_NAME(rcCompactCell_get_index)( pref<rcCompactCell>* _this ) {
-	return _unref(_this)->index;
-}
-DEFINE_PRIM(_I32,rcCompactCell_get_index,_IDL);
-HL_PRIM int HL_NAME(rcCompactCell_set_index)( pref<rcCompactCell>* _this, int value ) {
-	_unref(_this)->index = (value);
-	return value;
-}
-DEFINE_PRIM(_I32,rcCompactCell_set_index,_IDL _I32);
-
-HL_PRIM int HL_NAME(rcCompactCell_get_count)( pref<rcCompactCell>* _this ) {
-	return _unref(_this)->count;
-}
-DEFINE_PRIM(_I32,rcCompactCell_get_count,_IDL);
-HL_PRIM int HL_NAME(rcCompactCell_set_count)( pref<rcCompactCell>* _this, int value ) {
-	_unref(_this)->count = (value);
-	return value;
-}
-DEFINE_PRIM(_I32,rcCompactCell_set_count,_IDL _I32);
-
-HL_PRIM unsigned short HL_NAME(rcCompactSpan_get_y)( pref<rcCompactSpan>* _this ) {
-	return _unref(_this)->y;
-}
-DEFINE_PRIM(_I16,rcCompactSpan_get_y,_IDL);
-HL_PRIM unsigned short HL_NAME(rcCompactSpan_set_y)( pref<rcCompactSpan>* _this, unsigned short value ) {
-	_unref(_this)->y = (value);
-	return value;
-}
-DEFINE_PRIM(_I16,rcCompactSpan_set_y,_IDL _I16);
-
-HL_PRIM unsigned short HL_NAME(rcCompactSpan_get_reg)( pref<rcCompactSpan>* _this ) {
-	return _unref(_this)->reg;
-}
-DEFINE_PRIM(_I16,rcCompactSpan_get_reg,_IDL);
-HL_PRIM unsigned short HL_NAME(rcCompactSpan_set_reg)( pref<rcCompactSpan>* _this, unsigned short value ) {
-	_unref(_this)->reg = (value);
-	return value;
-}
-DEFINE_PRIM(_I16,rcCompactSpan_set_reg,_IDL _I16);
-
-HL_PRIM int HL_NAME(rcCompactSpan_get_con)( pref<rcCompactSpan>* _this ) {
-	return _unref(_this)->con;
-}
-DEFINE_PRIM(_I32,rcCompactSpan_get_con,_IDL);
-HL_PRIM int HL_NAME(rcCompactSpan_set_con)( pref<rcCompactSpan>* _this, int value ) {
-	_unref(_this)->con = (value);
-	return value;
-}
-DEFINE_PRIM(_I32,rcCompactSpan_set_con,_IDL _I32);
-
-HL_PRIM int HL_NAME(rcCompactSpan_get_h)( pref<rcCompactSpan>* _this ) {
-	return _unref(_this)->h;
-}
-DEFINE_PRIM(_I32,rcCompactSpan_get_h,_IDL);
-HL_PRIM int HL_NAME(rcCompactSpan_set_h)( pref<rcCompactSpan>* _this, int value ) {
-	_unref(_this)->h = (value);
-	return value;
-}
-DEFINE_PRIM(_I32,rcCompactSpan_set_h,_IDL _I32);
-
 HL_PRIM pref<rcCompactHeightfield>* HL_NAME(CompactHeightfield_new0)() {
 	return alloc_ref((new rcCompactHeightfield()),CompactHeightfield);
 }
 DEFINE_PRIM(_IDL, CompactHeightfield_new0,);
-
-HL_PRIM int HL_NAME(CompactHeightfield_get_width)( pref<rcCompactHeightfield>* _this ) {
-	return _unref(_this)->width;
-}
-DEFINE_PRIM(_I32,CompactHeightfield_get_width,_IDL);
-HL_PRIM int HL_NAME(CompactHeightfield_set_width)( pref<rcCompactHeightfield>* _this, int value ) {
-	_unref(_this)->width = (value);
-	return value;
-}
-DEFINE_PRIM(_I32,CompactHeightfield_set_width,_IDL _I32);
-
-HL_PRIM int HL_NAME(CompactHeightfield_get_height)( pref<rcCompactHeightfield>* _this ) {
-	return _unref(_this)->height;
-}
-DEFINE_PRIM(_I32,CompactHeightfield_get_height,_IDL);
-HL_PRIM int HL_NAME(CompactHeightfield_set_height)( pref<rcCompactHeightfield>* _this, int value ) {
-	_unref(_this)->height = (value);
-	return value;
-}
-DEFINE_PRIM(_I32,CompactHeightfield_set_height,_IDL _I32);
-
-HL_PRIM int HL_NAME(CompactHeightfield_get_spanCount)( pref<rcCompactHeightfield>* _this ) {
-	return _unref(_this)->spanCount;
-}
-DEFINE_PRIM(_I32,CompactHeightfield_get_spanCount,_IDL);
-HL_PRIM int HL_NAME(CompactHeightfield_set_spanCount)( pref<rcCompactHeightfield>* _this, int value ) {
-	_unref(_this)->spanCount = (value);
-	return value;
-}
-DEFINE_PRIM(_I32,CompactHeightfield_set_spanCount,_IDL _I32);
-
-HL_PRIM int HL_NAME(CompactHeightfield_get_walkableHeight)( pref<rcCompactHeightfield>* _this ) {
-	return _unref(_this)->walkableHeight;
-}
-DEFINE_PRIM(_I32,CompactHeightfield_get_walkableHeight,_IDL);
-HL_PRIM int HL_NAME(CompactHeightfield_set_walkableHeight)( pref<rcCompactHeightfield>* _this, int value ) {
-	_unref(_this)->walkableHeight = (value);
-	return value;
-}
-DEFINE_PRIM(_I32,CompactHeightfield_set_walkableHeight,_IDL _I32);
-
-HL_PRIM int HL_NAME(CompactHeightfield_get_walkableClimb)( pref<rcCompactHeightfield>* _this ) {
-	return _unref(_this)->walkableClimb;
-}
-DEFINE_PRIM(_I32,CompactHeightfield_get_walkableClimb,_IDL);
-HL_PRIM int HL_NAME(CompactHeightfield_set_walkableClimb)( pref<rcCompactHeightfield>* _this, int value ) {
-	_unref(_this)->walkableClimb = (value);
-	return value;
-}
-DEFINE_PRIM(_I32,CompactHeightfield_set_walkableClimb,_IDL _I32);
-
-HL_PRIM int HL_NAME(CompactHeightfield_get_borderSize)( pref<rcCompactHeightfield>* _this ) {
-	return _unref(_this)->borderSize;
-}
-DEFINE_PRIM(_I32,CompactHeightfield_get_borderSize,_IDL);
-HL_PRIM int HL_NAME(CompactHeightfield_set_borderSize)( pref<rcCompactHeightfield>* _this, int value ) {
-	_unref(_this)->borderSize = (value);
-	return value;
-}
-DEFINE_PRIM(_I32,CompactHeightfield_set_borderSize,_IDL _I32);
-
-HL_PRIM int HL_NAME(CompactHeightfield_get_maxDistance)( pref<rcCompactHeightfield>* _this ) {
-	return _unref(_this)->maxDistance;
-}
-DEFINE_PRIM(_I32,CompactHeightfield_get_maxDistance,_IDL);
-HL_PRIM int HL_NAME(CompactHeightfield_set_maxDistance)( pref<rcCompactHeightfield>* _this, int value ) {
-	_unref(_this)->maxDistance = (value);
-	return value;
-}
-DEFINE_PRIM(_I32,CompactHeightfield_set_maxDistance,_IDL _I32);
-
-HL_PRIM int HL_NAME(CompactHeightfield_get_maxRegions)( pref<rcCompactHeightfield>* _this ) {
-	return _unref(_this)->maxRegions;
-}
-DEFINE_PRIM(_I32,CompactHeightfield_get_maxRegions,_IDL);
-HL_PRIM int HL_NAME(CompactHeightfield_set_maxRegions)( pref<rcCompactHeightfield>* _this, int value ) {
-	_unref(_this)->maxRegions = (value);
-	return value;
-}
-DEFINE_PRIM(_I32,CompactHeightfield_set_maxRegions,_IDL _I32);
-
-HL_PRIM _h_float3* HL_NAME(CompactHeightfield_get_bmin)( pref<rcCompactHeightfield>* _this ) {
-	return (_h_float3* )(_unref(_this)->bmin);
-}
-HL_PRIM void HL_NAME(CompactHeightfield_getbminv)( pref<rcCompactHeightfield>* _this, _h_float3* value ) {
-	 float *src = (float*) & (_unref(_this)->bmin)[0];
-	 float *dst = (float*) value;
-	dst[0] = src[0]; dst[1] = src[1]; dst[2] = src[2];
-}
-DEFINE_PRIM(_VOID,CompactHeightfield_getbminv,_IDL _STRUCT  );
-DEFINE_PRIM(_STRUCT,CompactHeightfield_get_bmin,_IDL);
-HL_PRIM _h_float3* HL_NAME(CompactHeightfield_set_bmin)( pref<rcCompactHeightfield>* _this, _h_float3* value ) {
-	 float *dst = (float*) & (_unref(_this)->bmin)[0];
-	 float *src = (float*) value;
-	dst[0] = src[0]; dst[1] = src[1]; dst[2] = src[2];
-	return value;
-}
-HL_PRIM void HL_NAME(CompactHeightfield_setbmin3)( pref<rcCompactHeightfield>* _this,  float value0, float value1, float value2 ) {
-	 float *p = (_unref(_this)->bmin);
-	p[0] = value0; p[1] = value1; p[2] = value2;
-}
-DEFINE_PRIM(_VOID,CompactHeightfield_setbmin3,_IDL _F32 _F32 _F32 );
-DEFINE_PRIM(_STRUCT,CompactHeightfield_set_bmin,_IDL _STRUCT);
-
-HL_PRIM _h_float3* HL_NAME(CompactHeightfield_get_bmax)( pref<rcCompactHeightfield>* _this ) {
-	return (_h_float3* )(_unref(_this)->bmax);
-}
-HL_PRIM void HL_NAME(CompactHeightfield_getbmaxv)( pref<rcCompactHeightfield>* _this, _h_float3* value ) {
-	 float *src = (float*) & (_unref(_this)->bmax)[0];
-	 float *dst = (float*) value;
-	dst[0] = src[0]; dst[1] = src[1]; dst[2] = src[2];
-}
-DEFINE_PRIM(_VOID,CompactHeightfield_getbmaxv,_IDL _STRUCT  );
-DEFINE_PRIM(_STRUCT,CompactHeightfield_get_bmax,_IDL);
-HL_PRIM _h_float3* HL_NAME(CompactHeightfield_set_bmax)( pref<rcCompactHeightfield>* _this, _h_float3* value ) {
-	 float *dst = (float*) & (_unref(_this)->bmax)[0];
-	 float *src = (float*) value;
-	dst[0] = src[0]; dst[1] = src[1]; dst[2] = src[2];
-	return value;
-}
-HL_PRIM void HL_NAME(CompactHeightfield_setbmax3)( pref<rcCompactHeightfield>* _this,  float value0, float value1, float value2 ) {
-	 float *p = (_unref(_this)->bmax);
-	p[0] = value0; p[1] = value1; p[2] = value2;
-}
-DEFINE_PRIM(_VOID,CompactHeightfield_setbmax3,_IDL _F32 _F32 _F32 );
-DEFINE_PRIM(_STRUCT,CompactHeightfield_set_bmax,_IDL _STRUCT);
-
-HL_PRIM float HL_NAME(CompactHeightfield_get_cs)( pref<rcCompactHeightfield>* _this ) {
-	return _unref(_this)->cs;
-}
-DEFINE_PRIM(_F32,CompactHeightfield_get_cs,_IDL);
-HL_PRIM float HL_NAME(CompactHeightfield_set_cs)( pref<rcCompactHeightfield>* _this, float value ) {
-	_unref(_this)->cs = (value);
-	return value;
-}
-DEFINE_PRIM(_F32,CompactHeightfield_set_cs,_IDL _F32);
-
-HL_PRIM float HL_NAME(CompactHeightfield_get_ch)( pref<rcCompactHeightfield>* _this ) {
-	return _unref(_this)->ch;
-}
-DEFINE_PRIM(_F32,CompactHeightfield_get_ch,_IDL);
-HL_PRIM float HL_NAME(CompactHeightfield_set_ch)( pref<rcCompactHeightfield>* _this, float value ) {
-	_unref(_this)->ch = (value);
-	return value;
-}
-DEFINE_PRIM(_F32,CompactHeightfield_set_ch,_IDL _F32);
-
-HL_PRIM pref<rcCompactCell>* HL_NAME(CompactHeightfield_get_cells)( pref<rcCompactHeightfield>* _this ) {
-	return alloc_ref(_unref(_this)->cells,rcCompactCell);
-}
-DEFINE_PRIM(_IDL,CompactHeightfield_get_cells,_IDL);
-HL_PRIM pref<rcCompactCell>* HL_NAME(CompactHeightfield_set_cells)( pref<rcCompactHeightfield>* _this, pref<rcCompactCell>* value ) {
-	_unref(_this)->cells = _unref_ptr_safe(value);
-	return value;
-}
-DEFINE_PRIM(_IDL,CompactHeightfield_set_cells,_IDL _IDL);
-
-HL_PRIM pref<rcCompactSpan>* HL_NAME(CompactHeightfield_get_spans)( pref<rcCompactHeightfield>* _this ) {
-	return alloc_ref(_unref(_this)->spans,rcCompactSpan);
-}
-DEFINE_PRIM(_IDL,CompactHeightfield_get_spans,_IDL);
-HL_PRIM pref<rcCompactSpan>* HL_NAME(CompactHeightfield_set_spans)( pref<rcCompactHeightfield>* _this, pref<rcCompactSpan>* value ) {
-	_unref(_this)->spans = _unref_ptr_safe(value);
-	return value;
-}
-DEFINE_PRIM(_IDL,CompactHeightfield_set_spans,_IDL _IDL);
-
-HL_PRIM vbyte* HL_NAME(CompactHeightfield_get_dist)( pref<rcCompactHeightfield>* _this ) {
-	return (vbyte *)(&_unref(_this)->dist[0]);
-}
-DEFINE_PRIM(_BYTES,CompactHeightfield_get_dist,_IDL);
-HL_PRIM vbyte* HL_NAME(CompactHeightfield_set_dist)( pref<rcCompactHeightfield>* _this, vbyte* value ) {
-	_unref(_this)->dist = (unsigned short*)(value);
-	return value;
-}
-DEFINE_PRIM(_BYTES,CompactHeightfield_set_dist,_IDL _BYTES);
-
-HL_PRIM vbyte* HL_NAME(CompactHeightfield_get_areas)( pref<rcCompactHeightfield>* _this ) {
-	return (vbyte *)(&_unref(_this)->areas[0]);
-}
-DEFINE_PRIM(_BYTES,CompactHeightfield_get_areas,_IDL);
-HL_PRIM vbyte* HL_NAME(CompactHeightfield_set_areas)( pref<rcCompactHeightfield>* _this, vbyte* value ) {
-	_unref(_this)->areas = (unsigned char*)(value);
-	return value;
-}
-DEFINE_PRIM(_BYTES,CompactHeightfield_set_areas,_IDL _BYTES);
-
-HL_PRIM _h_float3* HL_NAME(HeightfieldLayer_get_bmin)( pref<rcHeightfieldLayer>* _this ) {
-	return (_h_float3* )(_unref(_this)->bmin);
-}
-HL_PRIM void HL_NAME(HeightfieldLayer_getbminv)( pref<rcHeightfieldLayer>* _this, _h_float3* value ) {
-	 float *src = (float*) & (_unref(_this)->bmin)[0];
-	 float *dst = (float*) value;
-	dst[0] = src[0]; dst[1] = src[1]; dst[2] = src[2];
-}
-DEFINE_PRIM(_VOID,HeightfieldLayer_getbminv,_IDL _STRUCT  );
-DEFINE_PRIM(_STRUCT,HeightfieldLayer_get_bmin,_IDL);
-HL_PRIM _h_float3* HL_NAME(HeightfieldLayer_set_bmin)( pref<rcHeightfieldLayer>* _this, _h_float3* value ) {
-	 float *dst = (float*) & (_unref(_this)->bmin)[0];
-	 float *src = (float*) value;
-	dst[0] = src[0]; dst[1] = src[1]; dst[2] = src[2];
-	return value;
-}
-HL_PRIM void HL_NAME(HeightfieldLayer_setbmin3)( pref<rcHeightfieldLayer>* _this,  float value0, float value1, float value2 ) {
-	 float *p = (_unref(_this)->bmin);
-	p[0] = value0; p[1] = value1; p[2] = value2;
-}
-DEFINE_PRIM(_VOID,HeightfieldLayer_setbmin3,_IDL _F32 _F32 _F32 );
-DEFINE_PRIM(_STRUCT,HeightfieldLayer_set_bmin,_IDL _STRUCT);
-
-HL_PRIM _h_float3* HL_NAME(HeightfieldLayer_get_bmax)( pref<rcHeightfieldLayer>* _this ) {
-	return (_h_float3* )(_unref(_this)->bmax);
-}
-HL_PRIM void HL_NAME(HeightfieldLayer_getbmaxv)( pref<rcHeightfieldLayer>* _this, _h_float3* value ) {
-	 float *src = (float*) & (_unref(_this)->bmax)[0];
-	 float *dst = (float*) value;
-	dst[0] = src[0]; dst[1] = src[1]; dst[2] = src[2];
-}
-DEFINE_PRIM(_VOID,HeightfieldLayer_getbmaxv,_IDL _STRUCT  );
-DEFINE_PRIM(_STRUCT,HeightfieldLayer_get_bmax,_IDL);
-HL_PRIM _h_float3* HL_NAME(HeightfieldLayer_set_bmax)( pref<rcHeightfieldLayer>* _this, _h_float3* value ) {
-	 float *dst = (float*) & (_unref(_this)->bmax)[0];
-	 float *src = (float*) value;
-	dst[0] = src[0]; dst[1] = src[1]; dst[2] = src[2];
-	return value;
-}
-HL_PRIM void HL_NAME(HeightfieldLayer_setbmax3)( pref<rcHeightfieldLayer>* _this,  float value0, float value1, float value2 ) {
-	 float *p = (_unref(_this)->bmax);
-	p[0] = value0; p[1] = value1; p[2] = value2;
-}
-DEFINE_PRIM(_VOID,HeightfieldLayer_setbmax3,_IDL _F32 _F32 _F32 );
-DEFINE_PRIM(_STRUCT,HeightfieldLayer_set_bmax,_IDL _STRUCT);
-
-HL_PRIM float HL_NAME(HeightfieldLayer_get_cs)( pref<rcHeightfieldLayer>* _this ) {
-	return _unref(_this)->cs;
-}
-DEFINE_PRIM(_F32,HeightfieldLayer_get_cs,_IDL);
-HL_PRIM float HL_NAME(HeightfieldLayer_set_cs)( pref<rcHeightfieldLayer>* _this, float value ) {
-	_unref(_this)->cs = (value);
-	return value;
-}
-DEFINE_PRIM(_F32,HeightfieldLayer_set_cs,_IDL _F32);
-
-HL_PRIM float HL_NAME(HeightfieldLayer_get_ch)( pref<rcHeightfieldLayer>* _this ) {
-	return _unref(_this)->ch;
-}
-DEFINE_PRIM(_F32,HeightfieldLayer_get_ch,_IDL);
-HL_PRIM float HL_NAME(HeightfieldLayer_set_ch)( pref<rcHeightfieldLayer>* _this, float value ) {
-	_unref(_this)->ch = (value);
-	return value;
-}
-DEFINE_PRIM(_F32,HeightfieldLayer_set_ch,_IDL _F32);
-
-HL_PRIM int HL_NAME(HeightfieldLayer_get_width)( pref<rcHeightfieldLayer>* _this ) {
-	return _unref(_this)->width;
-}
-DEFINE_PRIM(_I32,HeightfieldLayer_get_width,_IDL);
-HL_PRIM int HL_NAME(HeightfieldLayer_set_width)( pref<rcHeightfieldLayer>* _this, int value ) {
-	_unref(_this)->width = (value);
-	return value;
-}
-DEFINE_PRIM(_I32,HeightfieldLayer_set_width,_IDL _I32);
-
-HL_PRIM int HL_NAME(HeightfieldLayer_get_height)( pref<rcHeightfieldLayer>* _this ) {
-	return _unref(_this)->height;
-}
-DEFINE_PRIM(_I32,HeightfieldLayer_get_height,_IDL);
-HL_PRIM int HL_NAME(HeightfieldLayer_set_height)( pref<rcHeightfieldLayer>* _this, int value ) {
-	_unref(_this)->height = (value);
-	return value;
-}
-DEFINE_PRIM(_I32,HeightfieldLayer_set_height,_IDL _I32);
-
-HL_PRIM int HL_NAME(HeightfieldLayer_get_minx)( pref<rcHeightfieldLayer>* _this ) {
-	return _unref(_this)->minx;
-}
-DEFINE_PRIM(_I32,HeightfieldLayer_get_minx,_IDL);
-HL_PRIM int HL_NAME(HeightfieldLayer_set_minx)( pref<rcHeightfieldLayer>* _this, int value ) {
-	_unref(_this)->minx = (value);
-	return value;
-}
-DEFINE_PRIM(_I32,HeightfieldLayer_set_minx,_IDL _I32);
-
-HL_PRIM int HL_NAME(HeightfieldLayer_get_maxx)( pref<rcHeightfieldLayer>* _this ) {
-	return _unref(_this)->maxx;
-}
-DEFINE_PRIM(_I32,HeightfieldLayer_get_maxx,_IDL);
-HL_PRIM int HL_NAME(HeightfieldLayer_set_maxx)( pref<rcHeightfieldLayer>* _this, int value ) {
-	_unref(_this)->maxx = (value);
-	return value;
-}
-DEFINE_PRIM(_I32,HeightfieldLayer_set_maxx,_IDL _I32);
-
-HL_PRIM int HL_NAME(HeightfieldLayer_get_miny)( pref<rcHeightfieldLayer>* _this ) {
-	return _unref(_this)->miny;
-}
-DEFINE_PRIM(_I32,HeightfieldLayer_get_miny,_IDL);
-HL_PRIM int HL_NAME(HeightfieldLayer_set_miny)( pref<rcHeightfieldLayer>* _this, int value ) {
-	_unref(_this)->miny = (value);
-	return value;
-}
-DEFINE_PRIM(_I32,HeightfieldLayer_set_miny,_IDL _I32);
-
-HL_PRIM int HL_NAME(HeightfieldLayer_get_maxy)( pref<rcHeightfieldLayer>* _this ) {
-	return _unref(_this)->maxy;
-}
-DEFINE_PRIM(_I32,HeightfieldLayer_get_maxy,_IDL);
-HL_PRIM int HL_NAME(HeightfieldLayer_set_maxy)( pref<rcHeightfieldLayer>* _this, int value ) {
-	_unref(_this)->maxy = (value);
-	return value;
-}
-DEFINE_PRIM(_I32,HeightfieldLayer_set_maxy,_IDL _I32);
-
-HL_PRIM int HL_NAME(HeightfieldLayer_get_hmin)( pref<rcHeightfieldLayer>* _this ) {
-	return _unref(_this)->hmin;
-}
-DEFINE_PRIM(_I32,HeightfieldLayer_get_hmin,_IDL);
-HL_PRIM int HL_NAME(HeightfieldLayer_set_hmin)( pref<rcHeightfieldLayer>* _this, int value ) {
-	_unref(_this)->hmin = (value);
-	return value;
-}
-DEFINE_PRIM(_I32,HeightfieldLayer_set_hmin,_IDL _I32);
-
-HL_PRIM int HL_NAME(HeightfieldLayer_get_hmax)( pref<rcHeightfieldLayer>* _this ) {
-	return _unref(_this)->hmax;
-}
-DEFINE_PRIM(_I32,HeightfieldLayer_get_hmax,_IDL);
-HL_PRIM int HL_NAME(HeightfieldLayer_set_hmax)( pref<rcHeightfieldLayer>* _this, int value ) {
-	_unref(_this)->hmax = (value);
-	return value;
-}
-DEFINE_PRIM(_I32,HeightfieldLayer_set_hmax,_IDL _I32);
-
-HL_PRIM vbyte* HL_NAME(HeightfieldLayer_get_heights)( pref<rcHeightfieldLayer>* _this ) {
-	return (vbyte *)(&_unref(_this)->heights[0]);
-}
-DEFINE_PRIM(_BYTES,HeightfieldLayer_get_heights,_IDL);
-HL_PRIM vbyte* HL_NAME(HeightfieldLayer_set_heights)( pref<rcHeightfieldLayer>* _this, vbyte* value ) {
-	_unref(_this)->heights = (unsigned char*)(value);
-	return value;
-}
-DEFINE_PRIM(_BYTES,HeightfieldLayer_set_heights,_IDL _BYTES);
-
-HL_PRIM vbyte* HL_NAME(HeightfieldLayer_get_areas)( pref<rcHeightfieldLayer>* _this ) {
-	return (vbyte *)(&_unref(_this)->areas[0]);
-}
-DEFINE_PRIM(_BYTES,HeightfieldLayer_get_areas,_IDL);
-HL_PRIM vbyte* HL_NAME(HeightfieldLayer_set_areas)( pref<rcHeightfieldLayer>* _this, vbyte* value ) {
-	_unref(_this)->areas = (unsigned char*)(value);
-	return value;
-}
-DEFINE_PRIM(_BYTES,HeightfieldLayer_set_areas,_IDL _BYTES);
-
-HL_PRIM vbyte* HL_NAME(HeightfieldLayer_get_cons)( pref<rcHeightfieldLayer>* _this ) {
-	return (vbyte *)(&_unref(_this)->cons[0]);
-}
-DEFINE_PRIM(_BYTES,HeightfieldLayer_get_cons,_IDL);
-HL_PRIM vbyte* HL_NAME(HeightfieldLayer_set_cons)( pref<rcHeightfieldLayer>* _this, vbyte* value ) {
-	_unref(_this)->cons = (unsigned char*)(value);
-	return value;
-}
-DEFINE_PRIM(_BYTES,HeightfieldLayer_set_cons,_IDL _BYTES);
 
 HL_PRIM pref<rcHeightfieldLayerSet>* HL_NAME(HeightfieldLayerSet_new0)() {
 	return alloc_ref((new rcHeightfieldLayerSet()),HeightfieldLayerSet);
@@ -1716,442 +1079,20 @@ HL_PRIM int HL_NAME(HeightfieldLayerSet_set_nlayers)( pref<rcHeightfieldLayerSet
 }
 DEFINE_PRIM(_I32,HeightfieldLayerSet_set_nlayers,_IDL _I32);
 
-HL_PRIM vbyte* HL_NAME(rcContour_get_verts)( pref<rcContour>* _this ) {
-	return (vbyte *)(&_unref(_this)->verts[0]);
-}
-DEFINE_PRIM(_BYTES,rcContour_get_verts,_IDL);
-HL_PRIM vbyte* HL_NAME(rcContour_set_verts)( pref<rcContour>* _this, vbyte* value ) {
-	_unref(_this)->verts = (int*)(value);
-	return value;
-}
-DEFINE_PRIM(_BYTES,rcContour_set_verts,_IDL _BYTES);
-
-HL_PRIM int HL_NAME(rcContour_get_nverts)( pref<rcContour>* _this ) {
-	return _unref(_this)->nverts;
-}
-DEFINE_PRIM(_I32,rcContour_get_nverts,_IDL);
-HL_PRIM int HL_NAME(rcContour_set_nverts)( pref<rcContour>* _this, int value ) {
-	_unref(_this)->nverts = (value);
-	return value;
-}
-DEFINE_PRIM(_I32,rcContour_set_nverts,_IDL _I32);
-
-HL_PRIM vbyte* HL_NAME(rcContour_get_rverts)( pref<rcContour>* _this ) {
-	return (vbyte *)(&_unref(_this)->rverts[0]);
-}
-DEFINE_PRIM(_BYTES,rcContour_get_rverts,_IDL);
-HL_PRIM vbyte* HL_NAME(rcContour_set_rverts)( pref<rcContour>* _this, vbyte* value ) {
-	_unref(_this)->rverts = (int*)(value);
-	return value;
-}
-DEFINE_PRIM(_BYTES,rcContour_set_rverts,_IDL _BYTES);
-
-HL_PRIM int HL_NAME(rcContour_get_nrverts)( pref<rcContour>* _this ) {
-	return _unref(_this)->nrverts;
-}
-DEFINE_PRIM(_I32,rcContour_get_nrverts,_IDL);
-HL_PRIM int HL_NAME(rcContour_set_nrverts)( pref<rcContour>* _this, int value ) {
-	_unref(_this)->nrverts = (value);
-	return value;
-}
-DEFINE_PRIM(_I32,rcContour_set_nrverts,_IDL _I32);
-
-HL_PRIM int HL_NAME(rcContour_get_reg)( pref<rcContour>* _this ) {
-	return _unref(_this)->reg;
-}
-DEFINE_PRIM(_I32,rcContour_get_reg,_IDL);
-HL_PRIM int HL_NAME(rcContour_set_reg)( pref<rcContour>* _this, int value ) {
-	_unref(_this)->reg = (value);
-	return value;
-}
-DEFINE_PRIM(_I32,rcContour_set_reg,_IDL _I32);
-
-HL_PRIM unsigned char HL_NAME(rcContour_get_area)( pref<rcContour>* _this ) {
-	return _unref(_this)->area;
-}
-DEFINE_PRIM(_I8,rcContour_get_area,_IDL);
-HL_PRIM unsigned char HL_NAME(rcContour_set_area)( pref<rcContour>* _this, unsigned char value ) {
-	_unref(_this)->area = (value);
-	return value;
-}
-DEFINE_PRIM(_I8,rcContour_set_area,_IDL _I8);
-
 HL_PRIM pref<rcContourSet>* HL_NAME(rcContourSet_new0)() {
 	return alloc_ref((new rcContourSet()),rcContourSet);
 }
 DEFINE_PRIM(_IDL, rcContourSet_new0,);
-
-HL_PRIM pref<rcContour>* HL_NAME(rcContourSet_get_conts)( pref<rcContourSet>* _this ) {
-	return alloc_ref(_unref(_this)->conts,rcContour);
-}
-DEFINE_PRIM(_IDL,rcContourSet_get_conts,_IDL);
-HL_PRIM pref<rcContour>* HL_NAME(rcContourSet_set_conts)( pref<rcContourSet>* _this, pref<rcContour>* value ) {
-	_unref(_this)->conts = _unref_ptr_safe(value);
-	return value;
-}
-DEFINE_PRIM(_IDL,rcContourSet_set_conts,_IDL _IDL);
-
-HL_PRIM int HL_NAME(rcContourSet_get_nconts)( pref<rcContourSet>* _this ) {
-	return _unref(_this)->nconts;
-}
-DEFINE_PRIM(_I32,rcContourSet_get_nconts,_IDL);
-HL_PRIM int HL_NAME(rcContourSet_set_nconts)( pref<rcContourSet>* _this, int value ) {
-	_unref(_this)->nconts = (value);
-	return value;
-}
-DEFINE_PRIM(_I32,rcContourSet_set_nconts,_IDL _I32);
-
-HL_PRIM _h_float3* HL_NAME(rcContourSet_get_bmin)( pref<rcContourSet>* _this ) {
-	return (_h_float3* )(_unref(_this)->bmin);
-}
-HL_PRIM void HL_NAME(rcContourSet_getbminv)( pref<rcContourSet>* _this, _h_float3* value ) {
-	 float *src = (float*) & (_unref(_this)->bmin)[0];
-	 float *dst = (float*) value;
-	dst[0] = src[0]; dst[1] = src[1]; dst[2] = src[2];
-}
-DEFINE_PRIM(_VOID,rcContourSet_getbminv,_IDL _STRUCT  );
-DEFINE_PRIM(_STRUCT,rcContourSet_get_bmin,_IDL);
-HL_PRIM _h_float3* HL_NAME(rcContourSet_set_bmin)( pref<rcContourSet>* _this, _h_float3* value ) {
-	 float *dst = (float*) & (_unref(_this)->bmin)[0];
-	 float *src = (float*) value;
-	dst[0] = src[0]; dst[1] = src[1]; dst[2] = src[2];
-	return value;
-}
-HL_PRIM void HL_NAME(rcContourSet_setbmin3)( pref<rcContourSet>* _this,  float value0, float value1, float value2 ) {
-	 float *p = (_unref(_this)->bmin);
-	p[0] = value0; p[1] = value1; p[2] = value2;
-}
-DEFINE_PRIM(_VOID,rcContourSet_setbmin3,_IDL _F32 _F32 _F32 );
-DEFINE_PRIM(_STRUCT,rcContourSet_set_bmin,_IDL _STRUCT);
-
-HL_PRIM _h_float3* HL_NAME(rcContourSet_get_bmax)( pref<rcContourSet>* _this ) {
-	return (_h_float3* )(_unref(_this)->bmax);
-}
-HL_PRIM void HL_NAME(rcContourSet_getbmaxv)( pref<rcContourSet>* _this, _h_float3* value ) {
-	 float *src = (float*) & (_unref(_this)->bmax)[0];
-	 float *dst = (float*) value;
-	dst[0] = src[0]; dst[1] = src[1]; dst[2] = src[2];
-}
-DEFINE_PRIM(_VOID,rcContourSet_getbmaxv,_IDL _STRUCT  );
-DEFINE_PRIM(_STRUCT,rcContourSet_get_bmax,_IDL);
-HL_PRIM _h_float3* HL_NAME(rcContourSet_set_bmax)( pref<rcContourSet>* _this, _h_float3* value ) {
-	 float *dst = (float*) & (_unref(_this)->bmax)[0];
-	 float *src = (float*) value;
-	dst[0] = src[0]; dst[1] = src[1]; dst[2] = src[2];
-	return value;
-}
-HL_PRIM void HL_NAME(rcContourSet_setbmax3)( pref<rcContourSet>* _this,  float value0, float value1, float value2 ) {
-	 float *p = (_unref(_this)->bmax);
-	p[0] = value0; p[1] = value1; p[2] = value2;
-}
-DEFINE_PRIM(_VOID,rcContourSet_setbmax3,_IDL _F32 _F32 _F32 );
-DEFINE_PRIM(_STRUCT,rcContourSet_set_bmax,_IDL _STRUCT);
-
-HL_PRIM float HL_NAME(rcContourSet_get_cs)( pref<rcContourSet>* _this ) {
-	return _unref(_this)->cs;
-}
-DEFINE_PRIM(_F32,rcContourSet_get_cs,_IDL);
-HL_PRIM float HL_NAME(rcContourSet_set_cs)( pref<rcContourSet>* _this, float value ) {
-	_unref(_this)->cs = (value);
-	return value;
-}
-DEFINE_PRIM(_F32,rcContourSet_set_cs,_IDL _F32);
-
-HL_PRIM float HL_NAME(rcContourSet_get_ch)( pref<rcContourSet>* _this ) {
-	return _unref(_this)->ch;
-}
-DEFINE_PRIM(_F32,rcContourSet_get_ch,_IDL);
-HL_PRIM float HL_NAME(rcContourSet_set_ch)( pref<rcContourSet>* _this, float value ) {
-	_unref(_this)->ch = (value);
-	return value;
-}
-DEFINE_PRIM(_F32,rcContourSet_set_ch,_IDL _F32);
-
-HL_PRIM int HL_NAME(rcContourSet_get_width)( pref<rcContourSet>* _this ) {
-	return _unref(_this)->width;
-}
-DEFINE_PRIM(_I32,rcContourSet_get_width,_IDL);
-HL_PRIM int HL_NAME(rcContourSet_set_width)( pref<rcContourSet>* _this, int value ) {
-	_unref(_this)->width = (value);
-	return value;
-}
-DEFINE_PRIM(_I32,rcContourSet_set_width,_IDL _I32);
-
-HL_PRIM int HL_NAME(rcContourSet_get_height)( pref<rcContourSet>* _this ) {
-	return _unref(_this)->height;
-}
-DEFINE_PRIM(_I32,rcContourSet_get_height,_IDL);
-HL_PRIM int HL_NAME(rcContourSet_set_height)( pref<rcContourSet>* _this, int value ) {
-	_unref(_this)->height = (value);
-	return value;
-}
-DEFINE_PRIM(_I32,rcContourSet_set_height,_IDL _I32);
-
-HL_PRIM int HL_NAME(rcContourSet_get_borderSize)( pref<rcContourSet>* _this ) {
-	return _unref(_this)->borderSize;
-}
-DEFINE_PRIM(_I32,rcContourSet_get_borderSize,_IDL);
-HL_PRIM int HL_NAME(rcContourSet_set_borderSize)( pref<rcContourSet>* _this, int value ) {
-	_unref(_this)->borderSize = (value);
-	return value;
-}
-DEFINE_PRIM(_I32,rcContourSet_set_borderSize,_IDL _I32);
-
-HL_PRIM float HL_NAME(rcContourSet_get_maxError)( pref<rcContourSet>* _this ) {
-	return _unref(_this)->maxError;
-}
-DEFINE_PRIM(_F32,rcContourSet_get_maxError,_IDL);
-HL_PRIM float HL_NAME(rcContourSet_set_maxError)( pref<rcContourSet>* _this, float value ) {
-	_unref(_this)->maxError = (value);
-	return value;
-}
-DEFINE_PRIM(_F32,rcContourSet_set_maxError,_IDL _F32);
 
 HL_PRIM pref<rcPolyMesh>* HL_NAME(PolyMesh_new0)() {
 	return alloc_ref((new rcPolyMesh()),PolyMesh);
 }
 DEFINE_PRIM(_IDL, PolyMesh_new0,);
 
-HL_PRIM vbyte* HL_NAME(PolyMesh_get_verts)( pref<rcPolyMesh>* _this ) {
-	return (vbyte *)(&_unref(_this)->verts[0]);
-}
-DEFINE_PRIM(_BYTES,PolyMesh_get_verts,_IDL);
-HL_PRIM vbyte* HL_NAME(PolyMesh_set_verts)( pref<rcPolyMesh>* _this, vbyte* value ) {
-	_unref(_this)->verts = (unsigned short*)(value);
-	return value;
-}
-DEFINE_PRIM(_BYTES,PolyMesh_set_verts,_IDL _BYTES);
-
-HL_PRIM vbyte* HL_NAME(PolyMesh_get_polys)( pref<rcPolyMesh>* _this ) {
-	return (vbyte *)(&_unref(_this)->polys[0]);
-}
-DEFINE_PRIM(_BYTES,PolyMesh_get_polys,_IDL);
-HL_PRIM vbyte* HL_NAME(PolyMesh_set_polys)( pref<rcPolyMesh>* _this, vbyte* value ) {
-	_unref(_this)->polys = (unsigned short*)(value);
-	return value;
-}
-DEFINE_PRIM(_BYTES,PolyMesh_set_polys,_IDL _BYTES);
-
-HL_PRIM vbyte* HL_NAME(PolyMesh_get_regs)( pref<rcPolyMesh>* _this ) {
-	return (vbyte *)(&_unref(_this)->regs[0]);
-}
-DEFINE_PRIM(_BYTES,PolyMesh_get_regs,_IDL);
-HL_PRIM vbyte* HL_NAME(PolyMesh_set_regs)( pref<rcPolyMesh>* _this, vbyte* value ) {
-	_unref(_this)->regs = (unsigned short*)(value);
-	return value;
-}
-DEFINE_PRIM(_BYTES,PolyMesh_set_regs,_IDL _BYTES);
-
-HL_PRIM vbyte* HL_NAME(PolyMesh_get_flags)( pref<rcPolyMesh>* _this ) {
-	return (vbyte *)(&_unref(_this)->flags[0]);
-}
-DEFINE_PRIM(_BYTES,PolyMesh_get_flags,_IDL);
-HL_PRIM vbyte* HL_NAME(PolyMesh_set_flags)( pref<rcPolyMesh>* _this, vbyte* value ) {
-	_unref(_this)->flags = (unsigned short*)(value);
-	return value;
-}
-DEFINE_PRIM(_BYTES,PolyMesh_set_flags,_IDL _BYTES);
-
-HL_PRIM vbyte* HL_NAME(PolyMesh_get_areas)( pref<rcPolyMesh>* _this ) {
-	return (vbyte *)(&_unref(_this)->areas[0]);
-}
-DEFINE_PRIM(_BYTES,PolyMesh_get_areas,_IDL);
-HL_PRIM vbyte* HL_NAME(PolyMesh_set_areas)( pref<rcPolyMesh>* _this, vbyte* value ) {
-	_unref(_this)->areas = (unsigned char*)(value);
-	return value;
-}
-DEFINE_PRIM(_BYTES,PolyMesh_set_areas,_IDL _BYTES);
-
-HL_PRIM int HL_NAME(PolyMesh_get_nverts)( pref<rcPolyMesh>* _this ) {
-	return _unref(_this)->nverts;
-}
-DEFINE_PRIM(_I32,PolyMesh_get_nverts,_IDL);
-HL_PRIM int HL_NAME(PolyMesh_set_nverts)( pref<rcPolyMesh>* _this, int value ) {
-	_unref(_this)->nverts = (value);
-	return value;
-}
-DEFINE_PRIM(_I32,PolyMesh_set_nverts,_IDL _I32);
-
-HL_PRIM int HL_NAME(PolyMesh_get_npolys)( pref<rcPolyMesh>* _this ) {
-	return _unref(_this)->npolys;
-}
-DEFINE_PRIM(_I32,PolyMesh_get_npolys,_IDL);
-HL_PRIM int HL_NAME(PolyMesh_set_npolys)( pref<rcPolyMesh>* _this, int value ) {
-	_unref(_this)->npolys = (value);
-	return value;
-}
-DEFINE_PRIM(_I32,PolyMesh_set_npolys,_IDL _I32);
-
-HL_PRIM int HL_NAME(PolyMesh_get_maxpolys)( pref<rcPolyMesh>* _this ) {
-	return _unref(_this)->maxpolys;
-}
-DEFINE_PRIM(_I32,PolyMesh_get_maxpolys,_IDL);
-HL_PRIM int HL_NAME(PolyMesh_set_maxpolys)( pref<rcPolyMesh>* _this, int value ) {
-	_unref(_this)->maxpolys = (value);
-	return value;
-}
-DEFINE_PRIM(_I32,PolyMesh_set_maxpolys,_IDL _I32);
-
-HL_PRIM int HL_NAME(PolyMesh_get_nvp)( pref<rcPolyMesh>* _this ) {
-	return _unref(_this)->nvp;
-}
-DEFINE_PRIM(_I32,PolyMesh_get_nvp,_IDL);
-HL_PRIM int HL_NAME(PolyMesh_set_nvp)( pref<rcPolyMesh>* _this, int value ) {
-	_unref(_this)->nvp = (value);
-	return value;
-}
-DEFINE_PRIM(_I32,PolyMesh_set_nvp,_IDL _I32);
-
-HL_PRIM _h_float3* HL_NAME(PolyMesh_get_bmin)( pref<rcPolyMesh>* _this ) {
-	return (_h_float3* )(_unref(_this)->bmin);
-}
-HL_PRIM void HL_NAME(PolyMesh_getbminv)( pref<rcPolyMesh>* _this, _h_float3* value ) {
-	 float *src = (float*) & (_unref(_this)->bmin)[0];
-	 float *dst = (float*) value;
-	dst[0] = src[0]; dst[1] = src[1]; dst[2] = src[2];
-}
-DEFINE_PRIM(_VOID,PolyMesh_getbminv,_IDL _STRUCT  );
-DEFINE_PRIM(_STRUCT,PolyMesh_get_bmin,_IDL);
-HL_PRIM _h_float3* HL_NAME(PolyMesh_set_bmin)( pref<rcPolyMesh>* _this, _h_float3* value ) {
-	 float *dst = (float*) & (_unref(_this)->bmin)[0];
-	 float *src = (float*) value;
-	dst[0] = src[0]; dst[1] = src[1]; dst[2] = src[2];
-	return value;
-}
-HL_PRIM void HL_NAME(PolyMesh_setbmin3)( pref<rcPolyMesh>* _this,  float value0, float value1, float value2 ) {
-	 float *p = (_unref(_this)->bmin);
-	p[0] = value0; p[1] = value1; p[2] = value2;
-}
-DEFINE_PRIM(_VOID,PolyMesh_setbmin3,_IDL _F32 _F32 _F32 );
-DEFINE_PRIM(_STRUCT,PolyMesh_set_bmin,_IDL _STRUCT);
-
-HL_PRIM _h_float3* HL_NAME(PolyMesh_get_bmax)( pref<rcPolyMesh>* _this ) {
-	return (_h_float3* )(_unref(_this)->bmax);
-}
-HL_PRIM void HL_NAME(PolyMesh_getbmaxv)( pref<rcPolyMesh>* _this, _h_float3* value ) {
-	 float *src = (float*) & (_unref(_this)->bmax)[0];
-	 float *dst = (float*) value;
-	dst[0] = src[0]; dst[1] = src[1]; dst[2] = src[2];
-}
-DEFINE_PRIM(_VOID,PolyMesh_getbmaxv,_IDL _STRUCT  );
-DEFINE_PRIM(_STRUCT,PolyMesh_get_bmax,_IDL);
-HL_PRIM _h_float3* HL_NAME(PolyMesh_set_bmax)( pref<rcPolyMesh>* _this, _h_float3* value ) {
-	 float *dst = (float*) & (_unref(_this)->bmax)[0];
-	 float *src = (float*) value;
-	dst[0] = src[0]; dst[1] = src[1]; dst[2] = src[2];
-	return value;
-}
-HL_PRIM void HL_NAME(PolyMesh_setbmax3)( pref<rcPolyMesh>* _this,  float value0, float value1, float value2 ) {
-	 float *p = (_unref(_this)->bmax);
-	p[0] = value0; p[1] = value1; p[2] = value2;
-}
-DEFINE_PRIM(_VOID,PolyMesh_setbmax3,_IDL _F32 _F32 _F32 );
-DEFINE_PRIM(_STRUCT,PolyMesh_set_bmax,_IDL _STRUCT);
-
-HL_PRIM float HL_NAME(PolyMesh_get_cs)( pref<rcPolyMesh>* _this ) {
-	return _unref(_this)->cs;
-}
-DEFINE_PRIM(_F32,PolyMesh_get_cs,_IDL);
-HL_PRIM float HL_NAME(PolyMesh_set_cs)( pref<rcPolyMesh>* _this, float value ) {
-	_unref(_this)->cs = (value);
-	return value;
-}
-DEFINE_PRIM(_F32,PolyMesh_set_cs,_IDL _F32);
-
-HL_PRIM float HL_NAME(PolyMesh_get_ch)( pref<rcPolyMesh>* _this ) {
-	return _unref(_this)->ch;
-}
-DEFINE_PRIM(_F32,PolyMesh_get_ch,_IDL);
-HL_PRIM float HL_NAME(PolyMesh_set_ch)( pref<rcPolyMesh>* _this, float value ) {
-	_unref(_this)->ch = (value);
-	return value;
-}
-DEFINE_PRIM(_F32,PolyMesh_set_ch,_IDL _F32);
-
-HL_PRIM int HL_NAME(PolyMesh_get_borderSize)( pref<rcPolyMesh>* _this ) {
-	return _unref(_this)->borderSize;
-}
-DEFINE_PRIM(_I32,PolyMesh_get_borderSize,_IDL);
-HL_PRIM int HL_NAME(PolyMesh_set_borderSize)( pref<rcPolyMesh>* _this, int value ) {
-	_unref(_this)->borderSize = (value);
-	return value;
-}
-DEFINE_PRIM(_I32,PolyMesh_set_borderSize,_IDL _I32);
-
-HL_PRIM float HL_NAME(PolyMesh_get_maxEdgeError)( pref<rcPolyMesh>* _this ) {
-	return _unref(_this)->maxEdgeError;
-}
-DEFINE_PRIM(_F32,PolyMesh_get_maxEdgeError,_IDL);
-HL_PRIM float HL_NAME(PolyMesh_set_maxEdgeError)( pref<rcPolyMesh>* _this, float value ) {
-	_unref(_this)->maxEdgeError = (value);
-	return value;
-}
-DEFINE_PRIM(_F32,PolyMesh_set_maxEdgeError,_IDL _F32);
-
 HL_PRIM pref<rcPolyMeshDetail>* HL_NAME(PolyMeshDetail_new0)() {
 	return alloc_ref((new rcPolyMeshDetail()),PolyMeshDetail);
 }
 DEFINE_PRIM(_IDL, PolyMeshDetail_new0,);
-
-HL_PRIM vbyte* HL_NAME(PolyMeshDetail_get_meshes)( pref<rcPolyMeshDetail>* _this ) {
-	return (vbyte *)(&_unref(_this)->meshes[0]);
-}
-DEFINE_PRIM(_BYTES,PolyMeshDetail_get_meshes,_IDL);
-HL_PRIM vbyte* HL_NAME(PolyMeshDetail_set_meshes)( pref<rcPolyMeshDetail>* _this, vbyte* value ) {
-	_unref(_this)->meshes = (unsigned int*)(value);
-	return value;
-}
-DEFINE_PRIM(_BYTES,PolyMeshDetail_set_meshes,_IDL _BYTES);
-
-HL_PRIM vbyte* HL_NAME(PolyMeshDetail_get_verts)( pref<rcPolyMeshDetail>* _this ) {
-	return (vbyte *)(&_unref(_this)->verts[0]);
-}
-DEFINE_PRIM(_BYTES,PolyMeshDetail_get_verts,_IDL);
-HL_PRIM vbyte* HL_NAME(PolyMeshDetail_set_verts)( pref<rcPolyMeshDetail>* _this, vbyte* value ) {
-	_unref(_this)->verts = (float*)(value);
-	return value;
-}
-DEFINE_PRIM(_BYTES,PolyMeshDetail_set_verts,_IDL _BYTES);
-
-HL_PRIM vbyte* HL_NAME(PolyMeshDetail_get_tris)( pref<rcPolyMeshDetail>* _this ) {
-	return (vbyte *)(&_unref(_this)->tris[0]);
-}
-DEFINE_PRIM(_BYTES,PolyMeshDetail_get_tris,_IDL);
-HL_PRIM vbyte* HL_NAME(PolyMeshDetail_set_tris)( pref<rcPolyMeshDetail>* _this, vbyte* value ) {
-	_unref(_this)->tris = (unsigned char*)(value);
-	return value;
-}
-DEFINE_PRIM(_BYTES,PolyMeshDetail_set_tris,_IDL _BYTES);
-
-HL_PRIM int HL_NAME(PolyMeshDetail_get_nmeshes)( pref<rcPolyMeshDetail>* _this ) {
-	return _unref(_this)->nmeshes;
-}
-DEFINE_PRIM(_I32,PolyMeshDetail_get_nmeshes,_IDL);
-HL_PRIM int HL_NAME(PolyMeshDetail_set_nmeshes)( pref<rcPolyMeshDetail>* _this, int value ) {
-	_unref(_this)->nmeshes = (value);
-	return value;
-}
-DEFINE_PRIM(_I32,PolyMeshDetail_set_nmeshes,_IDL _I32);
-
-HL_PRIM int HL_NAME(PolyMeshDetail_get_nverts)( pref<rcPolyMeshDetail>* _this ) {
-	return _unref(_this)->nverts;
-}
-DEFINE_PRIM(_I32,PolyMeshDetail_get_nverts,_IDL);
-HL_PRIM int HL_NAME(PolyMeshDetail_set_nverts)( pref<rcPolyMeshDetail>* _this, int value ) {
-	_unref(_this)->nverts = (value);
-	return value;
-}
-DEFINE_PRIM(_I32,PolyMeshDetail_set_nverts,_IDL _I32);
-
-HL_PRIM int HL_NAME(PolyMeshDetail_get_ntris)( pref<rcPolyMeshDetail>* _this ) {
-	return _unref(_this)->ntris;
-}
-DEFINE_PRIM(_I32,PolyMeshDetail_get_ntris,_IDL);
-HL_PRIM int HL_NAME(PolyMeshDetail_set_ntris)( pref<rcPolyMeshDetail>* _this, int value ) {
-	_unref(_this)->ntris = (value);
-	return value;
-}
-DEFINE_PRIM(_I32,PolyMeshDetail_set_ntris,_IDL _I32);
 
 HL_PRIM void HL_NAME(Recast_rcFreeHeightField1)(pref<rcHeightfield>* hf) {
 	(rcFreeHeightField(_unref_ptr_safe(hf)));
@@ -2262,199 +1203,6 @@ HL_PRIM unsigned int HL_NAME(TileCache_buildNavMeshTilesAt3)(pref<dtTileCache>* 
 	return (_unref(_this)->buildNavMeshTilesAt(tx, ty, _unref_ptr_safe(navmesh)));
 }
 DEFINE_PRIM(_I32, TileCache_buildNavMeshTilesAt3, _IDL _I32 _I32 _IDL);
-
-HL_PRIM vbyte* HL_NAME(TileCacheCompressor_buildTileCacheLayer6)(pref<dtTileCacheCompressor>* _this, pref<dtTileCacheLayerHeader>* header, vbyte* heights, vbyte* areas, vbyte* cons, int* outDataSize) {
-	vbyte* __tmpret;
-dtBuildTileCacheLayer( _unref(_this) , _unref_ptr_safe(header), (unsigned char*)heights, (unsigned char*)areas, (unsigned char*)cons, (unsigned char **)&__tmpret, outDataSize);
-	return (__tmpret);
-}
-DEFINE_PRIM(_BYTES, TileCacheCompressor_buildTileCacheLayer6, _IDL _IDL _BYTES _BYTES _BYTES _REF(_I32));
-
-HL_PRIM pref<dtTileCacheLayerHeader>* HL_NAME(TileCacheLayerHeader_new0)() {
-	return alloc_ref((new dtTileCacheLayerHeader()),TileCacheLayerHeader);
-}
-DEFINE_PRIM(_IDL, TileCacheLayerHeader_new0,);
-
-HL_PRIM int HL_NAME(TileCacheLayerHeader_get_magic)( pref<dtTileCacheLayerHeader>* _this ) {
-	return _unref(_this)->magic;
-}
-DEFINE_PRIM(_I32,TileCacheLayerHeader_get_magic,_IDL);
-HL_PRIM int HL_NAME(TileCacheLayerHeader_set_magic)( pref<dtTileCacheLayerHeader>* _this, int value ) {
-	_unref(_this)->magic = (value);
-	return value;
-}
-DEFINE_PRIM(_I32,TileCacheLayerHeader_set_magic,_IDL _I32);
-
-HL_PRIM int HL_NAME(TileCacheLayerHeader_get_version)( pref<dtTileCacheLayerHeader>* _this ) {
-	return _unref(_this)->version;
-}
-DEFINE_PRIM(_I32,TileCacheLayerHeader_get_version,_IDL);
-HL_PRIM int HL_NAME(TileCacheLayerHeader_set_version)( pref<dtTileCacheLayerHeader>* _this, int value ) {
-	_unref(_this)->version = (value);
-	return value;
-}
-DEFINE_PRIM(_I32,TileCacheLayerHeader_set_version,_IDL _I32);
-
-HL_PRIM int HL_NAME(TileCacheLayerHeader_get_tx)( pref<dtTileCacheLayerHeader>* _this ) {
-	return _unref(_this)->tx;
-}
-DEFINE_PRIM(_I32,TileCacheLayerHeader_get_tx,_IDL);
-HL_PRIM int HL_NAME(TileCacheLayerHeader_set_tx)( pref<dtTileCacheLayerHeader>* _this, int value ) {
-	_unref(_this)->tx = (value);
-	return value;
-}
-DEFINE_PRIM(_I32,TileCacheLayerHeader_set_tx,_IDL _I32);
-
-HL_PRIM int HL_NAME(TileCacheLayerHeader_get_ty)( pref<dtTileCacheLayerHeader>* _this ) {
-	return _unref(_this)->ty;
-}
-DEFINE_PRIM(_I32,TileCacheLayerHeader_get_ty,_IDL);
-HL_PRIM int HL_NAME(TileCacheLayerHeader_set_ty)( pref<dtTileCacheLayerHeader>* _this, int value ) {
-	_unref(_this)->ty = (value);
-	return value;
-}
-DEFINE_PRIM(_I32,TileCacheLayerHeader_set_ty,_IDL _I32);
-
-HL_PRIM int HL_NAME(TileCacheLayerHeader_get_tlayer)( pref<dtTileCacheLayerHeader>* _this ) {
-	return _unref(_this)->tlayer;
-}
-DEFINE_PRIM(_I32,TileCacheLayerHeader_get_tlayer,_IDL);
-HL_PRIM int HL_NAME(TileCacheLayerHeader_set_tlayer)( pref<dtTileCacheLayerHeader>* _this, int value ) {
-	_unref(_this)->tlayer = (value);
-	return value;
-}
-DEFINE_PRIM(_I32,TileCacheLayerHeader_set_tlayer,_IDL _I32);
-
-HL_PRIM _h_float3* HL_NAME(TileCacheLayerHeader_get_bmin)( pref<dtTileCacheLayerHeader>* _this ) {
-	return (_h_float3* )(_unref(_this)->bmin);
-}
-HL_PRIM void HL_NAME(TileCacheLayerHeader_getbminv)( pref<dtTileCacheLayerHeader>* _this, _h_float3* value ) {
-	 float *src = (float*) & (_unref(_this)->bmin)[0];
-	 float *dst = (float*) value;
-	dst[0] = src[0]; dst[1] = src[1]; dst[2] = src[2];
-}
-DEFINE_PRIM(_VOID,TileCacheLayerHeader_getbminv,_IDL _STRUCT  );
-DEFINE_PRIM(_STRUCT,TileCacheLayerHeader_get_bmin,_IDL);
-HL_PRIM _h_float3* HL_NAME(TileCacheLayerHeader_set_bmin)( pref<dtTileCacheLayerHeader>* _this, _h_float3* value ) {
-	 float *dst = (float*) & (_unref(_this)->bmin)[0];
-	 float *src = (float*) value;
-	dst[0] = src[0]; dst[1] = src[1]; dst[2] = src[2];
-	return value;
-}
-HL_PRIM void HL_NAME(TileCacheLayerHeader_setbmin3)( pref<dtTileCacheLayerHeader>* _this,  float value0, float value1, float value2 ) {
-	 float *p = (_unref(_this)->bmin);
-	p[0] = value0; p[1] = value1; p[2] = value2;
-}
-DEFINE_PRIM(_VOID,TileCacheLayerHeader_setbmin3,_IDL _F32 _F32 _F32 );
-DEFINE_PRIM(_STRUCT,TileCacheLayerHeader_set_bmin,_IDL _STRUCT);
-
-HL_PRIM _h_float3* HL_NAME(TileCacheLayerHeader_get_bmax)( pref<dtTileCacheLayerHeader>* _this ) {
-	return (_h_float3* )(_unref(_this)->bmax);
-}
-HL_PRIM void HL_NAME(TileCacheLayerHeader_getbmaxv)( pref<dtTileCacheLayerHeader>* _this, _h_float3* value ) {
-	 float *src = (float*) & (_unref(_this)->bmax)[0];
-	 float *dst = (float*) value;
-	dst[0] = src[0]; dst[1] = src[1]; dst[2] = src[2];
-}
-DEFINE_PRIM(_VOID,TileCacheLayerHeader_getbmaxv,_IDL _STRUCT  );
-DEFINE_PRIM(_STRUCT,TileCacheLayerHeader_get_bmax,_IDL);
-HL_PRIM _h_float3* HL_NAME(TileCacheLayerHeader_set_bmax)( pref<dtTileCacheLayerHeader>* _this, _h_float3* value ) {
-	 float *dst = (float*) & (_unref(_this)->bmax)[0];
-	 float *src = (float*) value;
-	dst[0] = src[0]; dst[1] = src[1]; dst[2] = src[2];
-	return value;
-}
-HL_PRIM void HL_NAME(TileCacheLayerHeader_setbmax3)( pref<dtTileCacheLayerHeader>* _this,  float value0, float value1, float value2 ) {
-	 float *p = (_unref(_this)->bmax);
-	p[0] = value0; p[1] = value1; p[2] = value2;
-}
-DEFINE_PRIM(_VOID,TileCacheLayerHeader_setbmax3,_IDL _F32 _F32 _F32 );
-DEFINE_PRIM(_STRUCT,TileCacheLayerHeader_set_bmax,_IDL _STRUCT);
-
-HL_PRIM int HL_NAME(TileCacheLayerHeader_get_width)( pref<dtTileCacheLayerHeader>* _this ) {
-	return _unref(_this)->width;
-}
-DEFINE_PRIM(_I32,TileCacheLayerHeader_get_width,_IDL);
-HL_PRIM int HL_NAME(TileCacheLayerHeader_set_width)( pref<dtTileCacheLayerHeader>* _this, int value ) {
-	_unref(_this)->width = (value);
-	return value;
-}
-DEFINE_PRIM(_I32,TileCacheLayerHeader_set_width,_IDL _I32);
-
-HL_PRIM int HL_NAME(TileCacheLayerHeader_get_height)( pref<dtTileCacheLayerHeader>* _this ) {
-	return _unref(_this)->height;
-}
-DEFINE_PRIM(_I32,TileCacheLayerHeader_get_height,_IDL);
-HL_PRIM int HL_NAME(TileCacheLayerHeader_set_height)( pref<dtTileCacheLayerHeader>* _this, int value ) {
-	_unref(_this)->height = (value);
-	return value;
-}
-DEFINE_PRIM(_I32,TileCacheLayerHeader_set_height,_IDL _I32);
-
-HL_PRIM int HL_NAME(TileCacheLayerHeader_get_minx)( pref<dtTileCacheLayerHeader>* _this ) {
-	return _unref(_this)->minx;
-}
-DEFINE_PRIM(_I32,TileCacheLayerHeader_get_minx,_IDL);
-HL_PRIM int HL_NAME(TileCacheLayerHeader_set_minx)( pref<dtTileCacheLayerHeader>* _this, int value ) {
-	_unref(_this)->minx = (value);
-	return value;
-}
-DEFINE_PRIM(_I32,TileCacheLayerHeader_set_minx,_IDL _I32);
-
-HL_PRIM int HL_NAME(TileCacheLayerHeader_get_maxx)( pref<dtTileCacheLayerHeader>* _this ) {
-	return _unref(_this)->maxx;
-}
-DEFINE_PRIM(_I32,TileCacheLayerHeader_get_maxx,_IDL);
-HL_PRIM int HL_NAME(TileCacheLayerHeader_set_maxx)( pref<dtTileCacheLayerHeader>* _this, int value ) {
-	_unref(_this)->maxx = (value);
-	return value;
-}
-DEFINE_PRIM(_I32,TileCacheLayerHeader_set_maxx,_IDL _I32);
-
-HL_PRIM int HL_NAME(TileCacheLayerHeader_get_miny)( pref<dtTileCacheLayerHeader>* _this ) {
-	return _unref(_this)->miny;
-}
-DEFINE_PRIM(_I32,TileCacheLayerHeader_get_miny,_IDL);
-HL_PRIM int HL_NAME(TileCacheLayerHeader_set_miny)( pref<dtTileCacheLayerHeader>* _this, int value ) {
-	_unref(_this)->miny = (value);
-	return value;
-}
-DEFINE_PRIM(_I32,TileCacheLayerHeader_set_miny,_IDL _I32);
-
-HL_PRIM int HL_NAME(TileCacheLayerHeader_get_maxy)( pref<dtTileCacheLayerHeader>* _this ) {
-	return _unref(_this)->maxy;
-}
-DEFINE_PRIM(_I32,TileCacheLayerHeader_get_maxy,_IDL);
-HL_PRIM int HL_NAME(TileCacheLayerHeader_set_maxy)( pref<dtTileCacheLayerHeader>* _this, int value ) {
-	_unref(_this)->maxy = (value);
-	return value;
-}
-DEFINE_PRIM(_I32,TileCacheLayerHeader_set_maxy,_IDL _I32);
-
-HL_PRIM int HL_NAME(TileCacheLayerHeader_get_hmin)( pref<dtTileCacheLayerHeader>* _this ) {
-	return _unref(_this)->hmin;
-}
-DEFINE_PRIM(_I32,TileCacheLayerHeader_get_hmin,_IDL);
-HL_PRIM int HL_NAME(TileCacheLayerHeader_set_hmin)( pref<dtTileCacheLayerHeader>* _this, int value ) {
-	_unref(_this)->hmin = (value);
-	return value;
-}
-DEFINE_PRIM(_I32,TileCacheLayerHeader_set_hmin,_IDL _I32);
-
-HL_PRIM int HL_NAME(TileCacheLayerHeader_get_hmax)( pref<dtTileCacheLayerHeader>* _this ) {
-	return _unref(_this)->hmax;
-}
-DEFINE_PRIM(_I32,TileCacheLayerHeader_get_hmax,_IDL);
-HL_PRIM int HL_NAME(TileCacheLayerHeader_set_hmax)( pref<dtTileCacheLayerHeader>* _this, int value ) {
-	_unref(_this)->hmax = (value);
-	return value;
-}
-DEFINE_PRIM(_I32,TileCacheLayerHeader_set_hmax,_IDL _I32);
-
-HL_PRIM int HL_NAME(TileCacheLayerHeader_sizeof0)() {
-	return (sizeof(dtTileCacheLayerHeader));
-}
-DEFINE_PRIM(_I32, TileCacheLayerHeader_sizeof0,);
 
 HL_PRIM pref<dtTileCacheParams>* HL_NAME(TileCacheParams_new0)() {
 	return alloc_ref((new dtTileCacheParams()),TileCacheParams);
@@ -2589,26 +1337,6 @@ HL_PRIM pref<TileCacheData>* HL_NAME(TileCacheData_new0)() {
 }
 DEFINE_PRIM(_IDL, TileCacheData_new0,);
 
-HL_PRIM int HL_NAME(TileCacheData_get_dataSize)( pref<TileCacheData>* _this ) {
-	return _unref(_this)->dataSize;
-}
-DEFINE_PRIM(_I32,TileCacheData_get_dataSize,_IDL);
-HL_PRIM int HL_NAME(TileCacheData_set_dataSize)( pref<TileCacheData>* _this, int value ) {
-	_unref(_this)->dataSize = (value);
-	return value;
-}
-DEFINE_PRIM(_I32,TileCacheData_set_dataSize,_IDL _I32);
-
-HL_PRIM vbyte* HL_NAME(TileCacheData_get_data)( pref<TileCacheData>* _this ) {
-	return (vbyte *)(&_unref(_this)->data[0]);
-}
-DEFINE_PRIM(_BYTES,TileCacheData_get_data,_IDL);
-HL_PRIM vbyte* HL_NAME(TileCacheData_set_data)( pref<TileCacheData>* _this, vbyte* value ) {
-	_unref(_this)->data = (unsigned char*)(value);
-	return value;
-}
-DEFINE_PRIM(_BYTES,TileCacheData_set_data,_IDL _BYTES);
-
 HL_PRIM pref<FastLZCompressor>* HL_NAME(FastLZCompressor_new0)() {
 	return alloc_ref((new FastLZCompressor()),FastLZCompressor);
 }
@@ -2701,20 +1429,100 @@ HL_PRIM bool HL_NAME(SourcePolyChunk_finalize0)(pref<NavWorld::SourcePolyChunk>*
 }
 DEFINE_PRIM(_BOOL, SourcePolyChunk_finalize0, _IDL);
 
-HL_PRIM void HL_NAME(TileBuilder_retire0)(pref<NavWorld::TileBuilder>* _this) {
-	(_unref(_this)->retire());
+HL_PRIM bool HL_NAME(SourcePolyChunk_isEnabled0)(pref<NavWorld::SourcePolyChunk>* _this) {
+	return (_unref(_this)->isEnabled());
 }
-DEFINE_PRIM(_VOID, TileBuilder_retire0, _IDL);
+DEFINE_PRIM(_BOOL, SourcePolyChunk_isEnabled0, _IDL);
+
+HL_PRIM void HL_NAME(SourcePolyChunk_setEnabled1)(pref<NavWorld::SourcePolyChunk>* _this, bool enabled) {
+	(_unref(_this)->setEnabled(enabled));
+}
+DEFINE_PRIM(_VOID, SourcePolyChunk_setEnabled1, _IDL _BOOL);
 
 HL_PRIM bool HL_NAME(TileBuilder_buildTileColumnCacheData0)(pref<NavWorld::TileBuilder>* _this) {
 	return (_unref(_this)->buildTileColumnCacheData());
 }
 DEFINE_PRIM(_BOOL, TileBuilder_buildTileColumnCacheData0, _IDL);
 
-HL_PRIM pref<NavWorld>* HL_NAME(NavWorld_create7)(_h_float3* origin, _h_float3* dim, int tileSizeInCells, float cellSize, float cellHeight, int maxTiles, int maxPolys) {
-	return alloc_ref((NavWorld::create((_h_float3*)origin, (_h_float3*)dim, tileSizeInCells, cellSize, cellHeight, maxTiles, maxPolys)),NavWorld);
+HL_PRIM void HL_NAME(TileBuilder_retire0)(pref<NavWorld::TileBuilder>* _this) {
+	(_unref(_this)->retire());
 }
-DEFINE_PRIM(_IDL, NavWorld_create7, _STRUCT _STRUCT _I32 _F32 _F32 _I32 _I32);
+DEFINE_PRIM(_VOID, TileBuilder_retire0, _IDL);
+
+HL_PRIM void HL_NAME(TileBuilder_queueForSwap0)(pref<NavWorld::TileBuilder>* _this) {
+	(_unref(_this)->queueForSwap());
+}
+DEFINE_PRIM(_VOID, TileBuilder_queueForSwap0, _IDL);
+
+HL_PRIM bool HL_NAME(TileBuilder_isEmpty0)(pref<NavWorld::TileBuilder>* _this) {
+	return (_unref(_this)->isEmpty());
+}
+DEFINE_PRIM(_BOOL, TileBuilder_isEmpty0, _IDL);
+
+HL_PRIM int HL_NAME(TileBuilder_numSourceChunks0)(pref<NavWorld::TileBuilder>* _this) {
+	return (_unref(_this)->numSourceChunks());
+}
+DEFINE_PRIM(_I32, TileBuilder_numSourceChunks0, _IDL);
+
+HL_PRIM bool HL_NAME(TileBuilder_insertIntoCache0)(pref<NavWorld::TileBuilder>* _this) {
+	return (_unref(_this)->insertIntoCache());
+}
+DEFINE_PRIM(_BOOL, TileBuilder_insertIntoCache0, _IDL);
+
+HL_PRIM bool HL_NAME(TileBuilder_inflate0)(pref<NavWorld::TileBuilder>* _this) {
+	return (_unref(_this)->inflate());
+}
+DEFINE_PRIM(_BOOL, TileBuilder_inflate0, _IDL);
+
+HL_PRIM pref<AgentParameters>* HL_NAME(AgentParameters_new0)() {
+	return alloc_ref((new AgentParameters()),AgentParameters);
+}
+DEFINE_PRIM(_IDL, AgentParameters_new0,);
+
+HL_PRIM float HL_NAME(AgentParameters_get_walkableSlopeAngle)( pref<AgentParameters>* _this ) {
+	return _unref(_this)->walkableSlopeAngle;
+}
+DEFINE_PRIM(_F32,AgentParameters_get_walkableSlopeAngle,_IDL);
+HL_PRIM float HL_NAME(AgentParameters_set_walkableSlopeAngle)( pref<AgentParameters>* _this, float value ) {
+	_unref(_this)->walkableSlopeAngle = (value);
+	return value;
+}
+DEFINE_PRIM(_F32,AgentParameters_set_walkableSlopeAngle,_IDL _F32);
+
+HL_PRIM float HL_NAME(AgentParameters_get_walkableClimb)( pref<AgentParameters>* _this ) {
+	return _unref(_this)->walkableClimb;
+}
+DEFINE_PRIM(_F32,AgentParameters_get_walkableClimb,_IDL);
+HL_PRIM float HL_NAME(AgentParameters_set_walkableClimb)( pref<AgentParameters>* _this, float value ) {
+	_unref(_this)->walkableClimb = (value);
+	return value;
+}
+DEFINE_PRIM(_F32,AgentParameters_set_walkableClimb,_IDL _F32);
+
+HL_PRIM float HL_NAME(AgentParameters_get_walkableRadius)( pref<AgentParameters>* _this ) {
+	return _unref(_this)->walkableRadius;
+}
+DEFINE_PRIM(_F32,AgentParameters_get_walkableRadius,_IDL);
+HL_PRIM float HL_NAME(AgentParameters_set_walkableRadius)( pref<AgentParameters>* _this, float value ) {
+	_unref(_this)->walkableRadius = (value);
+	return value;
+}
+DEFINE_PRIM(_F32,AgentParameters_set_walkableRadius,_IDL _F32);
+
+HL_PRIM float HL_NAME(AgentParameters_get_walkableHeight)( pref<AgentParameters>* _this ) {
+	return _unref(_this)->walkableHeight;
+}
+DEFINE_PRIM(_F32,AgentParameters_get_walkableHeight,_IDL);
+HL_PRIM float HL_NAME(AgentParameters_set_walkableHeight)( pref<AgentParameters>* _this, float value ) {
+	_unref(_this)->walkableHeight = (value);
+	return value;
+}
+DEFINE_PRIM(_F32,AgentParameters_set_walkableHeight,_IDL _F32);
+
+HL_PRIM pref<NavWorld>* HL_NAME(NavWorld_create9)(_h_float3* origin, _h_float3* dim, int tileSizeInCells, float cellSize, float cellHeight, int maxTiles, int maxPolys, int maxObstacles, pref<AgentParameters>* agentParams) {
+	return alloc_ref((NavWorld::create((_h_float3*)origin, (_h_float3*)dim, tileSizeInCells, cellSize, cellHeight, maxTiles, maxPolys, maxObstacles, _unref_ptr_safe(agentParams))),NavWorld);
+}
+DEFINE_PRIM(_IDL, NavWorld_create9, _STRUCT _STRUCT _I32 _F32 _F32 _I32 _I32 _I32 _IDL);
 
 HL_PRIM HL_CONST pref<NavWorld::SourcePolyChunk>* HL_NAME(NavWorld_addChunk0)(pref<NavWorld>* _this) {
 	return alloc_ref_const((_unref(_this)->addChunk()),SourcePolyChunk);
@@ -2725,11 +1533,6 @@ HL_PRIM HL_CONST pref<NavWorld::TileBuilder>* HL_NAME(NavWorld_getTileBuilder2)(
 	return alloc_ref_const((_unref(_this)->getTileBuilder(x, y)),TileBuilder);
 }
 DEFINE_PRIM(_IDL, NavWorld_getTileBuilder2, _IDL _I32 _I32);
-
-HL_PRIM void HL_NAME(NavWorld_setAgentParameters4)(pref<NavWorld>* _this, float walkableSlopeAngle, float walkableClimb, float walkableRadius, float walkableHeight) {
-	(_unref(_this)->setAgentParameters(walkableSlopeAngle, walkableClimb, walkableRadius, walkableHeight));
-}
-DEFINE_PRIM(_VOID, NavWorld_setAgentParameters4, _IDL _F32 _F32 _F32 _F32);
 
 HL_PRIM void HL_NAME(NavWorld_getTileRegion4)(pref<NavWorld>* _this, _h_float2* in_bmin, _h_float2* in_bmax, _h_int2* out_tmin, _h_int2* out_tmax) {
 	(_unref(_this)->getTileRegion((_h_float2*)in_bmin, (_h_float2*)in_bmax, (_h_int2*)out_tmin, (_h_int2*)out_tmax));
