@@ -3,6 +3,7 @@
 
 NavWorld *NavWorld::create(_h_float3 *origin, _h_float3 *dim, int tileSizeInCells, float cellSize, float cellHeight, int maxTiles, int maxPolys) {
     auto *x = new NavWorld();
+    
     x->_tileSize = tileSizeInCells * cellSize;
     x->_cellSize = cellSize;
     x->_cellHeight = cellHeight;
@@ -35,6 +36,8 @@ NavWorld *NavWorld::create(_h_float3 *origin, _h_float3 *dim, int tileSizeInCell
 void NavWorld::TileBuilder::bind(int x, int y) {
     _x = x;
     _y = y;
+    _totalSourceChunks = 0;
+    
     auto borderSize = ceil(_world->_walkableRadius / _world->_cellSize);
 
     _tileCacheData.clear();
@@ -81,7 +84,7 @@ bool NavWorld::TileBuilder::buildTileColumnCacheData() {
     // Tile bounds.
     const float tcs = _world->_tileSize;
 
-    int totalChunks = 0;
+    _totalSourceChunks = 0;
 
     for (int i = 0; i < _world->_chunks.size(); ++i) {
         auto &chunk = *_world->_chunks[i];
@@ -98,7 +101,7 @@ bool NavWorld::TileBuilder::buildTileColumnCacheData() {
         // If you have multiple meshes you need to process, allocate
         // and array which can hold the max number of triangles you need to process.
         const int ncid = chunk.partition().getChunksOverlappingRect(tbmin, tbmax, &_chunkIds[0], _chunkIds.size());
-        totalChunks += ncid;
+        _totalSourceChunks += ncid;
         if (!ncid) {
             continue;
         }
@@ -118,7 +121,7 @@ bool NavWorld::TileBuilder::buildTileColumnCacheData() {
         }
     }
 
-    if (totalChunks == 0) {
+    if (_totalSourceChunks == 0) {
         return true;
     }
     // Once all geometry is rasterized, we do initial pass of filtering to

@@ -191,6 +191,7 @@ class NavWorld {
         // rcConfig _cfg;
         float _bmin[3];
         float _bmax[3];
+        int _totalSourceChunks = 0;
 
         int _x;
         int _y;
@@ -205,7 +206,6 @@ class NavWorld {
 
         std::vector<TileCacheData> _tileCacheData;
 
-        bool buildTileColumnCacheData();
         void bind(int x, int y);
         int numCachedTiles() const { return _tileCacheData.size(); }
         const TileCacheData &getCachedTileData(int i) const { return _tileCacheData[i]; }
@@ -236,6 +236,9 @@ class NavWorld {
         void retire() {
             _world->retire(this);
         }
+        
+        bool buildTileColumnCacheData();
+
     };
 
     int maxTrisPerChunk() {

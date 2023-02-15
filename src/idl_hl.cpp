@@ -2639,12 +2639,12 @@ HL_PRIM HL_CONST pref<dtTileCacheMeshProcess>* HL_NAME(RemapProcessor_asSuper0)(
 }
 DEFINE_PRIM(_IDL, RemapProcessor_asSuper0, _IDL);
 
-HL_PRIM bool HL_NAME(TriMeshBuilder_loadObj1)(pref<TriMeshBuilder>* _this, vstring * filename) {
+HL_PRIM bool HL_NAME(TriMeshBuilder_loadObj2)(pref<TriMeshBuilder>* _this, vstring * filename, _h_float3* offset) {
 	const char* filename__cstr = (filename == nullptr) ? "" : hl_to_utf8( filename->bytes ); // Should be garbage collected
-	auto ___retvalue = (_unref(_this)->loadObj(filename__cstr));
+	auto ___retvalue = (_unref(_this)->loadObj(filename__cstr, (_h_float3*)offset));
 	return (___retvalue);
 }
-DEFINE_PRIM(_BOOL, TriMeshBuilder_loadObj1, _IDL _STRING);
+DEFINE_PRIM(_BOOL, TriMeshBuilder_loadObj2, _IDL _STRING _STRUCT);
 
 HL_PRIM void HL_NAME(TriMeshBuilder_reserve2)(pref<TriMeshBuilder>* _this, int verts, int tris) {
 	(_unref(_this)->reserve(verts, tris));
@@ -2705,6 +2705,11 @@ HL_PRIM void HL_NAME(TileBuilder_retire0)(pref<NavWorld::TileBuilder>* _this) {
 	(_unref(_this)->retire());
 }
 DEFINE_PRIM(_VOID, TileBuilder_retire0, _IDL);
+
+HL_PRIM bool HL_NAME(TileBuilder_buildTileColumnCacheData0)(pref<NavWorld::TileBuilder>* _this) {
+	return (_unref(_this)->buildTileColumnCacheData());
+}
+DEFINE_PRIM(_BOOL, TileBuilder_buildTileColumnCacheData0, _IDL);
 
 HL_PRIM pref<NavWorld>* HL_NAME(NavWorld_create7)(_h_float3* origin, _h_float3* dim, int tileSizeInCells, float cellSize, float cellHeight, int maxTiles, int maxPolys) {
 	return alloc_ref((NavWorld::create((_h_float3*)origin, (_h_float3*)dim, tileSizeInCells, cellSize, cellHeight, maxTiles, maxPolys)),NavWorld);

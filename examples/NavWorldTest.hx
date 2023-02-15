@@ -15,8 +15,8 @@ class NavWorldTest {
         var nav = NavWorld.create(origin, extents, 100, 0.1, 10., 500, 5000 );
         var chunk = nav.addChunk();
         var mesh = chunk.mesh();
-
-        var loaded = mesh.loadObj("examples/undulating.obj");
+        var offset = new Vec3(-5005, 0, -5005.);
+        var loaded = mesh.loadObj("examples/undulating.obj", offset);
         var finalized = chunk.finalize();
         var tileRangeMin = new Int2(0, 0);
         var tileRangeMax = new Int2(0, 0);
@@ -26,6 +26,7 @@ class NavWorldTest {
         trace('Building tiles ${tileRangeMin.x} ${tileRangeMin.y} to ${tileRangeMax.x} ${tileRangeMax.y}');
         var tb = nav.getTileBuilder(tileRangeMin.x,tileRangeMin.y);
         trace('hello world ${loaded} ${finalized}');
+        tb.buildTileColumnCacheData();
         tb.retire();
     }
 }

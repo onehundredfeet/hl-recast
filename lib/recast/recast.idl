@@ -647,7 +647,7 @@ interface TriMeshBuilder {
     // bulk
 	*/
 
-	bool loadObj(string filename);
+	bool loadObj(string filename, float3 offset);
 
     void reserve(int verts, int tris);
 
@@ -674,6 +674,8 @@ interface SourcePolyChunk {
 [Internal="NavWorld::TileBuilder"]
 interface TileBuilder {
 	void retire();
+	// Do work to make the tile valid
+	bool buildTileColumnCacheData();
 };
 
 interface NavWorld {

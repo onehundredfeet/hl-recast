@@ -156,7 +156,7 @@ static int parseFace(char* row, int* data, int n, int vcnt)
 }
 
 
-bool TriMeshBuilder::loadObj( const char* filename ) {
+bool TriMeshBuilder::loadObj( const char* filename, _h_float3 *offset ) {
 char* buf = 0;
 	FILE* fp = fopen(filename, "rb");
 	if (!fp)
@@ -212,6 +212,11 @@ char* buf = 0;
 		{
 			// Vertex pos
 			sscanf(row+1, "%f %f %f", &x, &y, &z);
+            if (offset) {
+                x += offset->x;
+                y += offset->y;
+                z += offset->z;
+            }
 			addVertex(x, y, z);
 		}
 		if (row[0] == 'f')

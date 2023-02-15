@@ -28,7 +28,7 @@ public:
     void setVerts(float *verts, int count);
     void setTris(int *tris, int count);
 
-    bool loadObj( const char* filename );
+    bool loadObj( const char* filename, _h_float3 *offset );
 private:
 	// Explicitly disabled copy constructor and copy assignment operator.
 	TriMeshBuilder(const TriMeshBuilder&);
