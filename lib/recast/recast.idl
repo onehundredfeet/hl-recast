@@ -688,6 +688,9 @@ interface QueryWorker {
 	void getNearestPoint(float3 point);
 	bool centerOverNearestPoly();
 
+	void setCurrentAsStart();
+	void setCurrentAsEnd();
+
 	void setStartPoint(PolyRef ref, float3 point);
 	void setEndPoint(PolyRef ref, float3 point);
 
@@ -697,13 +700,15 @@ interface QueryWorker {
 	int pathLength();
 	void getPathNodes( PolyRef *nodes );
 
-	void straightenPath();
+	DtStatus straightenPath();
 	int straightPathLength();
 	void getStraightPathPositions( float3 *nodes );
 	void getStraightPathFlags( byte *flags );
 	void getStraightPathRefs( PolyRef *refs );
 
-
+	void getStraightPathPosition(int i, float3 pos);
+	int getStraightPathNodeFlags(int i);
+	PolyRef getStraightPathNodePoly(int i);
 
 	void retire();
 };

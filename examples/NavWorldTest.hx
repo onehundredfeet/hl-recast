@@ -41,11 +41,11 @@ class NavWorldTest {
 		// Approx 2 ms
 		var pool = new ThreadPool(16); // 4 concurrent threads
 
-		//pool.awaitCompletion(30 * 1000); // wait 30 seconds for all submitted tasks to be processed
+		// pool.awaitCompletion(30 * 1000); // wait 30 seconds for all submitted tasks to be processed
 
 		var activeBuilders = new hx.concurrent.collection.Queue<TileBuilder>();
 		var completeBuilders = new hx.concurrent.collection.Queue<TileBuilder>();
-		Timer.measure(() ->for (x in tileRangeMin.x...tileRangeMax.x) {
+		Timer.measure(() -> for (x in tileRangeMin.x...tileRangeMax.x) {
 			for (y in tileRangeMin.y...tileRangeMax.y) {
 				var tb = nav.getTileBuilder(x, y);
 				activeBuilders.push(tb);
@@ -53,21 +53,21 @@ class NavWorldTest {
 
 			var f = function(ctx:ThreadContext) {
 				// do some work here
-                var tb = activeBuilders.pop();
+				var tb = activeBuilders.pop();
 				var built = tb.buildTileColumnCacheData();
-                completeBuilders.push(tb);
+				completeBuilders.push(tb);
 			};
 			for (_ in tileRangeMin.y...tileRangeMax.y)
 				pool.submit(f);
 
-            pool.awaitCompletion(-1);
+			pool.awaitCompletion(-1);
 			if (pool.executingTasks > 0) {
-				throw ("huh? 1s not long enough?");
+				throw("huh? 1s not long enough?");
 			}
 			for (y in tileRangeMin.y...tileRangeMax.y) {
 				var tb = completeBuilders.pop();
 				if (tb == null) {
-					throw ('huh? ${tileRangeMin.y}/${y}/${tileRangeMax.y}}');
+					throw('huh? ${tileRangeMin.y}/${y}/${tileRangeMax.y}}');
 				}
 				maxSource = Std.int(max(maxSource, tb.numSourceChunks()));
 				if (tb.numSourceChunks() == 0) {
@@ -79,13 +79,15 @@ class NavWorldTest {
 					notEmpty++;
 				}
 				var inserted = tb.insertIntoCache();
-				if (!inserted) throw 'Could not insert tile ${tb.x()} ${tb.y()}';
+				if (!inserted)
+					throw 'Could not insert tile ${tb.x()} ${tb.y()}';
 				var inflated = tb.inflate();
-				if (!inflated) throw 'Could not inflate tile ${tb.x()} ${tb.y()}';
+				if (!inflated)
+					throw 'Could not inflate tile ${tb.x()} ${tb.y()}';
 				tb.retire();
 			}
-            
-            trace('Processed row ${x}');
+
+			trace('Processed row ${x}');
 		});
 		trace('empty ${empty} vs ${notEmpty} | emptySource ${emptySource} max ${maxSource}');
 
@@ -93,35 +95,27 @@ class NavWorldTest {
 
 		var q = nav.getQueryWorker();
 
-		q.setQueryArea(new Vec3(0, 0, 0), new Vec3(2, 2, 2));
+		q.setQueryArea(new Vec3(0, 0, 0), new Vec3(2, 5, 2));
 		q.setIncludeFlags(0xffff);
 		q.setExcludeFlags(0);
 		if (q.findNearestPoly() != DT_SUCCESS) {
 			throw('no poly found');
 		}
-		var startPoly = q.nearestPoly();
-		var startLoc = new Vec3(0, 0, 0);
-		q.getNearestPoint(startLoc);
-		q.setQueryArea(new Vec3(5, 0, 5), new Vec3(2, 2, 2));
+		q.setCurrentAsStart();
+		q.setQueryArea(new Vec3(5, 0, 5), new Vec3(2, 5, 2));
 		if (q.findNearestPoly() != DT_SUCCESS) {
 			throw('no poly found');
 		}
-		var endPoly = q.nearestPoly();
-		var endLoc = new Vec3(0, 0, 0);
-		q.getNearestPoint(endLoc);
-		trace('start Poly ${startPoly} ${startLoc} end poly ${endPoly} ${endLoc}');
-
-		/*
-			trace('Building tiles ${tileRangeMin.x} ${tileRangeMin.y} to ${tileRangeMax.x} ${tileRangeMax.y}');
-			var tb = nav.getTileBuilder(tileRangeMin.x,tileRangeMin.y);
-			trace('hello world ${loaded} ${finalized}');
-			var built = Timer.measure(() -> return tb.buildTileColumnCacheData());
-			trace('built ${built}');
-			var inserted = Timer.measure(() -> return tb.insertIntoCache());
-			trace('inserted ${inserted}');
-			var inflated = Timer.measure(() -> return tb.inflate());
-			trace('inflated ${inflated}');
-			//        tb.discard();
-		 */
+		q.setCurrentAsEnd();
+		Timer.measure(() -> if (q.findPath() != DT_SUCCESS) {
+			throw('no path found');
+		});
+		trace('path length ${q.pathLength()}');
+		if (q.straightenPath() != DT_SUCCESS) {
+			throw('Could not straighten path');
+		}
+		Timer.measure(() -> {
+			trace('straight path length ${q.straightPathLength()}');
+		});
 	}
 }

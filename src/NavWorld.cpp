@@ -279,15 +279,12 @@ void printStatus(dtStatus status) {
     if (status & DT_ALREADY_OCCUPIED) {
         printf("Tile already occupied.\n");
     }
-    
-
-
 }
 
 bool NavWorld::TileBuilder::inflate() {
     auto status = _world->_tileCache.buildNavMeshTilesAt(_x, _y, &_world->_navMesh);
     if (dtStatusFailed(status)) {
-       printStatus(status);
+        printStatus(status);
     }
     return dtStatusSucceed(status);
 }
@@ -339,8 +336,8 @@ NavWorld::QueryWorker *NavWorld::getQueryWorker() {
 }
 
 NavWorld::QueryWorker::QueryWorker(NavWorld *world) : _maxPathLength(DEFAULT_MAX_NODES),
-                                       _pathLength(0),
-                                       _straightPathLength(0) {
+                                                      _pathLength(0),
+                                                      _straightPathLength(0) {
     _world = world;
     _path.resize(DEFAULT_MAX_NODES);
     _straightPos.resize(DEFAULT_MAX_NODES);
@@ -458,7 +455,7 @@ void NavWorld::QueryWorker::getStraightPathPosition(int i, h_float3 nodes) {
 unsigned char NavWorld::QueryWorker::getStraightPathNodeFlags(int i) {
     return _straightFlags[i];
 }
-dtPolyRef NavWorld::QueryWorker::getStraightPathNodeRef(int i) {
+dtPolyRef NavWorld::QueryWorker::getStraightPathNodePoly(int i) {
     return _straightPath[i];
 }
 void NavWorld::QueryWorker::reset() {
@@ -469,8 +466,18 @@ void NavWorld::QueryWorker::reset() {
     _centerOverNearestPoly = false;
     _filter.setIncludeFlags(0xffff);
     _filter.setExcludeFlags(0);
-
 }
+
+void NavWorld::QueryWorker::setCurrentAsStart() {
+    _startPoint = _nearestPoint;
+    _startPoly = _nearestPoly;
+}
+
+void NavWorld::QueryWorker::setCurrentAsEnd() {
+    _endPoint = _nearestPoint;
+    _endPoly = _nearestPoly;
+}
+
 /*
 bool NavWorld::TileBuilder::build(int &dataSize) {
 

@@ -1153,6 +1153,16 @@ HL_PRIM bool HL_NAME(QueryWorker_centerOverNearestPoly0)(pref<NavWorld::QueryWor
 }
 DEFINE_PRIM(_BOOL, QueryWorker_centerOverNearestPoly0, _IDL);
 
+HL_PRIM void HL_NAME(QueryWorker_setCurrentAsStart0)(pref<NavWorld::QueryWorker>* _this) {
+	(_unref(_this)->setCurrentAsStart());
+}
+DEFINE_PRIM(_VOID, QueryWorker_setCurrentAsStart0, _IDL);
+
+HL_PRIM void HL_NAME(QueryWorker_setCurrentAsEnd0)(pref<NavWorld::QueryWorker>* _this) {
+	(_unref(_this)->setCurrentAsEnd());
+}
+DEFINE_PRIM(_VOID, QueryWorker_setCurrentAsEnd0, _IDL);
+
 HL_PRIM void HL_NAME(QueryWorker_setStartPoint2)(pref<NavWorld::QueryWorker>* _this, unsigned int ref, h_float3 point) {
 	(_unref(_this)->setStartPoint(ref, (h_float3)point));
 }
@@ -1183,10 +1193,10 @@ HL_PRIM void HL_NAME(QueryWorker_getPathNodes1)(pref<NavWorld::QueryWorker>* _th
 }
 DEFINE_PRIM(_VOID, QueryWorker_getPathNodes1, _IDL _BYTES);
 
-HL_PRIM void HL_NAME(QueryWorker_straightenPath0)(pref<NavWorld::QueryWorker>* _this) {
-	(_unref(_this)->straightenPath());
+HL_PRIM int HL_NAME(QueryWorker_straightenPath0)(pref<NavWorld::QueryWorker>* _this) {
+	return HL_NAME(DtStatus_valueToIndex1)(_unref(_this)->straightenPath());
 }
-DEFINE_PRIM(_VOID, QueryWorker_straightenPath0, _IDL);
+DEFINE_PRIM(_I32, QueryWorker_straightenPath0, _IDL);
 
 HL_PRIM int HL_NAME(QueryWorker_straightPathLength0)(pref<NavWorld::QueryWorker>* _this) {
 	return (_unref(_this)->straightPathLength());
@@ -1207,6 +1217,21 @@ HL_PRIM void HL_NAME(QueryWorker_getStraightPathRefs1)(pref<NavWorld::QueryWorke
 	(_unref(_this)->getStraightPathRefs((unsigned int*)refs));
 }
 DEFINE_PRIM(_VOID, QueryWorker_getStraightPathRefs1, _IDL _BYTES);
+
+HL_PRIM void HL_NAME(QueryWorker_getStraightPathPosition2)(pref<NavWorld::QueryWorker>* _this, int i, h_float3 pos) {
+	(_unref(_this)->getStraightPathPosition(i, (h_float3)pos));
+}
+DEFINE_PRIM(_VOID, QueryWorker_getStraightPathPosition2, _IDL _I32 _STRUCT);
+
+HL_PRIM int HL_NAME(QueryWorker_getStraightPathNodeFlags1)(pref<NavWorld::QueryWorker>* _this, int i) {
+	return (_unref(_this)->getStraightPathNodeFlags(i));
+}
+DEFINE_PRIM(_I32, QueryWorker_getStraightPathNodeFlags1, _IDL _I32);
+
+HL_PRIM unsigned int HL_NAME(QueryWorker_getStraightPathNodePoly1)(pref<NavWorld::QueryWorker>* _this, int i) {
+	return (_unref(_this)->getStraightPathNodePoly(i));
+}
+DEFINE_PRIM(_I32, QueryWorker_getStraightPathNodePoly1, _IDL _I32);
 
 HL_PRIM void HL_NAME(QueryWorker_retire0)(pref<NavWorld::QueryWorker>* _this) {
 	(_unref(_this)->retire());

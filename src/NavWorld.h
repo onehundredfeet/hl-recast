@@ -273,6 +273,9 @@ class NavWorld {
         void getNearestPoint(h_float3 point);
         bool centerOverNearestPoly();
 
+        void setCurrentAsStart();
+        void setCurrentAsEnd();
+        
         void setStartPoint(dtPolyRef ref, h_float3 point);
         void setEndPoint(dtPolyRef ref, h_float3 point);
 
@@ -290,7 +293,8 @@ class NavWorld {
 
         void getStraightPathPosition(int i, h_float3 nodes);
         unsigned char getStraightPathNodeFlags(int i);
-        dtPolyRef getStraightPathNodeRef(int i);
+        dtPolyRef getStraightPathNodePoly(int i);
+
 
         void retire();
         void reset();
