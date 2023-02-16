@@ -1,5 +1,6 @@
 -lib hl-idl
 -lib hvector
+-lib haxe-concurrent
 -cp lib
 -cp examples
 -main NavWorldTest

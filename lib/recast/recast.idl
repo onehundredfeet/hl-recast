@@ -644,6 +644,8 @@ interface SourcePolyChunk {
 interface TileBuilder {
 	// Do work to make the tile valid
 	// Fully thread safe
+	int x();
+	int y();
 	bool buildTileColumnCacheData();
 	void retire();
 	void queueForSwap();

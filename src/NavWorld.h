@@ -19,6 +19,7 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
+#include <set>
 
 #include "NavVerts.h"
 #include "PerfTimer.h"
@@ -59,7 +60,9 @@ struct LinearAllocator : public dtTileCacheAlloc {
     }
 
     LinearAllocator(const size_t cap) : buffer(0), capacity(0), top(0), high(0) {
+//        printf("Linear alloc %lu\n", cap);
         resize(cap);
+  //      printf("Done Linear alloc %lu\n", cap);
     }
 
     virtual ~LinearAllocator() {
@@ -225,6 +228,9 @@ class NavWorld {
         }
 
        public:
+        int x() const { return _x; }
+        int y() const { return _y; }
+
         // Not sure how much to put in here
         TileBuilder() : _talloc(32 * 1024) {
             _chunkIds.resize(MAX_CHUNKS);
@@ -299,13 +305,14 @@ class NavWorld {
     float _lastBuiltTileBmax[3];
 
     std::vector<SourcePolyChunk *> _chunks;
-    std::vector<TileBuilder *> _activeBuilders;
+    std::set<TileBuilder *> _activeBuilders;
     std::vector<TileBuilder *> _dormantBuilders;
     std::vector<ConvexVolume> _convexVolumes;
 
     void retire(TileBuilder *builder) {
         builder->reset();
         _dormantBuilders.push_back(builder);
+        _activeBuilders.erase(builder);
     }
 
    public:
@@ -332,14 +339,14 @@ class NavWorld {
         if (_dormantBuilders.size() > 0) {
             auto builder = _dormantBuilders.back();
             _dormantBuilders.pop_back();
-            _activeBuilders.push_back(builder);
+            _activeBuilders.insert(builder);
             builder->bind(x, y);
             return builder;
         }
         auto builder = new TileBuilder();
         builder->_world = this;
         builder->bind(x, y);
-        _activeBuilders.push_back(builder);
+        _activeBuilders.insert(builder);
         return builder;
     }
     /*

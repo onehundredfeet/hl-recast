@@ -1439,6 +1439,16 @@ HL_PRIM void HL_NAME(SourcePolyChunk_setEnabled1)(pref<NavWorld::SourcePolyChunk
 }
 DEFINE_PRIM(_VOID, SourcePolyChunk_setEnabled1, _IDL _BOOL);
 
+HL_PRIM int HL_NAME(TileBuilder_x0)(pref<NavWorld::TileBuilder>* _this) {
+	return (_unref(_this)->x());
+}
+DEFINE_PRIM(_I32, TileBuilder_x0, _IDL);
+
+HL_PRIM int HL_NAME(TileBuilder_y0)(pref<NavWorld::TileBuilder>* _this) {
+	return (_unref(_this)->y());
+}
+DEFINE_PRIM(_I32, TileBuilder_y0, _IDL);
+
 HL_PRIM bool HL_NAME(TileBuilder_buildTileColumnCacheData0)(pref<NavWorld::TileBuilder>* _this) {
 	return (_unref(_this)->buildTileColumnCacheData());
 }
