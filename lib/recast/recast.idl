@@ -1,4 +1,6 @@
 typedef StatusCode uint;
+typedef PolyRef uint;
+typedef TileRef uint;
 
 [Internal="rcLogCategory"]
 enum LogCategory
@@ -71,6 +73,18 @@ enum TimerLabel
 	"RC_MAX_TIMERS"
 };
 
+typedef NodeIndex short;
+
+
+[Internal="dtStatus"]
+enum DtStatus {
+	"DT_FAILURE",
+	"DT_SUCCESS",
+	"DT_IN_PROGRESS"
+};
+
+
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Abstration for an opaque sized byte buffer
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -108,7 +122,7 @@ interface TriMeshPartition {
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Temporary context to help with recast buidling
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+/*
 [Internal="rcContext"]
 interface RasterContext 
 {
@@ -198,8 +212,8 @@ interface RasterContext
 
 	[CObject, Internal="rcBuildHeightfieldLayers"] bool buildHeightfieldLayers([Deref] CompactHeightfield chf, int borderSize, int walkableHeight, [Deref] HeightfieldLayerSet lset);
 };
-
-
+*/
+/*
 
 [Internal="rcConfig"]
 interface RasterConfig {
@@ -231,7 +245,7 @@ interface RasterConfig {
 	attribute float detailSampleMaxError;
 };
 
-
+*/
 [Internal="rcHeightfield"]
 interface Heightfield
 {
@@ -658,6 +672,42 @@ interface TileBuilder {
 	bool inflate();	
 };
 
+[Internal="NavWorld::QueryWorker"]
+interface QueryWorker {
+	float getAreaCost(int i);
+	void setAreaCost(int i, float cost);
+	short getIncludeFlags();
+	void setIncludeFlags(short flags);
+	short getExcludeFlags();
+	void setExcludeFlags(short flags);
+
+	void setQueryArea( float3 center, float3 halfExtents );
+
+	DtStatus findNearestPoly();
+	PolyRef nearestPoly();
+	void getNearestPoint(float3 point);
+	bool centerOverNearestPoly();
+
+	void setStartPoint(PolyRef ref, float3 point);
+	void setEndPoint(PolyRef ref, float3 point);
+
+	void setMaximumPathLength(int maxNodes); // needs to include the straightened path if you want it
+
+	DtStatus findPath();
+	int pathLength();
+	void getPathNodes( PolyRef *nodes );
+
+	void straightenPath();
+	int straightPathLength();
+	void getStraightPathPositions( float3 *nodes );
+	void getStraightPathFlags( byte *flags );
+	void getStraightPathRefs( PolyRef *refs );
+
+
+
+	void retire();
+};
+
 //
 // Unified nav mesh builder
 // Holds world geo and nav mesh data
@@ -681,7 +731,7 @@ interface NavWorld {
 	// Allows for easier threading this way.
     [Const] TileBuilder getTileBuilder(int x, int y);
 
-
+	[Const] QueryWorker getQueryWorker();
 
 	void getTileRegion( float2 in_bmin, float2 in_bmax, int2 out_tmin, int2 out_tmax);
 
@@ -692,8 +742,7 @@ interface NavWorld {
 /// Nav mesh section
 ///////////////////////////////////////////////////////////////////////////
 
-typedef PolyRef uint;
-typedef TileRef uint;
+
 
 interface NavMesh
 {
@@ -764,16 +813,6 @@ interface NavMesh
 };
 
 
-
-typedef NodeIndex short;
-
-
-[Internal="dtStatus"]
-enum DtStatus {
-	"DT_FAILURE",
-	"DT_SUCCESS",
-	"DT_IN_PROGRESS"
-};
 
 
 [Internal="dtQueryFilter"]

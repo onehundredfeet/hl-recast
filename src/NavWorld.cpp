@@ -29,7 +29,7 @@ NavWorld *NavWorld::create(_h_float3 *origin, _h_float3 *dim, int tileSizeInCell
     memset(&tc_params, 0, sizeof(tc_params));
     tc_params.ch = cellHeight;
     tc_params.cs = cellSize;
-    dtVcopy( tc_params.orig, x->_origin );
+    dtVcopy(tc_params.orig, x->_origin);
     tc_params.maxObstacles = maxObstacles;
     tc_params.maxTiles = maxTiles;
     tc_params.width = tileSizeInCells;
@@ -37,10 +37,10 @@ NavWorld *NavWorld::create(_h_float3 *origin, _h_float3 *dim, int tileSizeInCell
 
     tc_params.maxSimplificationError = 1.3f;
     tc_params.walkableClimb = x->_agentParams.walkableClimb;
-    tc_params.walkableHeight =x->_agentParams.walkableHeight;
+    tc_params.walkableHeight = x->_agentParams.walkableHeight;
     tc_params.walkableRadius = x->_agentParams.walkableRadius;
 
-    x->_tileCache.init( &tc_params, &x->_talloc, &x->_tcomp, &x->_tmproc);
+    x->_tileCache.init(&tc_params, &x->_talloc, &x->_tcomp, &x->_tmproc);
 
     dtNavMeshParams nm_params;
     memset(&nm_params, 0, sizeof(nm_params));
@@ -51,7 +51,7 @@ NavWorld *NavWorld::create(_h_float3 *origin, _h_float3 *dim, int tileSizeInCell
     nm_params.tileHeight = x->_tileSize;
     nm_params.maxTiles = maxTiles;
     nm_params.maxPolys = maxPolys;
-    
+
     x->_navMesh.init(&nm_params);
     return x;
 }
@@ -187,7 +187,7 @@ bool NavWorld::TileBuilder::buildTileColumnCacheData() {
         return 0;
     }
 
-//    printf("Number of layers: %d\n", _lset.nlayers);
+    //    printf("Number of layers: %d\n", _lset.nlayers);
     for (int i = 0; i < _lset.nlayers; ++i) {
         _tileCacheData.push_back({});
         TileCacheData &tile = _tileCacheData.back();
@@ -236,7 +236,7 @@ bool NavWorld::TileBuilder::insertIntoCache() {
 
     bool additionSuccess = true;
 
-//    printf("Inserting %lu tiles into cache\n", _tileCacheData.size());
+    //    printf("Inserting %lu tiles into cache\n", _tileCacheData.size());
     for (int i = 0; i < _tileCacheData.size(); ++i) {
         TileCacheData *tile = &_tileCacheData[i];
 
@@ -251,11 +251,226 @@ bool NavWorld::TileBuilder::insertIntoCache() {
     return additionSuccess;
 }
 
+void printStatus(dtStatus status) {
+    if (dtStatusSucceed(status)) {
+        return;
+    }
+    if (status & DT_WRONG_MAGIC) {
+        printf("Wrong magic number in input data.\n");
+    }
+    if (status & DT_WRONG_VERSION) {
+        printf("Wrong version number in input data.\n");
+    }
+    if (status & DT_OUT_OF_MEMORY) {
+        printf("Out of memory.\n");
+    }
+    if (status & DT_INVALID_PARAM) {
+        printf("Invalid parameter.\n");
+    }
+    if (status & DT_BUFFER_TOO_SMALL) {
+        printf("Buffer too small.\n");
+    }
+    if (status & DT_OUT_OF_NODES) {
+        printf("Out of nodes.\n");
+    }
+    if (status & DT_PARTIAL_RESULT) {
+        printf("Partial result.\n");
+    }
+    if (status & DT_ALREADY_OCCUPIED) {
+        printf("Tile already occupied.\n");
+    }
+    
+
+
+}
+
 bool NavWorld::TileBuilder::inflate() {
-     auto status =_world->_tileCache.buildNavMeshTilesAt(_x,_y, &_world->_navMesh);
+    auto status = _world->_tileCache.buildNavMeshTilesAt(_x, _y, &_world->_navMesh);
+    if (dtStatusFailed(status)) {
+       printStatus(status);
+    }
     return dtStatusSucceed(status);
 }
 
+void NavWorld::getTileRegion(h_float2 bmin, h_float2 bmax, h_int2 tmin, h_int2 tmax) {
+    tmin->x = (int)floorf((bmin->x - _origin[0]) / _tileSize);
+    tmin->y = (int)floorf((bmin->y - _origin[2]) / _tileSize);
+    tmax->x = (int)floorf((bmax->x - _origin[0]) / _tileSize);
+    tmax->y = (int)floorf((bmax->y - _origin[2]) / _tileSize);
+
+    tmin->x = dtClamp(tmin->x, 0, dtMin(_tileCountWidth - 1, tmax->x));
+    tmin->y = dtClamp(tmin->y, 0, dtMin(_tileCountHeight - 1, tmax->y));
+    tmax->x = dtClamp(tmax->x, tmin->x, _tileCountWidth - 1);
+    tmax->y = dtClamp(tmax->y, tmin->y, _tileCountHeight - 1);
+}
+
+void NavWorld::retire(TileBuilder *builder) {
+    builder->reset();
+    _dormantBuilders.push_back(builder);
+    _activeBuilders.erase(builder);
+}
+
+NavWorld::TileBuilder *NavWorld::getTileBuilder(int x, int y) {
+    if (_dormantBuilders.size() > 0) {
+        auto builder = _dormantBuilders.back();
+        _dormantBuilders.pop_back();
+        _activeBuilders.insert(builder);
+        builder->bind(x, y);
+        return builder;
+    }
+    auto builder = new TileBuilder();
+    builder->_world = this;
+    builder->bind(x, y);
+    _activeBuilders.insert(builder);
+    return builder;
+}
+
+NavWorld::QueryWorker *NavWorld::getQueryWorker() {
+    if (_dormantQueryWorkers.size() > 0) {
+        auto builder = _dormantQueryWorkers.back();
+        _dormantQueryWorkers.pop_back();
+        _activeQueryWorkers.insert(builder);
+        return builder;
+    }
+    auto builder = new QueryWorker(this);
+    builder->_world = this;
+    _activeQueryWorkers.insert(builder);
+    return builder;
+}
+
+NavWorld::QueryWorker::QueryWorker(NavWorld *world) : _maxPathLength(DEFAULT_MAX_NODES),
+                                       _pathLength(0),
+                                       _straightPathLength(0) {
+    _world = world;
+    _path.resize(DEFAULT_MAX_NODES);
+    _straightPos.resize(DEFAULT_MAX_NODES);
+    _straightPath.resize(DEFAULT_MAX_NODES);
+    _straightFlags.resize(DEFAULT_MAX_NODES);
+
+    _query.init(&_world->_navMesh, DEFAULT_MAX_NODES);
+}
+
+void NavWorld::QueryWorker::retire() {
+    //    builder->reset();
+    _world->_dormantQueryWorkers.push_back(this);
+    _world->_activeQueryWorkers.erase(this);
+}
+
+float NavWorld::QueryWorker::getAreaCost(int i) {
+    return _filter.getAreaCost(i);
+}
+
+void NavWorld::QueryWorker::setAreaCost(int i, float cost) {
+    _filter.setAreaCost(i, cost);
+}
+
+short NavWorld::QueryWorker::getIncludeFlags() {
+    return _filter.getIncludeFlags();
+}
+
+void NavWorld::QueryWorker::setIncludeFlags(short flags) {
+    _filter.setIncludeFlags(flags);
+}
+
+short NavWorld::QueryWorker::getExcludeFlags() {
+    return _filter.getExcludeFlags();
+}
+
+void NavWorld::QueryWorker::setExcludeFlags(short flags) {
+    _filter.setExcludeFlags(flags);
+}
+
+void NavWorld::QueryWorker::setQueryArea(h_float3 center, h_float3 halfExtents) {
+    _center = *center;
+    _halfExtents = *halfExtents;
+}
+
+dtStatus NavWorld::QueryWorker::findNearestPoly() {
+    auto x = _query.findNearestPoly(&_center.x, &_halfExtents.x, &_filter, &_nearestPoly, &_nearestPoint.x);
+    if (_nearestPoly == 0) return DT_FAILURE;
+    return x;
+}
+
+dtPolyRef NavWorld::QueryWorker::nearestPoly() {
+    return _nearestPoly;
+}
+
+void NavWorld::QueryWorker::getNearestPoint(h_float3 point) {
+    *point = _nearestPoint;
+}
+
+bool NavWorld::QueryWorker::centerOverNearestPoly() {
+    return _centerOverNearestPoly;
+}
+
+void NavWorld::QueryWorker::setStartPoint(dtPolyRef ref, h_float3 point) {
+    _startPoly = ref;
+    _startPoint = *point;
+}
+
+void NavWorld::QueryWorker::setEndPoint(dtPolyRef ref, h_float3 point) {
+    _endPoly = ref;
+    _endPoint = *point;
+}
+
+void NavWorld::QueryWorker::setMaximumPathLength(int maxNodes) {
+    _path.resize(maxNodes);
+    _straightPos.resize(maxNodes);
+    _straightPath.resize(maxNodes);
+    _straightFlags.resize(maxNodes);
+    _query.init(&_world->_navMesh, maxNodes);
+}
+dtStatus NavWorld::QueryWorker::findPath() {
+    return _query.findPath(_startPoly, _endPoly, &_startPoint.x, &_endPoint.x, &_filter, _path.data(), &_pathLength, _maxPathLength);
+}
+
+int NavWorld::QueryWorker::pathLength() {
+    return _pathLength;
+}
+
+void NavWorld::QueryWorker::getPathNodes(dtPolyRef *nodes) {
+    memcpy(nodes, _path.data(), _pathLength * sizeof(dtPolyRef));
+}
+
+dtStatus NavWorld::QueryWorker::straightenPath() {
+    return _query.findStraightPath(&_startPoint.x, &_endPoint.x, _path.data(), _pathLength, (float *)_straightPos.data(), _straightFlags.data(), _straightPath.data(), &_straightPathLength, _maxPathLength);
+}
+
+int NavWorld::QueryWorker::straightPathLength() {
+    return _straightPathLength;
+}
+
+void NavWorld::QueryWorker::getStraightPathPositions(h_float3_array nodes) {
+    memcpy(nodes, _straightPos.data(), _straightPathLength * sizeof(h_float3));
+}
+
+void NavWorld::QueryWorker::getStraightPathFlags(unsigned char *flags) {
+    memcpy(flags, _straightFlags.data(), _straightPathLength * sizeof(unsigned char));
+}
+
+void NavWorld::QueryWorker::getStraightPathRefs(dtPolyRef *refs) {
+    memcpy(refs, _straightPath.data(), _straightPathLength * sizeof(dtPolyRef));
+}
+
+void NavWorld::QueryWorker::getStraightPathPosition(int i, h_float3 nodes) {
+    *nodes = _straightPos[i];
+}
+unsigned char NavWorld::QueryWorker::getStraightPathNodeFlags(int i) {
+    return _straightFlags[i];
+}
+dtPolyRef NavWorld::QueryWorker::getStraightPathNodeRef(int i) {
+    return _straightPath[i];
+}
+void NavWorld::QueryWorker::reset() {
+    _pathLength = 0;
+    _straightPathLength = 0;
+    _startPoly = 0;
+    _endPoly = 0;
+    _centerOverNearestPoly = false;
+    _filter.setIncludeFlags(0xffff);
+    _filter.setExcludeFlags(0);
+
+}
 /*
 bool NavWorld::TileBuilder::build(int &dataSize) {
 

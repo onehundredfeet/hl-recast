@@ -16,10 +16,10 @@
 #include <stdio.h>
 
 #include <map>
+#include <set>
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
-#include <set>
 
 #include "NavVerts.h"
 #include "PerfTimer.h"
@@ -60,9 +60,9 @@ struct LinearAllocator : public dtTileCacheAlloc {
     }
 
     LinearAllocator(const size_t cap) : buffer(0), capacity(0), top(0), high(0) {
-//        printf("Linear alloc %lu\n", cap);
+        //        printf("Linear alloc %lu\n", cap);
         resize(cap);
-  //      printf("Done Linear alloc %lu\n", cap);
+        //      printf("Done Linear alloc %lu\n", cap);
     }
 
     virtual ~LinearAllocator() {
@@ -165,6 +165,7 @@ struct AgentParameters {
 // Derived from sample tile mesh
 class NavWorld {
    public:
+    // Exposed types
     class SourcePolyChunk {
         friend NavWorld;
         NavWorld *_world;
@@ -255,7 +256,72 @@ class NavWorld {
         bool insertIntoCache();
         bool inflate();
     };
+    class QueryWorker {
+        const int DEFAULT_MAX_NODES = 512;
+        public:
+        float getAreaCost(int i);
+        void setAreaCost(int i, float cost);
+        short getIncludeFlags();
+        void setIncludeFlags(short flags);
+        short getExcludeFlags();
+        void setExcludeFlags(short flags);
 
+        void setQueryArea(h_float3 center, h_float3 halfExtents);
+
+        dtStatus findNearestPoly();
+        dtPolyRef nearestPoly();
+        void getNearestPoint(h_float3 point);
+        bool centerOverNearestPoly();
+
+        void setStartPoint(dtPolyRef ref, h_float3 point);
+        void setEndPoint(dtPolyRef ref, h_float3 point);
+
+        void setMaximumPathLength(int maxNodes);  // needs to include the straightened path if you want it
+
+        dtStatus findPath();
+        int pathLength();
+        void getPathNodes(dtPolyRef *nodes);
+
+        dtStatus straightenPath();
+        int straightPathLength();
+        void getStraightPathPositions(h_float3_array nodes);
+        void getStraightPathFlags(unsigned char *flags);
+        void getStraightPathRefs(dtPolyRef *refs);
+
+        void getStraightPathPosition(int i, h_float3 nodes);
+        unsigned char getStraightPathNodeFlags(int i);
+        dtPolyRef getStraightPathNodeRef(int i);
+
+        void retire();
+        void reset();
+        private:
+        QueryWorker(NavWorld *);
+        dtQueryFilter _filter;
+        dtNavMeshQuery _query;
+        friend NavWorld;
+        NavWorld *_world;
+
+        _h_float3 _center;
+        _h_float3 _halfExtents;        
+        _h_float3 _nearestPoint;
+        _h_float3 _startPoint;
+        _h_float3 _endPoint;
+        dtPolyRef _nearestPoly;
+        dtPolyRef _startPoly;
+        dtPolyRef _endPoly;
+        bool _centerOverNearestPoly = false;
+        int _maxPathLength;
+        int _pathLength;
+        int _straightPathLength;
+        std::vector<dtPolyRef> _path;
+        std::vector<dtPolyRef> _straightPath;
+        std::vector<_h_float3> _straightPos;
+        std::vector<unsigned char> _straightFlags;
+
+        
+    };
+
+    // exposed functions
     int maxTrisPerChunk() {
         int maxTris = 0;
         for (auto chunk : _chunks) {
@@ -264,7 +330,7 @@ class NavWorld {
         return maxTris;
     }
 
-    static const int DEFAULT_TEMP_MEMORY = 32 * 1024;
+    static const int DEFAULT_TEMP_MEMORY = 64 * 1024;
     NavWorld() : _talloc(DEFAULT_TEMP_MEMORY) {
         _maxTrisPerPartitionChunk = DEFAULT_TRIS_PER_PARTITION_CHUNK;
     }
@@ -287,12 +353,7 @@ class NavWorld {
     int _maxTrisPerPartitionChunk;
 
     AgentParameters _agentParams;
-    /*
-    float _walkableSlopeAngle;
-    float _walkableClimb;
-    float _walkableRadius;
-    float _walkableHeight;
-*/
+
     bool _filterLowHangingObstacles;
     bool _filterLedgeSpans;
     bool _filterWalkableLowHeightSpans;
@@ -308,12 +369,10 @@ class NavWorld {
     std::set<TileBuilder *> _activeBuilders;
     std::vector<TileBuilder *> _dormantBuilders;
     std::vector<ConvexVolume> _convexVolumes;
+    std::set<QueryWorker *> _activeQueryWorkers;
+    std::vector<QueryWorker *> _dormantQueryWorkers;
 
-    void retire(TileBuilder *builder) {
-        builder->reset();
-        _dormantBuilders.push_back(builder);
-        _activeBuilders.erase(builder);
-    }
+    void retire(TileBuilder *builder);
 
    public:
     SourcePolyChunk *addChunk() {
@@ -323,60 +382,11 @@ class NavWorld {
         return layer;
     }
 
-    void getTileRegion(_h_float2 *bmin, _h_float2 *bmax, _h_int2 *tmin, _h_int2 *tmax) {
-        tmin->x = (int)floorf((bmin->x - _origin[0]) / _tileSize);
-        tmin->y = (int)floorf((bmin->y - _origin[2]) / _tileSize);
-        tmax->x = (int)floorf((bmax->x - _origin[0]) / _tileSize);
-        tmax->y = (int)floorf((bmax->y - _origin[2]) / _tileSize);
+    void getTileRegion(h_float2 bmin, h_float2 bmax, h_int2 tmin, h_int2 tmax);
+    TileBuilder *getTileBuilder(int x, int y);
+    QueryWorker *getQueryWorker();
 
-        tmin->x = dtClamp(tmin->x, 0, dtMin(_tileCountWidth - 1, tmax->x));
-        tmin->y = dtClamp(tmin->y, 0, dtMin(_tileCountHeight - 1, tmax->y));
-        tmax->x = dtClamp(tmax->x, tmin->x, _tileCountWidth - 1);
-        tmax->y = dtClamp(tmax->y, tmin->y, _tileCountHeight - 1);
-    }
-
-    TileBuilder *getTileBuilder(int x, int y) {
-        if (_dormantBuilders.size() > 0) {
-            auto builder = _dormantBuilders.back();
-            _dormantBuilders.pop_back();
-            _activeBuilders.insert(builder);
-            builder->bind(x, y);
-            return builder;
-        }
-        auto builder = new TileBuilder();
-        builder->_world = this;
-        builder->bind(x, y);
-        _activeBuilders.insert(builder);
-        return builder;
-    }
-    /*
-void setAgentParameters(float walkableSlopeAngle,
-                        float walkableClimb,
-                        float walkableRadius,
-                        float walkableHeight) {
-    _walkableSlopeAngle = walkableSlopeAngle;
-    _walkableClimb = walkableClimb;
-    _walkableRadius = walkableRadius;
-    _walkableHeight = walkableHeight;
-}
-
-void rebuildTile(int tx, int ty) {
-    int dataSize = 0;
-    unsigned char *data = buildTileMesh(tx, ty, _lastBuiltTileBmin, _lastBuiltTileBmax, dataSize);
-
-    // Remove any previous data (navmesh owns and deletes the data).
-    _navMesh.removeTile(_navMesh.getTileRefAt(tx, ty, 0), 0, 0);
-
-    // Add tile, or leave the location empty.
-    if (data) {
-        // Let the navmesh own the data.
-        dtStatus status = _navMesh.addTile(data, dataSize, DT_TILE_FREE_DATA, 0, 0);
-        if (dtStatusFailed(status))
-            dtFree(data);
-    }
-}
-*/
-    static NavWorld *create(_h_float3 *origin, _h_float3 *dim, int tileSizeInCells, float cellSize, float cellHeight, int maxTiles, int maxPolys, int maxObstacles, AgentParameters *);
+    static NavWorld *create(h_float3 origin, h_float3 dim, int tileSizeInCells, float cellSize, float cellHeight, int maxTiles, int maxPolys, int maxObstacles, AgentParameters *);
 };
 
 #include "NavWorld.cpp"

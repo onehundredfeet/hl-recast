@@ -17,12 +17,16 @@ struct _h_float2 {
 	float x;
 	float y;
 };
+typedef _h_float2 *h_float2;
+typedef _h_float2 *h_float2_array;
 
 struct _h_float3 {
 	float x;
 	float y;
 	float z;
 };
+typedef _h_float3 *h_float3;
+typedef _h_float3 *h_float3_array;
 
 struct _h_float4 {
 	float x;
@@ -35,7 +39,10 @@ struct _h_float4 {
 struct _h_int2 {
 	int x;
 	int y;
+
 };
+typedef _h_int2 *h_int2;
+typedef _h_int2 *h_int2_array;
 
 struct _h_int3 {
 	int x;
