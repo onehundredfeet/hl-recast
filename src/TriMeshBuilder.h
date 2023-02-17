@@ -18,9 +18,9 @@ public:
 
     void reserve(int verts, int tris);
 	
-    void addVertex(float x, float y, float z);
+    int addVertex(float x, float y, float z);
     
-    void addTriangle(int a, int b, int c);
+    int addTriangle(int a, int b, int c);
     void setNormal(int tidx, float x, float y, float z);
     void setFlags(int tidx, unsigned short flags);
 	

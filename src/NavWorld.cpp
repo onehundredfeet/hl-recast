@@ -100,8 +100,8 @@ void NavWorld::TileBuilder::bind(int x, int y) {
     rcVcopy(_solid.bmax, _bmax);
 }
 
-bool NavWorld::SourcePolyChunk::finalize() {
-    return _partition.partition(_mesh.getVerts(), _mesh.getTris(), _mesh.getTriCount(), _world->_maxTrisPerPartitionChunk);
+bool NavWorld::SourceTriChunk::finalize() {
+    return _partition.partition(_mesh.getVerts(), _mesh.getTris(), _mesh.getTriCount(), _maxTrisPerPartitionChunk);
 }
 
 bool NavWorld::TileBuilder::buildTileColumnCacheData() {

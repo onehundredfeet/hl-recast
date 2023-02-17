@@ -573,11 +573,11 @@ HL_PRIM void HL_NAME(TriMeshBuilder_delete)( pref<TriMeshBuilder>* _this ) {
 	free_ref(_this );
 }
 DEFINE_PRIM(_VOID, TriMeshBuilder_delete, _IDL);
-static void finalize_SourcePolyChunk( pref<NavWorld::SourcePolyChunk>* _this ) { free_ref(_this ); }
-HL_PRIM void HL_NAME(SourcePolyChunk_delete)( pref<NavWorld::SourcePolyChunk>* _this ) {
+static void finalize_SourceTriChunk( pref<NavWorld::SourceTriChunk>* _this ) { free_ref(_this ); }
+HL_PRIM void HL_NAME(SourceTriChunk_delete)( pref<NavWorld::SourceTriChunk>* _this ) {
 	free_ref(_this );
 }
-DEFINE_PRIM(_VOID, SourcePolyChunk_delete, _IDL);
+DEFINE_PRIM(_VOID, SourceTriChunk_delete, _IDL);
 static void finalize_TileBuilder( pref<NavWorld::TileBuilder>* _this ) { free_ref(_this ); }
 HL_PRIM void HL_NAME(TileBuilder_delete)( pref<NavWorld::TileBuilder>* _this ) {
 	free_ref(_this );
@@ -1013,10 +1013,10 @@ HL_PRIM int HL_NAME(TriMeshBuilder_getTriCount0)(pref<TriMeshBuilder>* _this) {
 }
 DEFINE_PRIM(_I32, TriMeshBuilder_getTriCount0, _IDL);
 
-HL_PRIM void HL_NAME(TriMeshBuilder_addVertex3)(pref<TriMeshBuilder>* _this, float x, float y, float z) {
-	(_unref(_this)->addVertex(x, y, z));
+HL_PRIM int HL_NAME(TriMeshBuilder_addVertex3)(pref<TriMeshBuilder>* _this, float x, float y, float z) {
+	return (_unref(_this)->addVertex(x, y, z));
 }
-DEFINE_PRIM(_VOID, TriMeshBuilder_addVertex3, _IDL _F32 _F32 _F32);
+DEFINE_PRIM(_I32, TriMeshBuilder_addVertex3, _IDL _F32 _F32 _F32);
 
 HL_PRIM void HL_NAME(TriMeshBuilder_setNormal4)(pref<TriMeshBuilder>* _this, int vidx, float x, float y, float z) {
 	(_unref(_this)->setNormal(vidx, x, y, z));
@@ -1033,25 +1033,30 @@ HL_PRIM void HL_NAME(TriMeshBuilder_setFlags2)(pref<TriMeshBuilder>* _this, int 
 }
 DEFINE_PRIM(_VOID, TriMeshBuilder_setFlags2, _IDL _I32 _I32);
 
-HL_PRIM pref<TriMeshBuilder>* HL_NAME(SourcePolyChunk_mesh0)(pref<NavWorld::SourcePolyChunk>* _this) {
+HL_PRIM pref<NavWorld::SourceTriChunk>* HL_NAME(SourceTriChunk_new1)(int maxTrisPerPartitionChunk) {
+	return alloc_ref((new NavWorld::SourceTriChunk(maxTrisPerPartitionChunk)),SourceTriChunk);
+}
+DEFINE_PRIM(_IDL, SourceTriChunk_new1, _I32);
+
+HL_PRIM pref<TriMeshBuilder>* HL_NAME(SourceTriChunk_mesh0)(pref<NavWorld::SourceTriChunk>* _this) {
 	return alloc_ref((_unref(_this)->meshPtr()),TriMeshBuilder);
 }
-DEFINE_PRIM(_IDL, SourcePolyChunk_mesh0, _IDL);
+DEFINE_PRIM(_IDL, SourceTriChunk_mesh0, _IDL);
 
-HL_PRIM bool HL_NAME(SourcePolyChunk_finalize0)(pref<NavWorld::SourcePolyChunk>* _this) {
+HL_PRIM bool HL_NAME(SourceTriChunk_finalize0)(pref<NavWorld::SourceTriChunk>* _this) {
 	return (_unref(_this)->finalize());
 }
-DEFINE_PRIM(_BOOL, SourcePolyChunk_finalize0, _IDL);
+DEFINE_PRIM(_BOOL, SourceTriChunk_finalize0, _IDL);
 
-HL_PRIM bool HL_NAME(SourcePolyChunk_isEnabled0)(pref<NavWorld::SourcePolyChunk>* _this) {
+HL_PRIM bool HL_NAME(SourceTriChunk_isEnabled0)(pref<NavWorld::SourceTriChunk>* _this) {
 	return (_unref(_this)->isEnabled());
 }
-DEFINE_PRIM(_BOOL, SourcePolyChunk_isEnabled0, _IDL);
+DEFINE_PRIM(_BOOL, SourceTriChunk_isEnabled0, _IDL);
 
-HL_PRIM void HL_NAME(SourcePolyChunk_setEnabled1)(pref<NavWorld::SourcePolyChunk>* _this, bool enabled) {
+HL_PRIM void HL_NAME(SourceTriChunk_setEnabled1)(pref<NavWorld::SourceTriChunk>* _this, bool enabled) {
 	(_unref(_this)->setEnabled(enabled));
 }
-DEFINE_PRIM(_VOID, SourcePolyChunk_setEnabled1, _IDL _BOOL);
+DEFINE_PRIM(_VOID, SourceTriChunk_setEnabled1, _IDL _BOOL);
 
 HL_PRIM int HL_NAME(TileBuilder_x0)(pref<NavWorld::TileBuilder>* _this) {
 	return (_unref(_this)->x());
@@ -1288,8 +1293,8 @@ HL_PRIM pref<NavWorld>* HL_NAME(NavWorld_create9)(h_float3 origin, h_float3 dim,
 }
 DEFINE_PRIM(_IDL, NavWorld_create9, _STRUCT _STRUCT _I32 _F32 _F32 _I32 _I32 _I32 _IDL);
 
-HL_PRIM HL_CONST pref<NavWorld::SourcePolyChunk>* HL_NAME(NavWorld_addChunk0)(pref<NavWorld>* _this) {
-	return alloc_ref_const((_unref(_this)->addChunk()),SourcePolyChunk);
+HL_PRIM HL_CONST pref<NavWorld::SourceTriChunk>* HL_NAME(NavWorld_addChunk0)(pref<NavWorld>* _this) {
+	return alloc_ref_const((_unref(_this)->addChunk()),SourceTriChunk);
 }
 DEFINE_PRIM(_IDL, NavWorld_addChunk0, _IDL);
 

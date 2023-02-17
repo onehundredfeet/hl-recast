@@ -64,12 +64,11 @@ void TriMeshBuilder::setTris(int *tris, int count) {
     }
 }
 
-void TriMeshBuilder::addVertex(float x, float y, float z) {
+int TriMeshBuilder::addVertex(float x, float y, float z) {
     _verts.push_back(x);
     _verts.push_back(y);
     _verts.push_back(z);
-    _vertCount++;
-
+    return _vertCount++;
 }
 void TriMeshBuilder::setNormal(int idx, float x, float y, float z) {
     _normals[idx] = x;
@@ -77,7 +76,7 @@ void TriMeshBuilder::setNormal(int idx, float x, float y, float z) {
     _normals[idx + 2] = z;
 }
 
-void TriMeshBuilder::addTriangle(int a, int b, int c) {
+int  TriMeshBuilder::addTriangle(int a, int b, int c) {
     _tris.push_back(a);
     _tris.push_back(b);
     _tris.push_back(c);
@@ -88,7 +87,7 @@ void TriMeshBuilder::addTriangle(int a, int b, int c) {
     
     _flags.push_back(0);
     
-    _triCount++;
+    return _triCount++;
 }
 
 void TriMeshBuilder::setFlags(int idx, unsigned short flags) {
