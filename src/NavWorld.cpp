@@ -100,7 +100,7 @@ void NavWorld::TileBuilder::bind(int x, int y) {
     rcVcopy(_solid.bmax, _bmax);
 }
 
-bool NavWorld::SourceTriChunk::finalize() {
+bool SourceTriChunk::finalize() {
     return _partition.partition(_mesh.getVerts(), _mesh.getTris(), _mesh.getTriCount(), _maxTrisPerPartitionChunk);
 }
 
@@ -141,9 +141,10 @@ bool NavWorld::TileBuilder::buildTileColumnCacheData() {
             const int *tris = &chunk.partition().tris[node.i * 3];
             const int ntris = node.n;
 
-            memset(&_triAreas[0], 0, ntris * sizeof(unsigned char));
-            rcMarkWalkableTriangles(&_context, _world->_agentParams.walkableSlopeAngle,
-                                    verts, nverts, tris, ntris, &_triAreas[0]);
+            //memset(&_triAreas[0], 0, ntris * sizeof(unsigned char));
+            // This isn't particulary meaningful.
+//            rcMarkWalkableTriangles(&_context, _world->_agentParams.walkableSlopeAngle,
+  //                                  verts, nverts, tris, ntris, &_triAreas[0]);
 
             if (!rcRasterizeTriangles(&_context, verts, nverts, tris, &_triAreas[0], ntris, _solid, _world->_agentParams.walkableClimb))
                 return false;
@@ -301,6 +302,7 @@ void NavWorld::getTileRegion(h_float2 bmin, h_float2 bmax, h_int2 tmin, h_int2 t
     tmax->y = dtClamp(tmax->y, tmin->y, _tileCountHeight - 1);
 }
 
+
 void NavWorld::retire(TileBuilder *builder) {
     builder->reset();
     _dormantBuilders.push_back(builder);
@@ -387,6 +389,21 @@ dtStatus NavWorld::QueryWorker::findNearestPoly() {
     if (_nearestPoly == 0) return DT_FAILURE;
     return x;
 }
+dtStatus NavWorld::QueryWorker::findEndPoints(h_float3 start, h_float3 end, h_float3 halfExtents) {
+    auto x = _query.findNearestPoly(&start->x, &halfExtents->x, &_filter, &_nearestPoly, &_nearestPoint.x);
+    if (_nearestPoly == 0 || !dtStatusSucceed(x)) return DT_FAILURE;
+     _startPoly = _nearestPoly;
+    _startPoint = _nearestPoint;
+
+    _nearestPoly = 0;
+    
+    x = _query.findNearestPoly(&end->x, &halfExtents->x, &_filter, &_nearestPoly, &_nearestPoint.x);
+    if (_nearestPoly == 0 || !dtStatusSucceed(x)) return DT_FAILURE;
+     _endPoly = _nearestPoly;
+    _endPoint = _nearestPoint;
+
+    return DT_SUCCESS;
+}
 
 dtPolyRef NavWorld::QueryWorker::nearestPoly() {
     return _nearestPoly;
@@ -427,6 +444,10 @@ int NavWorld::QueryWorker::pathLength() {
 
 void NavWorld::QueryWorker::getPathNodes(dtPolyRef *nodes) {
     memcpy(nodes, _path.data(), _pathLength * sizeof(dtPolyRef));
+}
+
+int  NavWorld::QueryWorker::getPathNode(int i) {
+    return _path[i];
 }
 
 dtStatus NavWorld::QueryWorker::straightenPath() {

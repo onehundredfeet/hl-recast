@@ -573,8 +573,8 @@ HL_PRIM void HL_NAME(TriMeshBuilder_delete)( pref<TriMeshBuilder>* _this ) {
 	free_ref(_this );
 }
 DEFINE_PRIM(_VOID, TriMeshBuilder_delete, _IDL);
-static void finalize_SourceTriChunk( pref<NavWorld::SourceTriChunk>* _this ) { free_ref(_this ); }
-HL_PRIM void HL_NAME(SourceTriChunk_delete)( pref<NavWorld::SourceTriChunk>* _this ) {
+static void finalize_SourceTriChunk( pref<SourceTriChunk>* _this ) { free_ref(_this ); }
+HL_PRIM void HL_NAME(SourceTriChunk_delete)( pref<SourceTriChunk>* _this ) {
 	free_ref(_this );
 }
 DEFINE_PRIM(_VOID, SourceTriChunk_delete, _IDL);
@@ -1023,37 +1023,42 @@ HL_PRIM void HL_NAME(TriMeshBuilder_setNormal4)(pref<TriMeshBuilder>* _this, int
 }
 DEFINE_PRIM(_VOID, TriMeshBuilder_setNormal4, _IDL _I32 _F32 _F32 _F32);
 
-HL_PRIM void HL_NAME(TriMeshBuilder_addTriangle3)(pref<TriMeshBuilder>* _this, int a, int b, int c) {
-	(_unref(_this)->addTriangle(a, b, c));
+HL_PRIM int HL_NAME(TriMeshBuilder_addTriangle3)(pref<TriMeshBuilder>* _this, int a, int b, int c) {
+	return (_unref(_this)->addTriangle(a, b, c));
 }
-DEFINE_PRIM(_VOID, TriMeshBuilder_addTriangle3, _IDL _I32 _I32 _I32);
+DEFINE_PRIM(_I32, TriMeshBuilder_addTriangle3, _IDL _I32 _I32 _I32);
 
 HL_PRIM void HL_NAME(TriMeshBuilder_setFlags2)(pref<TriMeshBuilder>* _this, int tidx, int flags) {
 	(_unref(_this)->setFlags(tidx, flags));
 }
 DEFINE_PRIM(_VOID, TriMeshBuilder_setFlags2, _IDL _I32 _I32);
 
-HL_PRIM pref<NavWorld::SourceTriChunk>* HL_NAME(SourceTriChunk_new1)(int maxTrisPerPartitionChunk) {
-	return alloc_ref((new NavWorld::SourceTriChunk(maxTrisPerPartitionChunk)),SourceTriChunk);
+HL_PRIM void HL_NAME(TriMeshBuilder_setArea2)(pref<TriMeshBuilder>* _this, int tidx, int area) {
+	(_unref(_this)->setArea(tidx, area));
+}
+DEFINE_PRIM(_VOID, TriMeshBuilder_setArea2, _IDL _I32 _I32);
+
+HL_PRIM pref<SourceTriChunk>* HL_NAME(SourceTriChunk_new1)(int maxTrisPerPartitionChunk) {
+	return alloc_ref((new SourceTriChunk(maxTrisPerPartitionChunk)),SourceTriChunk);
 }
 DEFINE_PRIM(_IDL, SourceTriChunk_new1, _I32);
 
-HL_PRIM pref<TriMeshBuilder>* HL_NAME(SourceTriChunk_mesh0)(pref<NavWorld::SourceTriChunk>* _this) {
-	return alloc_ref((_unref(_this)->meshPtr()),TriMeshBuilder);
+HL_PRIM HL_CONST pref<TriMeshBuilder>* HL_NAME(SourceTriChunk_mesh0)(pref<SourceTriChunk>* _this) {
+	return alloc_ref_const((_unref(_this)->meshPtr()),TriMeshBuilder);
 }
 DEFINE_PRIM(_IDL, SourceTriChunk_mesh0, _IDL);
 
-HL_PRIM bool HL_NAME(SourceTriChunk_finalize0)(pref<NavWorld::SourceTriChunk>* _this) {
+HL_PRIM bool HL_NAME(SourceTriChunk_finalize0)(pref<SourceTriChunk>* _this) {
 	return (_unref(_this)->finalize());
 }
 DEFINE_PRIM(_BOOL, SourceTriChunk_finalize0, _IDL);
 
-HL_PRIM bool HL_NAME(SourceTriChunk_isEnabled0)(pref<NavWorld::SourceTriChunk>* _this) {
+HL_PRIM bool HL_NAME(SourceTriChunk_isEnabled0)(pref<SourceTriChunk>* _this) {
 	return (_unref(_this)->isEnabled());
 }
 DEFINE_PRIM(_BOOL, SourceTriChunk_isEnabled0, _IDL);
 
-HL_PRIM void HL_NAME(SourceTriChunk_setEnabled1)(pref<NavWorld::SourceTriChunk>* _this, bool enabled) {
+HL_PRIM void HL_NAME(SourceTriChunk_setEnabled1)(pref<SourceTriChunk>* _this, bool enabled) {
 	(_unref(_this)->setEnabled(enabled));
 }
 DEFINE_PRIM(_VOID, SourceTriChunk_setEnabled1, _IDL _BOOL);
@@ -1143,6 +1148,11 @@ HL_PRIM int HL_NAME(QueryWorker_findNearestPoly0)(pref<NavWorld::QueryWorker>* _
 }
 DEFINE_PRIM(_I32, QueryWorker_findNearestPoly0, _IDL);
 
+HL_PRIM int HL_NAME(QueryWorker_findEndPoints3)(pref<NavWorld::QueryWorker>* _this, h_float3 start, h_float3 end, h_float3 halfExtents) {
+	return HL_NAME(DtStatus_valueToIndex1)(_unref(_this)->findEndPoints((h_float3)start, (h_float3)end, (h_float3)halfExtents));
+}
+DEFINE_PRIM(_I32, QueryWorker_findEndPoints3, _IDL _STRUCT _STRUCT _STRUCT);
+
 HL_PRIM unsigned int HL_NAME(QueryWorker_nearestPoly0)(pref<NavWorld::QueryWorker>* _this) {
 	return (_unref(_this)->nearestPoly());
 }
@@ -1197,6 +1207,11 @@ HL_PRIM void HL_NAME(QueryWorker_getPathNodes1)(pref<NavWorld::QueryWorker>* _th
 	(_unref(_this)->getPathNodes((unsigned int*)nodes));
 }
 DEFINE_PRIM(_VOID, QueryWorker_getPathNodes1, _IDL _BYTES);
+
+HL_PRIM int HL_NAME(QueryWorker_getPathNode1)(pref<NavWorld::QueryWorker>* _this, int i) {
+	return (_unref(_this)->getPathNode(i));
+}
+DEFINE_PRIM(_I32, QueryWorker_getPathNode1, _IDL _I32);
 
 HL_PRIM int HL_NAME(QueryWorker_straightenPath0)(pref<NavWorld::QueryWorker>* _this) {
 	return HL_NAME(DtStatus_valueToIndex1)(_unref(_this)->straightenPath());
@@ -1293,10 +1308,15 @@ HL_PRIM pref<NavWorld>* HL_NAME(NavWorld_create9)(h_float3 origin, h_float3 dim,
 }
 DEFINE_PRIM(_IDL, NavWorld_create9, _STRUCT _STRUCT _I32 _F32 _F32 _I32 _I32 _I32 _IDL);
 
-HL_PRIM HL_CONST pref<NavWorld::SourceTriChunk>* HL_NAME(NavWorld_addChunk0)(pref<NavWorld>* _this) {
+HL_PRIM HL_CONST pref<SourceTriChunk>* HL_NAME(NavWorld_addChunk0)(pref<NavWorld>* _this) {
 	return alloc_ref_const((_unref(_this)->addChunk()),SourceTriChunk);
 }
 DEFINE_PRIM(_IDL, NavWorld_addChunk0, _IDL);
+
+HL_PRIM void HL_NAME(NavWorld_attachChunk1)(pref<NavWorld>* _this, pref<SourceTriChunk>* chunk) {
+	(_unref(_this)->attachChunk(_unref_ptr_safe(chunk)));
+}
+DEFINE_PRIM(_VOID, NavWorld_attachChunk1, _IDL _IDL);
 
 HL_PRIM HL_CONST pref<NavWorld::TileBuilder>* HL_NAME(NavWorld_getTileBuilder2)(pref<NavWorld>* _this, int x, int y) {
 	return alloc_ref_const((_unref(_this)->getTileBuilder(x, y)),TileBuilder);

@@ -23,7 +23,8 @@ public:
     int addTriangle(int a, int b, int c);
     void setNormal(int tidx, float x, float y, float z);
     void setFlags(int tidx, unsigned short flags);
-	
+	void setArea(int tidx, unsigned char area);
+
     // bulk
     void setVerts(float *verts, int count);
     void setTris(int *tris, int count);
@@ -39,6 +40,7 @@ private:
 	std::vector<int> _tris;
 	std::vector<float> _normals;
 	std::vector<unsigned short> _flags;
+	std::vector<unsigned char> _area;
 	int _vertCount;
 	int _triCount;
 };

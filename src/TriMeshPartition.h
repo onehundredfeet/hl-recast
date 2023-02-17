@@ -35,6 +35,7 @@ struct TriMeshPartition
 	TriMeshPartitionNode* nodes;
 	int nnodes;
 	int* tris;
+	unsigned char *areas;
 	int ntris;
 	int maxTrisPerChunk;
 

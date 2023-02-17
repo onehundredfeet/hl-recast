@@ -638,17 +638,19 @@ interface TriMeshBuilder {
 	int getVertCount();
 	int getTriCount();
 
-	void addVertex(float x, float y, float z);
+	int addVertex(float x, float y, float z);
     void setNormal(int vidx, float x, float y, float z);
     
-    void addTriangle(int a, int b, int c);
+    int addTriangle(int a, int b, int c);
     void setFlags(int tidx, int flags);
+	void setArea(int tidx, int area);
 };
 
-[Internal="NavWorld::SourcePolyChunk"]
-interface SourcePolyChunk {
-	[Internal="meshPtr"]
-	TriMeshBuilder mesh();
+[Internal="SourceTriChunk"]
+interface SourceTriChunk {
+	void SourceTriChunk(int maxTrisPerPartitionChunk);
+
+	[Internal="meshPtr", Const] TriMeshBuilder mesh();
 	bool finalize();
 	bool isEnabled();
 	void setEnabled(bool enabled);
@@ -684,6 +686,7 @@ interface QueryWorker {
 	void setQueryArea( float3 center, float3 halfExtents );
 
 	DtStatus findNearestPoly();
+	DtStatus findEndPoints(float3 start, float3 end, float3 halfExtents);
 	PolyRef nearestPoly();
 	void getNearestPoint(float3 point);
 	bool centerOverNearestPoly();
@@ -699,6 +702,7 @@ interface QueryWorker {
 	DtStatus findPath();
 	int pathLength();
 	void getPathNodes( PolyRef *nodes );
+	int getPathNode(int i);
 
 	DtStatus straightenPath();
 	int straightPathLength();
@@ -731,7 +735,10 @@ interface AgentParameters {
 
 interface NavWorld {
 	[Static, Internal="NavWorld::create"] NavWorld create(float3 origin, float3 dim, int tileSizeInCells, float cellSize, float cellHeight, int maxTiles, int maxPolys, int maxObstacles, AgentParameters agentParams);
-    [Const] SourcePolyChunk addChunk();
+    [Const] SourceTriChunk addChunk();
+
+	void attachChunk( SourceTriChunk chunk );
+
 	// This should likely be internal, but we'll see how it goes exposed
 	// Allows for easier threading this way.
     [Const] TileBuilder getTileBuilder(int x, int y);

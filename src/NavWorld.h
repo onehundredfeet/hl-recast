@@ -159,14 +159,9 @@ struct AgentParameters {
     float walkableRadius = 0.6f;
     float walkableHeight = 2.0f;
 };
-////////////////////////////////////////////////////////////////////////
-// NAV WORLD
-//////////////////////////////////////////////////////////////////////////
-// Derived from sample tile mesh
-class NavWorld {
-   public:
-    // Exposed types
-    class SourceTriChunk {
+
+class NavWorld;
+ class SourceTriChunk {
         friend NavWorld;
         // NavWorld *_world;
         TriMeshPartition _partition;
@@ -178,6 +173,8 @@ class NavWorld {
         SourceTriChunk(int maxTrisPerPartitionChunk) : _maxTrisPerPartitionChunk(maxTrisPerPartitionChunk) {
         }
 
+       ~SourceTriChunk() {
+        }
         bool finalize();
         bool isEnabled() { return _enabled; }
         bool setEnabled(bool v) { return _enabled = v; }
@@ -191,6 +188,15 @@ class NavWorld {
         const int *getTris() { return _mesh.getTris(); }
         int maxTrisPerChunk() { return _partition.maxTrisPerChunk; }
     };
+
+////////////////////////////////////////////////////////////////////////
+// NAV WORLD
+//////////////////////////////////////////////////////////////////////////
+// Derived from sample tile mesh
+class NavWorld {
+   public:
+    // Exposed types
+   
     class TileBuilder {
         rcContext _context;
         friend NavWorld;
@@ -276,6 +282,7 @@ class NavWorld {
         dtStatus findNearestPoly();
         dtPolyRef nearestPoly();
         void getNearestPoint(h_float3 point);
+    	dtStatus findEndPoints(h_float3 start, h_float3 end, h_float3 halfExtents);
         bool centerOverNearestPoly();
 
         void setCurrentAsStart();
@@ -289,6 +296,7 @@ class NavWorld {
         dtStatus findPath();
         int pathLength();
         void getPathNodes(dtPolyRef *nodes);
+        int getPathNode(int i);
 
         dtStatus straightenPath();
         int straightPathLength();
@@ -373,6 +381,7 @@ class NavWorld {
     float _lastBuiltTileBmax[3];
 
     std::vector<SourceTriChunk *> _chunks;
+    std::vector<SourceTriChunk *> _ownedChunks;
     std::set<TileBuilder *> _activeBuilders;
     std::vector<TileBuilder *> _dormantBuilders;
     std::vector<ConvexVolume> _convexVolumes;
@@ -385,6 +394,7 @@ class NavWorld {
     SourceTriChunk *addChunk() {
         auto layer = new SourceTriChunk(_maxTrisPerPartitionChunk);
         _chunks.push_back(layer);
+        _ownedChunks.push_back(layer);
         return layer;
     }
 

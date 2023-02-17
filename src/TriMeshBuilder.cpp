@@ -31,7 +31,8 @@ void TriMeshBuilder::reserve(int verts, int tris) {
     this->_verts.reserve(verts * 3);
     this->_tris.reserve(tris * 3);
     this->_normals.reserve(tris * 3);
-    this->_flags.reserve(verts);
+    this->_flags.reserve(tris);
+	this->_area.reserve(tris);
 
 }
 
@@ -49,6 +50,7 @@ void TriMeshBuilder::setVerts(float *verts, int count) {
 void TriMeshBuilder::setTris(int *tris, int count) {
     this->_tris.reserve(count * 3);
     this->_flags.reserve(count);
+	this->_area.reserve(count);
 
     for (int i = 0; i < count; i++) {
         this->_tris.push_back(tris[i * 3]);
@@ -61,6 +63,7 @@ void TriMeshBuilder::setTris(int *tris, int count) {
 
 
         this->_flags.push_back(0);
+		this->_area.push_back(RC_WALKABLE_AREA);
     }
 }
 
@@ -86,12 +89,17 @@ int  TriMeshBuilder::addTriangle(int a, int b, int c) {
     _normals.push_back(0.0f);
     
     _flags.push_back(0);
-    
+    _area.push_back(RC_WALKABLE_AREA);
+
     return _triCount++;
 }
 
 void TriMeshBuilder::setFlags(int idx, unsigned short flags) {
     _flags[idx] = flags;
+}
+
+void TriMeshBuilder::setArea(int tidx, unsigned char area) {
+	_area[tidx] = area;
 }
 
 static char* parseRow(char* buf, char* bufEnd, char* row, int len)
