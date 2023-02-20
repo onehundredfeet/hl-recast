@@ -16,45 +16,61 @@
 // 3. This notice may not be removed or altered from any source distribution.
 //
 
+// MOdifications by Ryan Cleven
+
 #ifndef _TRI_MESH_PARTITION_H_
 #define _TRI_MESH_PARTITION_H_
 #pragma once
-struct TriMeshPartitionNode
-{
-	float bmin[2];
-	float bmax[2];
-	int i;
-	int n;
+#include "hl-idl-helpers.hpp"
+
+struct TriMeshPartitionNode {
+    float bmin[2];
+    float bmax[2];
+    int i;
+    int n;
 };
 
-struct TriMeshPartition
-{
-	inline TriMeshPartition() : nodes(0), nnodes(0), tris(0), ntris(0), maxTrisPerChunk(0) {};
-	inline ~TriMeshPartition() { delete [] nodes; delete [] tris; }
+struct TriMeshPartition {
+    static const int MAX_TRIS_PER_NODE = 32;
+    inline TriMeshPartition() : nodes(0), nnodes(0), tris(0), ntris(0), maxTrisPerChunk(0){};
+    inline ~TriMeshPartition() {
+        delete[] nodes;
+        delete[] tris;
+    }
 
-	TriMeshPartitionNode* nodes;
-	int nnodes;
-	int* tris;
-	unsigned char *areas;
-	int ntris;
-	int maxTrisPerChunk;
+    TriMeshPartitionNode* nodes;
+    int nnodes;
+    int* tris;
+    unsigned char* areas;
+    int ntris;
+    int maxTrisPerChunk;
 
-	/// Creates partitioned triangle mesh (AABB tree),
-	/// where each node contains at max trisPerChunk triangles.
-	bool partition(const float* verts, const int* tris, int ntris, int trisPerChunk);
+    int getNodeCount() { return nnodes; }
+    int getTriCount() { return ntris; }
 
-	/// Returns the chunk indices which overlap the input rectable.
-	int getChunksOverlappingRect(float bmin[2], float bmax[2], int* ids, const int maxIds);
+    void getBounds(h_float2 bmin, h_float2 bmax) {
+        if (nnodes > 0) {
+            bmin->x = nodes[0].bmin[0];
+            bmin->y = nodes[0].bmin[1];
+            bmax->x = nodes[0].bmax[0];
+            bmax->y = nodes[0].bmax[1];
+        }
+    }
+    /// Creates partitioned triangle mesh (AABB tree),
+    /// where each node contains at max trisPerChunk triangles.
+    bool partition(const float* verts, const int* tris, int ntris, int trisPerChunk);
 
-	/// Returns the chunk indices which overlap the input segment.
-	int getChunksOverlappingSegment(float p[2], float q[2], int* ids, const int maxIds);
+    /// Returns the chunk indices which overlap the input rectable.
+    int getChunksOverlappingRect(float bmin[2], float bmax[2], int* ids, const int maxIds);
 
+    /// Returns the chunk indices which overlap the input segment.
+    int getChunksOverlappingSegment(float p[2], float q[2], int* ids, const int maxIds);
 
-private:
-	// Explicitly disabled copy constructor and copy assignment operator.
-	TriMeshPartition(const TriMeshPartition&);
-	TriMeshPartition& operator=(const TriMeshPartition&);
+   private:
+    // Explicitly disabled copy constructor and copy assignment operator.
+    TriMeshPartition(const TriMeshPartition&);
+    TriMeshPartition& operator=(const TriMeshPartition&);
 };
 
 #include "TriMeshPartition.cpp"
-#endif // CHUNKYTRIMESH_H
+#endif  // CHUNKYTRIMESH_H

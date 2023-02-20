@@ -1,7 +1,7 @@
 #ifndef __H_RECAST_H_
 #define __H_RECAST_H_
 
-// #include <DebugDraw.h>
+ #include <DebugDraw.h>
 #include <DetourAlloc.h>
 #include <DetourCommon.h>
 #include <DetourDebugDraw.h>
@@ -81,7 +81,6 @@ inline void setToOne(int *a, float *b, double *c, bool *d) {
     *d = true;
 }
 
-/*
 class dtMeshCapture : public duDebugDraw {
    public:
     struct float3 {
@@ -241,7 +240,7 @@ class dtMeshCapture : public duDebugDraw {
         }
     }
 };
-*/
+
 
 
 static unsigned short MESH_NULL_IDX = 0xffff;
@@ -553,7 +552,7 @@ private:
 	
 */
 
-/*
+
 void dtMeshCapture::captureNavMesh(const dtNavMesh &nm, unsigned short flags) {
     duDebugDrawNavMeshPolysWithFlags(this, nm, flags, 0xffffffff);
 }
@@ -614,6 +613,6 @@ void dtMeshCapture::vertex(const float x, const float y, const float z, unsigned
 
 /// End drawing primitives.
 void dtMeshCapture::end() {}
-*/
+
 
 #endif

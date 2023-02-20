@@ -161,33 +161,36 @@ struct AgentParameters {
 };
 
 class NavWorld;
- class SourceTriChunk {
-        friend NavWorld;
-        // NavWorld *_world;
-        TriMeshPartition _partition;
-        TriMeshBuilder _mesh;
-        bool _enabled = true;
-        int _maxTrisPerPartitionChunk;
+class SourceTriChunk {
+    friend NavWorld;
+    // NavWorld *_world;
+    TriMeshPartition _partition;
+    TriMeshBuilder _mesh;
+    bool _enabled = true;
+    int _maxTrisPerPartitionChunk;
 
-       public:
-        SourceTriChunk(int maxTrisPerPartitionChunk) : _maxTrisPerPartitionChunk(maxTrisPerPartitionChunk) {
-        }
+   public:
+    SourceTriChunk(int maxTrisPerPartitionChunk) : _maxTrisPerPartitionChunk(maxTrisPerPartitionChunk) {
+    }
 
-       ~SourceTriChunk() {
-        }
-        bool finalize();
-        bool isEnabled() { return _enabled; }
-        bool setEnabled(bool v) { return _enabled = v; }
-        TriMeshBuilder &mesh() { return _mesh; }
-        TriMeshBuilder *meshPtr() { return &_mesh; }
-        TriMeshPartition &partition() { return _partition; }
-        TriMeshPartition *partitionPtr() { return &_partition; }
-        int getVertCount() { return _mesh.getVertCount(); }
-        int getTriCount() { return _mesh.getTriCount(); }
-        const float *getVerts() { return _mesh.getVerts(); }
-        const int *getTris() { return _mesh.getTris(); }
-        int maxTrisPerChunk() { return _partition.maxTrisPerChunk; }
-    };
+    ~SourceTriChunk() {
+    }
+    bool finalize();
+    bool isEnabled() { return _enabled; }
+    bool setEnabled(bool v) { return _enabled = v; }
+    TriMeshBuilder &mesh() { return _mesh; }
+    TriMeshBuilder *meshPtr() { return &_mesh; }
+    TriMeshPartition &partition() { return _partition; }
+    TriMeshPartition *partitionPtr() { return &_partition; }
+    int getVertCount() { return _mesh.getVertCount(); }
+    int getTriCount() { return _mesh.getTriCount(); }
+    const float *getVerts() { return _mesh.getVerts(); }
+    const int *getTris() { return _mesh.getTris(); }
+    void getAllVerts(float *verts) { memcpy(verts, _mesh.getVerts(), _mesh.getVertCount() * sizeof(float) * 3); }
+    void getAllTris(int *tris) { memcpy(tris, _mesh.getTris(), _mesh.getTriCount() * sizeof(int) * 3); }
+    int getMaxNodeTris() { return _partition.maxTrisPerChunk; }
+    inline void getBounds(h_float2 bmin, h_float2 bmax) { return _partition.getBounds(bmin, bmax); }
+};
 
 ////////////////////////////////////////////////////////////////////////
 // NAV WORLD
@@ -196,7 +199,7 @@ class NavWorld;
 class NavWorld {
    public:
     // Exposed types
-   
+
     class TileBuilder {
         rcContext _context;
         friend NavWorld;
@@ -207,6 +210,8 @@ class NavWorld {
         FastLZCompressor _tcomp;
         RemapProcessor _tmproc;
         rcHeightfieldLayerSet _lset;
+
+        static const int DEFAULT_TEMP_MEMORY = 256 * 1024;
 
         // rcConfig _cfg;
         float _bmin[3];
@@ -243,7 +248,7 @@ class NavWorld {
         int y() const { return _y; }
 
         // Not sure how much to put in here
-        TileBuilder() : _talloc(32 * 1024) {
+        TileBuilder() : _talloc(DEFAULT_TEMP_MEMORY) {
             _chunkIds.resize(MAX_CHUNKS);
         }
         ~TileBuilder() {
@@ -281,8 +286,11 @@ class NavWorld {
 
         dtStatus findNearestPoly();
         dtPolyRef nearestPoly();
+        dtPolyRef startPoly();
+        dtPolyRef endPoly();
+
         void getNearestPoint(h_float3 point);
-    	dtStatus findEndPoints(h_float3 start, h_float3 end, h_float3 halfExtents);
+        dtStatus findEndPoints(h_float3 start, h_float3 end, h_float3 halfExtents);
         bool centerOverNearestPoly();
 
         void setCurrentAsStart();
@@ -310,6 +318,7 @@ class NavWorld {
 
         void retire();
         void reset();
+        std::string getLastError();
 
        private:
         QueryWorker(NavWorld *);
@@ -317,6 +326,9 @@ class NavWorld {
         dtNavMeshQuery _query;
         friend NavWorld;
         NavWorld *_world;
+
+        dtStatus _lastStatus;
+        std::string _plastError;
 
         _h_float3 _center;
         _h_float3 _halfExtents;
@@ -340,15 +352,16 @@ class NavWorld {
     int maxTrisPerChunk() {
         int maxTris = 0;
         for (auto chunk : _chunks) {
-            maxTris = std::max(maxTris, chunk->maxTrisPerChunk());
+            maxTris = std::max(maxTris, chunk->getMaxNodeTris());
         }
         return maxTris;
     }
 
-    static const int DEFAULT_TEMP_MEMORY = 64 * 1024;
+    static const int DEFAULT_TEMP_MEMORY = 128 * 1024;
     NavWorld() : _talloc(DEFAULT_TEMP_MEMORY) {
         _maxTrisPerPartitionChunk = DEFAULT_TRIS_PER_PARTITION_CHUNK;
     }
+    int nonEmptyChunks();
 
    private:
     dtNavMesh _navMesh;
@@ -405,6 +418,7 @@ class NavWorld {
     void getTileRegion(h_float2 bmin, h_float2 bmax, h_int2 tmin, h_int2 tmax);
     TileBuilder *getTileBuilder(int x, int y);
     QueryWorker *getQueryWorker();
+    dtMeshCapture *meshSnapshot();
 
     static NavWorld *create(h_float3 origin, h_float3 dim, int tileSizeInCells, float cellSize, float cellHeight, int maxTiles, int maxPolys, int maxObstacles, AgentParameters *);
 };

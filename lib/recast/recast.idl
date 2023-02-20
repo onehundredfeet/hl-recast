@@ -109,6 +109,7 @@ interface TriMeshPartition {
 	[CObject]
 	int getNodeTriCount(int nodeIdx);
 
+	void getBounds(float2 bmin, float2 bmax);
 	//[CObject, Cast="vbyte *"]
 	//int *getTriVertIndices(int nodeTriIndex);
 
@@ -654,6 +655,15 @@ interface SourceTriChunk {
 	bool finalize();
 	bool isEnabled();
 	void setEnabled(bool enabled);
+
+	int getVertCount();
+    int getTriCount();
+
+	void getAllVerts( float *verts );
+	void getAllTris( int *tris );
+
+	int getMaxNodeTris(); // result
+	void getBounds(float2 bmin, float2 bmax);
 };
 
 [Internal="NavWorld::TileBuilder"]
@@ -672,6 +682,7 @@ interface TileBuilder {
 
 	//takes cached data and over-writes the tile data
 	bool inflate();	
+
 };
 
 [Internal="NavWorld::QueryWorker"]
@@ -688,6 +699,8 @@ interface QueryWorker {
 	DtStatus findNearestPoly();
 	DtStatus findEndPoints(float3 start, float3 end, float3 halfExtents);
 	PolyRef nearestPoly();
+	PolyRef startPoly();
+	PolyRef endPoly();
 	void getNearestPoint(float3 point);
 	bool centerOverNearestPoly();
 
@@ -715,6 +728,8 @@ interface QueryWorker {
 	PolyRef getStraightPathNodePoly(int i);
 
 	void retire();
+
+	String getLastError();
 };
 
 //
@@ -747,6 +762,9 @@ interface NavWorld {
 
 	void getTileRegion( float2 in_bmin, float2 in_bmax, int2 out_tmin, int2 out_tmax);
 
+	int nonEmptyChunks();
+
+	MeshCapture meshSnapshot();
 };
 
 
@@ -985,16 +1003,6 @@ interface PerformanceTimer {
 	double deltaMilliseconds();
 	double deltaMicroseconds();
 };
-/*
-[NoDelete]
-interface Tests {
-	[Static, Internal="setToZero"]
-	void setToZero( [Out] int a, [Out] float b, [Out] double c, [Out] bool d);
-	[Static, Internal="setToOne"]
-	void setToOne( [Out] int a, [Out] float b, [Out] double c, [Out] bool d);
-};
-
-
 
 [Internal="dtMeshCapture"]
 interface MeshCapture {
@@ -1008,8 +1016,20 @@ interface MeshCapture {
 	long numSurfacePrims();
 	boolean isSurface();
 	void getVert(int idx, [Cast="float*"]float3 pos  ); 
-
 };
+
+/*
+[NoDelete]
+interface Tests {
+	[Static, Internal="setToZero"]
+	void setToZero( [Out] int a, [Out] float b, [Out] double c, [Out] bool d);
+	[Static, Internal="setToOne"]
+	void setToOne( [Out] int a, [Out] float b, [Out] double c, [Out] bool d);
+};
+
+
+
+
 
 */
 

@@ -628,6 +628,11 @@ HL_PRIM void HL_NAME(PerformanceTimer_delete)( pref<PerformanceTimer>* _this ) {
 	free_ref(_this );
 }
 DEFINE_PRIM(_VOID, PerformanceTimer_delete, _IDL);
+static void finalize_MeshCapture( pref<dtMeshCapture>* _this ) { free_ref(_this ); }
+HL_PRIM void HL_NAME(MeshCapture_delete)( pref<dtMeshCapture>* _this ) {
+	free_ref(_this );
+}
+DEFINE_PRIM(_VOID, MeshCapture_delete, _IDL);
 static void finalize_NavTileConverter( pref<NavTileConverter>* _this ) { free_ref(_this ); }
 HL_PRIM void HL_NAME(NavTileConverter_delete)( pref<NavTileConverter>* _this ) {
 	free_ref(_this );
@@ -657,6 +662,11 @@ HL_PRIM int HL_NAME(TriMeshPartition_getNodeTriCount1)(pref<TriMeshPartition>* _
 	return (getNodeTriCount( _unref(_this) , nodeIdx));
 }
 DEFINE_PRIM(_I32, TriMeshPartition_getNodeTriCount1, _IDL _I32);
+
+HL_PRIM void HL_NAME(TriMeshPartition_getBounds2)(pref<TriMeshPartition>* _this, h_float2 bmin, h_float2 bmax) {
+	(_unref(_this)->getBounds((h_float2)bmin, (h_float2)bmax));
+}
+DEFINE_PRIM(_VOID, TriMeshPartition_getBounds2, _IDL _STRUCT _STRUCT);
 
 HL_PRIM int HL_NAME(TriMeshPartition_getChunksOverlappingRect4)(pref<TriMeshPartition>* _this, h_float2 bmin, h_float2 bmax, varray* ids, int maxIds) {
 	return (_unref(_this)->getChunksOverlappingRect((float*)(h_float2)bmin, (float*)(h_float2)bmax, hl_aptr(ids,int), maxIds));
@@ -1063,6 +1073,36 @@ HL_PRIM void HL_NAME(SourceTriChunk_setEnabled1)(pref<SourceTriChunk>* _this, bo
 }
 DEFINE_PRIM(_VOID, SourceTriChunk_setEnabled1, _IDL _BOOL);
 
+HL_PRIM int HL_NAME(SourceTriChunk_getVertCount0)(pref<SourceTriChunk>* _this) {
+	return (_unref(_this)->getVertCount());
+}
+DEFINE_PRIM(_I32, SourceTriChunk_getVertCount0, _IDL);
+
+HL_PRIM int HL_NAME(SourceTriChunk_getTriCount0)(pref<SourceTriChunk>* _this) {
+	return (_unref(_this)->getTriCount());
+}
+DEFINE_PRIM(_I32, SourceTriChunk_getTriCount0, _IDL);
+
+HL_PRIM void HL_NAME(SourceTriChunk_getAllVerts1)(pref<SourceTriChunk>* _this, vbyte* verts) {
+	(_unref(_this)->getAllVerts((float*)verts));
+}
+DEFINE_PRIM(_VOID, SourceTriChunk_getAllVerts1, _IDL _BYTES);
+
+HL_PRIM void HL_NAME(SourceTriChunk_getAllTris1)(pref<SourceTriChunk>* _this, vbyte* tris) {
+	(_unref(_this)->getAllTris((int*)tris));
+}
+DEFINE_PRIM(_VOID, SourceTriChunk_getAllTris1, _IDL _BYTES);
+
+HL_PRIM int HL_NAME(SourceTriChunk_getMaxNodeTris0)(pref<SourceTriChunk>* _this) {
+	return (_unref(_this)->getMaxNodeTris());
+}
+DEFINE_PRIM(_I32, SourceTriChunk_getMaxNodeTris0, _IDL);
+
+HL_PRIM void HL_NAME(SourceTriChunk_getBounds2)(pref<SourceTriChunk>* _this, h_float2 bmin, h_float2 bmax) {
+	(_unref(_this)->getBounds((h_float2)bmin, (h_float2)bmax));
+}
+DEFINE_PRIM(_VOID, SourceTriChunk_getBounds2, _IDL _STRUCT _STRUCT);
+
 HL_PRIM int HL_NAME(TileBuilder_x0)(pref<NavWorld::TileBuilder>* _this) {
 	return (_unref(_this)->x());
 }
@@ -1157,6 +1197,16 @@ HL_PRIM unsigned int HL_NAME(QueryWorker_nearestPoly0)(pref<NavWorld::QueryWorke
 	return (_unref(_this)->nearestPoly());
 }
 DEFINE_PRIM(_I32, QueryWorker_nearestPoly0, _IDL);
+
+HL_PRIM unsigned int HL_NAME(QueryWorker_startPoly0)(pref<NavWorld::QueryWorker>* _this) {
+	return (_unref(_this)->startPoly());
+}
+DEFINE_PRIM(_I32, QueryWorker_startPoly0, _IDL);
+
+HL_PRIM unsigned int HL_NAME(QueryWorker_endPoly0)(pref<NavWorld::QueryWorker>* _this) {
+	return (_unref(_this)->endPoly());
+}
+DEFINE_PRIM(_I32, QueryWorker_endPoly0, _IDL);
 
 HL_PRIM void HL_NAME(QueryWorker_getNearestPoint1)(pref<NavWorld::QueryWorker>* _this, h_float3 point) {
 	(_unref(_this)->getNearestPoint((h_float3)point));
@@ -1258,6 +1308,11 @@ HL_PRIM void HL_NAME(QueryWorker_retire0)(pref<NavWorld::QueryWorker>* _this) {
 }
 DEFINE_PRIM(_VOID, QueryWorker_retire0, _IDL);
 
+HL_PRIM vstring * HL_NAME(QueryWorker_getLastError0)(pref<NavWorld::QueryWorker>* _this) {
+	return hl_utf8_to_hlstr(_unref(_this)->getLastError());
+}
+DEFINE_PRIM(_STRING, QueryWorker_getLastError0, _IDL);
+
 HL_PRIM pref<AgentParameters>* HL_NAME(AgentParameters_new0)() {
 	return alloc_ref((new AgentParameters()),AgentParameters);
 }
@@ -1332,6 +1387,16 @@ HL_PRIM void HL_NAME(NavWorld_getTileRegion4)(pref<NavWorld>* _this, h_float2 in
 	(_unref(_this)->getTileRegion((h_float2)in_bmin, (h_float2)in_bmax, (h_int2)out_tmin, (h_int2)out_tmax));
 }
 DEFINE_PRIM(_VOID, NavWorld_getTileRegion4, _IDL _STRUCT _STRUCT _STRUCT _STRUCT);
+
+HL_PRIM int HL_NAME(NavWorld_nonEmptyChunks0)(pref<NavWorld>* _this) {
+	return (_unref(_this)->nonEmptyChunks());
+}
+DEFINE_PRIM(_I32, NavWorld_nonEmptyChunks0, _IDL);
+
+HL_PRIM pref<dtMeshCapture>* HL_NAME(NavWorld_meshSnapshot0)(pref<NavWorld>* _this) {
+	return alloc_ref((_unref(_this)->meshSnapshot()),MeshCapture);
+}
+DEFINE_PRIM(_IDL, NavWorld_meshSnapshot0, _IDL);
 
 HL_PRIM void HL_NAME(NavMesh_create5)(pref<NavMesh>* _this, h_float3 origin, float tileWidth, float tileHeight, int maxTiles, int maxPolys) {
 	(_unref(_this)->create((h_float3)origin, tileWidth, tileHeight, maxTiles, maxPolys));
@@ -1670,6 +1735,51 @@ HL_PRIM double HL_NAME(PerformanceTimer_deltaMicroseconds0)(pref<PerformanceTime
 	return (_unref(_this)->deltaMicroseconds());
 }
 DEFINE_PRIM(_F64, PerformanceTimer_deltaMicroseconds0, _IDL);
+
+HL_PRIM pref<dtMeshCapture>* HL_NAME(MeshCapture_new1)(bool isSurface) {
+	return alloc_ref((new dtMeshCapture(isSurface)),MeshCapture);
+}
+DEFINE_PRIM(_IDL, MeshCapture_new1, _BOOL);
+
+HL_PRIM void HL_NAME(MeshCapture_captureNavMesh2)(pref<dtMeshCapture>* _this, pref<NavMesh>* nm, int flags) {
+	(_unref(_this)->captureNavMesh(*_unref_ptr_safe(nm), flags));
+}
+DEFINE_PRIM(_VOID, MeshCapture_captureNavMesh2, _IDL _IDL _I32);
+
+HL_PRIM void HL_NAME(MeshCapture_captureHeightField1)(pref<dtMeshCapture>* _this, pref<rcHeightfield>* hf) {
+	(_unref(_this)->captureHeightField(*_unref_ptr_safe(hf)));
+}
+DEFINE_PRIM(_VOID, MeshCapture_captureHeightField1, _IDL _IDL);
+
+HL_PRIM void HL_NAME(MeshCapture_captureCompactHeightField1)(pref<dtMeshCapture>* _this, pref<rcCompactHeightfield>* chf) {
+	(_unref(_this)->captureCompactHeightField(*_unref_ptr_safe(chf)));
+}
+DEFINE_PRIM(_VOID, MeshCapture_captureCompactHeightField1, _IDL _IDL);
+
+HL_PRIM void HL_NAME(MeshCapture_captureHeighfieldLayerSet1)(pref<dtMeshCapture>* _this, pref<rcHeightfieldLayerSet>* hfls) {
+	(_unref(_this)->captureHeighfieldLayerSet(*_unref_ptr_safe(hfls)));
+}
+DEFINE_PRIM(_VOID, MeshCapture_captureHeighfieldLayerSet1, _IDL _IDL);
+
+HL_PRIM int HL_NAME(MeshCapture_numVerts0)(pref<dtMeshCapture>* _this) {
+	return (_unref(_this)->numVerts());
+}
+DEFINE_PRIM(_I32, MeshCapture_numVerts0, _IDL);
+
+HL_PRIM int HL_NAME(MeshCapture_numSurfacePrims0)(pref<dtMeshCapture>* _this) {
+	return (_unref(_this)->numSurfacePrims());
+}
+DEFINE_PRIM(_I32, MeshCapture_numSurfacePrims0, _IDL);
+
+HL_PRIM bool HL_NAME(MeshCapture_isSurface0)(pref<dtMeshCapture>* _this) {
+	return (_unref(_this)->isSurface());
+}
+DEFINE_PRIM(_BOOL, MeshCapture_isSurface0, _IDL);
+
+HL_PRIM void HL_NAME(MeshCapture_getVert2)(pref<dtMeshCapture>* _this, int idx, h_float3 pos) {
+	(_unref(_this)->getVert(idx, (float*)(h_float3)pos));
+}
+DEFINE_PRIM(_VOID, MeshCapture_getVert2, _IDL _I32 _STRUCT);
 
 HL_PRIM pref<NavTileConverter>* HL_NAME(NavTileConverter_new0)() {
 	return alloc_ref((new NavTileConverter()),NavTileConverter);

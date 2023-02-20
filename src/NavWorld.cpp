@@ -104,6 +104,16 @@ bool SourceTriChunk::finalize() {
     return _partition.partition(_mesh.getVerts(), _mesh.getTris(), _mesh.getTriCount(), _maxTrisPerPartitionChunk);
 }
 
+int NavWorld::nonEmptyChunks() {
+    int nonEmpty = 0;
+    for (auto &chunk : _chunks) {
+        if (chunk->getVertCount() > 0) {
+            nonEmpty++;
+        }
+    }
+    return nonEmpty;
+}
+
 bool NavWorld::TileBuilder::buildTileColumnCacheData() {
     const int tx = _x;
     const int ty = _y;
@@ -117,8 +127,11 @@ bool NavWorld::TileBuilder::buildTileColumnCacheData() {
 
     for (int i = 0; i < _world->_chunks.size(); ++i) {
         auto &chunk = *_world->_chunks[i];
-        const float *verts = chunk.getVerts();
         const int nverts = chunk.getVertCount();
+        if (nverts == 0) {
+            continue;
+        }
+        const float *verts = chunk.getVerts();
         const TriMeshPartition &partition = chunk.partition();
 
         float tbmin[2], tbmax[2];
@@ -132,19 +145,20 @@ bool NavWorld::TileBuilder::buildTileColumnCacheData() {
         const int ncid = chunk.partition().getChunksOverlappingRect(tbmin, tbmax, &_chunkIds[0], _chunkIds.size());
         _totalSourceChunks += ncid;
         if (!ncid) {
+//            printf("No chunks in tile %d,%d\n", tx, ty);
             continue;
         }
-
+  //      printf("chunks found! in tile %d,%d\n", tx, ty);
         // Rasterize chunks
         for (int c = 0; c < ncid; ++c) {
             const TriMeshPartitionNode &node = chunk.partition().nodes[_chunkIds[c]];
             const int *tris = &chunk.partition().tris[node.i * 3];
             const int ntris = node.n;
 
-            //memset(&_triAreas[0], 0, ntris * sizeof(unsigned char));
-            // This isn't particulary meaningful.
-//            rcMarkWalkableTriangles(&_context, _world->_agentParams.walkableSlopeAngle,
-  //                                  verts, nverts, tris, ntris, &_triAreas[0]);
+            // memset(&_triAreas[0], 0, ntris * sizeof(unsigned char));
+            //This isn't particulary meaningful.
+            rcMarkWalkableTriangles(&_context, _world->_agentParams.walkableSlopeAngle,
+                                              verts, nverts, tris, ntris, &_triAreas[0]);
 
             if (!rcRasterizeTriangles(&_context, verts, nverts, tris, &_triAreas[0], ntris, _solid, _world->_agentParams.walkableClimb))
                 return false;
@@ -252,34 +266,48 @@ bool NavWorld::TileBuilder::insertIntoCache() {
     return additionSuccess;
 }
 
-void printStatus(dtStatus status) {
+static const unsigned int DT_NO_NEAR_POLY = 1 << 8;  // A tile has already been assigned to the given x,y coordinate
+
+static std::string statusString(dtStatus status) {
     if (dtStatusSucceed(status)) {
-        return;
+        return "Success";
     }
+    std::string statusStr = "Failure: ";
+
     if (status & DT_WRONG_MAGIC) {
-        printf("Wrong magic number in input data.\n");
+        statusStr.append("Wrong magic number in input data. ");
     }
     if (status & DT_WRONG_VERSION) {
-        printf("Wrong version number in input data.\n");
+        statusStr.append("Wrong version number in input data. ");
     }
     if (status & DT_OUT_OF_MEMORY) {
-        printf("Out of memory.\n");
+        statusStr.append("Out of memory. ");
     }
     if (status & DT_INVALID_PARAM) {
-        printf("Invalid parameter.\n");
+        statusStr.append("Invalid parameter. ");
     }
     if (status & DT_BUFFER_TOO_SMALL) {
-        printf("Buffer too small.\n");
+        statusStr.append("Buffer too small. ");
     }
     if (status & DT_OUT_OF_NODES) {
-        printf("Out of nodes.\n");
+        statusStr.append("Out of nodes. ");
     }
     if (status & DT_PARTIAL_RESULT) {
-        printf("Partial result.\n");
+        statusStr.append("Partial result. ");
     }
     if (status & DT_ALREADY_OCCUPIED) {
-        printf("Tile already occupied.\n");
+        statusStr.append("Tile already occupied. ");
     }
+    if (status & DT_NO_NEAR_POLY) {
+        statusStr.append("No nearby polygon. ");
+    }
+
+    return statusStr;
+}
+
+void printStatus(dtStatus status) {
+    auto str = statusString(status);
+    printf("%s\n", str.c_str());
 }
 
 bool NavWorld::TileBuilder::inflate() {
@@ -301,7 +329,6 @@ void NavWorld::getTileRegion(h_float2 bmin, h_float2 bmax, h_int2 tmin, h_int2 t
     tmax->x = dtClamp(tmax->x, tmin->x, _tileCountWidth - 1);
     tmax->y = dtClamp(tmax->y, tmin->y, _tileCountHeight - 1);
 }
-
 
 void NavWorld::retire(TileBuilder *builder) {
     builder->reset();
@@ -386,23 +413,25 @@ void NavWorld::QueryWorker::setQueryArea(h_float3 center, h_float3 halfExtents) 
 
 dtStatus NavWorld::QueryWorker::findNearestPoly() {
     auto x = _query.findNearestPoly(&_center.x, &_halfExtents.x, &_filter, &_nearestPoly, &_nearestPoint.x);
-    if (_nearestPoly == 0) return DT_FAILURE;
-    return x;
+    if (_nearestPoly == 0) {
+        x = DT_FAILURE | DT_NO_NEAR_POLY;
+    }
+    return _lastStatus = x;
 }
 dtStatus NavWorld::QueryWorker::findEndPoints(h_float3 start, h_float3 end, h_float3 halfExtents) {
     auto x = _query.findNearestPoly(&start->x, &halfExtents->x, &_filter, &_nearestPoly, &_nearestPoint.x);
-    if (_nearestPoly == 0 || !dtStatusSucceed(x)) return DT_FAILURE;
-     _startPoly = _nearestPoly;
+    if (_nearestPoly == 0 || !dtStatusSucceed(x)) return _lastStatus = DT_FAILURE | DT_NO_NEAR_POLY;
+    _startPoly = _nearestPoly;
     _startPoint = _nearestPoint;
 
     _nearestPoly = 0;
-    
+
     x = _query.findNearestPoly(&end->x, &halfExtents->x, &_filter, &_nearestPoly, &_nearestPoint.x);
-    if (_nearestPoly == 0 || !dtStatusSucceed(x)) return DT_FAILURE;
-     _endPoly = _nearestPoly;
+    if (_nearestPoly == 0 || !dtStatusSucceed(x)) return _lastStatus = DT_FAILURE | DT_NO_NEAR_POLY;
+    _endPoly = _nearestPoly;
     _endPoint = _nearestPoint;
 
-    return DT_SUCCESS;
+    return _lastStatus = DT_SUCCESS;
 }
 
 dtPolyRef NavWorld::QueryWorker::nearestPoly() {
@@ -416,7 +445,12 @@ void NavWorld::QueryWorker::getNearestPoint(h_float3 point) {
 bool NavWorld::QueryWorker::centerOverNearestPoly() {
     return _centerOverNearestPoly;
 }
-
+dtPolyRef NavWorld::QueryWorker::startPoly() {
+    return _startPoly;
+}
+dtPolyRef NavWorld::QueryWorker::endPoly() {
+    return _endPoly;
+}
 void NavWorld::QueryWorker::setStartPoint(dtPolyRef ref, h_float3 point) {
     _startPoly = ref;
     _startPoint = *point;
@@ -425,6 +459,9 @@ void NavWorld::QueryWorker::setStartPoint(dtPolyRef ref, h_float3 point) {
 void NavWorld::QueryWorker::setEndPoint(dtPolyRef ref, h_float3 point) {
     _endPoly = ref;
     _endPoint = *point;
+}
+std::string NavWorld::QueryWorker::getLastError() {
+    return statusString(_lastStatus);
 }
 
 void NavWorld::QueryWorker::setMaximumPathLength(int maxNodes) {
@@ -435,7 +472,7 @@ void NavWorld::QueryWorker::setMaximumPathLength(int maxNodes) {
     _query.init(&_world->_navMesh, maxNodes);
 }
 dtStatus NavWorld::QueryWorker::findPath() {
-    return _query.findPath(_startPoly, _endPoly, &_startPoint.x, &_endPoint.x, &_filter, _path.data(), &_pathLength, _maxPathLength);
+    return _lastStatus = _query.findPath(_startPoly, _endPoly, &_startPoint.x, &_endPoint.x, &_filter, _path.data(), &_pathLength, _maxPathLength);
 }
 
 int NavWorld::QueryWorker::pathLength() {
@@ -446,12 +483,12 @@ void NavWorld::QueryWorker::getPathNodes(dtPolyRef *nodes) {
     memcpy(nodes, _path.data(), _pathLength * sizeof(dtPolyRef));
 }
 
-int  NavWorld::QueryWorker::getPathNode(int i) {
+int NavWorld::QueryWorker::getPathNode(int i) {
     return _path[i];
 }
 
 dtStatus NavWorld::QueryWorker::straightenPath() {
-    return _query.findStraightPath(&_startPoint.x, &_endPoint.x, _path.data(), _pathLength, (float *)_straightPos.data(), _straightFlags.data(), _straightPath.data(), &_straightPathLength, _maxPathLength);
+    return _lastStatus = _query.findStraightPath(&_startPoint.x, &_endPoint.x, _path.data(), _pathLength, (float *)_straightPos.data(), _straightFlags.data(), _straightPath.data(), &_straightPathLength, _maxPathLength);
 }
 
 int NavWorld::QueryWorker::straightPathLength() {
@@ -499,6 +536,11 @@ void NavWorld::QueryWorker::setCurrentAsEnd() {
     _endPoly = _nearestPoly;
 }
 
+dtMeshCapture *NavWorld::meshSnapshot() {
+    dtMeshCapture *capture = new dtMeshCapture(true);
+    capture->captureNavMesh(_navMesh);
+    return capture;
+}
 /*
 bool NavWorld::TileBuilder::build(int &dataSize) {
 
