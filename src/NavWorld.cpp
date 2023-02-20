@@ -68,7 +68,7 @@ void NavWorld::TileBuilder::bind(int x, int y) {
     _totalSourceChunks = 0;
 
     //auto borderSize = ceil(_world->_agentParams.walkableRadius / _world->_cellSize);
-    auto borderSize = _world->_agentParams.walkableRadius + 3;
+    auto borderSize = _world->_agentParams.walkableRadius  / _world->_cellSize + 3;
 
     if (borderSize != _borderSize) {
         _borderSize = borderSize;
