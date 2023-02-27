@@ -39,7 +39,7 @@ class NavWorldTest {
 		var maxSource = 0;
 		//        for (i in 0...3)
 		// Approx 2 ms
-		var pool = new ThreadPool(16); // 4 concurrent threads
+		var pool = new ThreadPool(2); // 4 concurrent threads
 
 		// pool.awaitCompletion(30 * 1000); // wait 30 seconds for all submitted tasks to be processed
 
@@ -83,7 +83,7 @@ class NavWorldTest {
 					throw 'Could not insert tile ${tb.x()} ${tb.y()}';
 				var inflated = tb.inflate();
 				if (!inflated)
-					throw 'Could not inflate tile ${tb.x()} ${tb.y()}';
+					throw 'Could not inflate tile ${tb.x()} ${tb.y()} : w ${tb.width()} h ${tb.height()}}';
 				tb.retire();
 			}
 
