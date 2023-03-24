@@ -1,7 +1,18 @@
 cmake_minimum_required(VERSION 3.10)
+if (WIN32)
+#why this has to be here is SUPER annoying
+cmake_policy(SET CMP0091 NEW) #required for MSVC runtime
+endif()
+
 project (recast C CXX)
 
+
+include(config.cmake)
+
+if (NOT PATH_TO_IDL)
 set(PATH_TO_IDL "../hl-idl")
+endif()
+
 # a bunch of pre-configured options that may or may not be useful
 # it attempts to cover most of what is used for basic libraries
 # you can reference the paths defined here to help make your cmake code more portable

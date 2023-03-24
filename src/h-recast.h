@@ -17,7 +17,7 @@
 #include <map>
 #include <unordered_map>
 #include <vector>
-
+#include <stdexcept>
 
 #include "fastlz/fastlz.h"
 #include "TriMeshBuilder.h"

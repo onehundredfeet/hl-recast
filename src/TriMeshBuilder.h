@@ -35,14 +35,14 @@ private:
 	TriMeshBuilder(const TriMeshBuilder&);
 	TriMeshBuilder& operator=(const TriMeshBuilder&);
 
-	float _scale;	
+	float _scale = 1.;	
 	std::vector<float> _verts;
 	std::vector<int> _tris;
 	std::vector<float> _normals;
 	std::vector<unsigned short> _flags;
 	std::vector<unsigned char> _area;
-	int _vertCount;
-	int _triCount;
+	int _vertCount = 0;
+	int _triCount = 0;
 };
 #include "TriMeshBuilder.cpp"
 #endif

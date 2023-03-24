@@ -232,7 +232,7 @@ class NavWorld {
         std::vector<TileCacheData> _tileCacheData;
 
         void bind(int x, int y);
-        int numCachedTiles() const { return _tileCacheData.size(); }
+        int numCachedTiles() const { return (int)_tileCacheData.size(); }
         const TileCacheData &getCachedTileData(int i) const { return _tileCacheData[i]; }
         void clearCachedTiles() {
             _tileCacheData.clear();
@@ -352,7 +352,8 @@ class NavWorld {
     int maxTrisPerChunk() {
         int maxTris = 0;
         for (auto chunk : _chunks) {
-            maxTris = std::max(maxTris, chunk->getMaxNodeTris());
+            auto x = chunk->getMaxNodeTris();
+            maxTris = x > maxTris ? x : maxTris;
         }
         return maxTris;
     }

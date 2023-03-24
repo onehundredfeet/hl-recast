@@ -143,7 +143,7 @@ bool NavWorld::TileBuilder::buildTileColumnCacheData() {
 
         // If you have multiple meshes you need to process, allocate
         // and array which can hold the max number of triangles you need to process.
-        const int ncid = chunk.partition().getChunksOverlappingRect(tbmin, tbmax, &_chunkIds[0], _chunkIds.size());
+        const int ncid = chunk.partition().getChunksOverlappingRect(tbmin, tbmax, &_chunkIds[0], (int)_chunkIds.size());
         _totalSourceChunks += ncid;
         if (!ncid) {
 //            printf("No chunks in tile %d,%d\n", tx, ty);

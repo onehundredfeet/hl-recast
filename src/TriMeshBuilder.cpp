@@ -229,7 +229,7 @@ char* buf = 0;
 		if (row[0] == 'f')
 		{
 			// Faces
-			nv = parseFace(row+1, face, 32, _verts.size());
+			nv = parseFace(row+1, face, 32, (int)_verts.size());
 			for (int i = 2; i < nv; ++i)
 			{
 				const int a = face[0];
