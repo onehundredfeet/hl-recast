@@ -2,19 +2,21 @@
 ################# COMMON
 
 if (NOT PATH_TO_IDL)
-set(PATH_TO_IDL "ext/hl-idl")
+set(PATH_TO_IDL "${CMAKE_SOURCE_DIR}/ext/hl-idl")
 endif()
 
 if (NOT EXISTS ${PATH_TO_IDL})
 message( "This library requires library hl-idl https://github.com/onehundredfeet/hl-idl.git ")
-message( FATAL_ERROR "Please use -DPATH_TO_IDLL=<IDLPATH> to set the path relative to directory you are running in or run `git update submodules --init --recursive`")
+message( FATAL_ERROR "Please use -DPATH_TO_IDL=<IDLPATH> to set the path relative to directory you are running in or run `git update submodules --init --recursive`")
 endif()
 
-set(RECAST_LIB_DIR "ext/recast")
+if (NOT RECAST_LIB_DIR) 
+set(RECAST_LIB_DIR "${CMAKE_SOURCE_DIR}/ext/recast")
+endif()
 
 if (NOT EXISTS ${RECAST_LIB_DIR})
 message( "This library requires a specific version of recast https://github.com/onehundredfeet/recastnavigation.git ")
-message( FATAL_ERROR "Please run `git update submodules --init --recursive`")
+message( FATAL_ERROR "Can't find recast at ${RECAST_LIB_DIR}, please specify -DRECAST_LIB_DIR=<PATH> or run `git update submodules --init --recursive`")
 endif()
 
 
@@ -34,8 +36,8 @@ if (NOT HDLL_DESTINATION)
     set(HDLL_DESTINATION ${COMMON_LIB_DIR})
 endif()
 
-if (NOT HL_INCLUDE_DIR) 
-    set(HL_INCLUDE_DIR "/usr/local/include")
+if (NOT HL_INC_DIR) 
+    set(HL_INC_DIR "/usr/local/include")
 endif()
 
 ################# WINDOWS
@@ -45,9 +47,10 @@ if (NOT COMMON_LIB_DIR)
     set(COMMON_LIB_DIR "ext")
 endif()
 
-if (NOT HL_INCLUDE_DIR) 
-    set(HL_INCLUDE_DIR "${COMMON_LIB_DIR}/include")
+if (NOT HL_INC_DIR) 
+    set(HL_INC_DIR "${COMMON_LIB_DIR}/include")
 endif()
+message(STATUS "HL_INC_DIR: ${HL_INC_DIR}")
 if (NOT HL_LIB_DIR) 
     set(HL_LIB_DIR "${COMMON_LIB_DIR}/lib")
 endif()
