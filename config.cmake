@@ -23,22 +23,7 @@ endif()
 ################# MAC AND LINUX
 if (UNIX)
 
-if (NOT COMMON_LIB_DIR) 
-    set(COMMON_LIB_DIR "/usr/local/lib")
-endif()
 
-
-if (NOT HL_LIB_DIR) 
-    set(HL_LIB_DIR ${COMMON_LIB_DIR})
-endif()
-
-if (NOT HDLL_DESTINATION) 
-    set(HDLL_DESTINATION ${COMMON_LIB_DIR})
-endif()
-
-if (NOT HL_INC_DIR) 
-    set(HL_INC_DIR "/usr/local/include")
-endif()
 
 ################# WINDOWS
 elseif(WIN32)

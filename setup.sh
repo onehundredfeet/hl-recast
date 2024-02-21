@@ -6,9 +6,9 @@ BUILDER="ninja"
 TARGET=hl
 #TARGET=jvm
 CONFIG=Debug
+IDL_PATH="../hl-idl"
 
-
-while getopts p:b:c:a:t: flag
+while getopts p:b:c:a:t:i: flag
 do
     case "${flag}" in
         p) PROJECT=${OPTARG};;
@@ -16,6 +16,7 @@ do
         c) CONFIG=${OPTARG};;
         a) ARCH=${OPTARG};;
         t) TARGET=${OPTARG};;
+	i) IDL_PATH=${OPTARG};;
     esac
 done
 
@@ -35,7 +36,5 @@ mkdir -p build/${TARGET}/${ARCH}/${CONFIG}
 mkdir -p installed/${TARGET}/${ARCH}/${CONFIG}
 
 mkdir -p build/${TARGET}/${ARCH}/${CONFIG}
-pushd build/${TARGET}/${ARCH}/${CONFIG}
-cmake -G"${GENERATOR}" -DTARGET_ARCH=${ARCH} -DTARGET_HOST=${TARGET} -DCMAKE_BUILD_TYPE=${CONFIG} -DCMAKE_INSTALL_PREFIX=../../../../installed/${TARGET}/${ARCH}/${CONFIG} ../../../.. 
-popd
+cmake -G"${GENERATOR}" -DTARGET_ARCH=${ARCH} -DPATH_TO_IDL=${IDL_PATH} -DTARGET_HOST=${TARGET} -DCMAKE_BUILD_TYPE=${CONFIG} -DCMAKE_INSTALL_PREFIX=installed/${TARGET}/${ARCH}/${CONFIG} -B build/${TARGET}/${ARCH}/${CONFIG} 
 

@@ -19,9 +19,7 @@ done
 
 
 
-pushd build/${TARGET}/${ARCH}/${CONFIG}
-${BUILDER} install
-popd
+cmake --install build/${TARGET}/${ARCH}/${CONFIG}
 mkdir -p bin
 rm -f ${PROJECT}.dylib
 cp -f build/${TARGET}/${ARCH}/${CONFIG}/${PROJECT}.* .

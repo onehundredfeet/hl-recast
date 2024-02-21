@@ -7,3 +7,4 @@ PathfinderSample/pathfinder.hl
 recast.hdll
 bin
 out.obj
+.haxelib

@@ -18,7 +18,5 @@ do
 done
 
 
-pushd build/${TARGET}/${ARCH}/${CONFIG}
-${BUILDER}
-popd
+cmake --build build/${TARGET}/${ARCH}/${CONFIG}
 
