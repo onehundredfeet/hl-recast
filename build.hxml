@@ -1,0 +1,5 @@
+
+-cp generator
+-cp .
+-lib hl-idl
+--run Build

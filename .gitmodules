@@ -1,3 +1,9 @@
 [submodule "ext/recast"]
 	path = ext/recast
 	url = https://github.com/onehundredfeet/recastnavigation.git
+[submodule "ext2/recast"]
+	path = ext2/recast
+	url = https://github.com/recastnavigation/recastnavigation.git
+[submodule "ext/hl-idl"]
+	path = ext/hl-idl
+	url = https://github.com/onehundredfeet/hl-idl.git
