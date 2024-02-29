@@ -99,7 +99,7 @@ rcSpan* rcHeightfield_rcSpanAt(rcHeightfield *context, int pos) {
 	static var arch = "x86_64";
     static var idlPath = "ext/hl-idl";
     static var config = "Debug";
-
+	static var hlDir = null;
 	static var installDir = null;
 
     static function cmake(){
@@ -144,6 +144,8 @@ rcSpan* rcHeightfield_rcSpanAt(rcHeightfield *context, int pos) {
                         config = args.shift();
 					case "--dir":
 						installDir = args.shift();
+					case "--hl":
+						hlDir = args.shift();
                     default:
                 }
             }

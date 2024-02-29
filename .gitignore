@@ -8,3 +8,5 @@ recast.hdll
 bin
 out.obj
 .haxelib
+installed
+src/idl_hl.cpp

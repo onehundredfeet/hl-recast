@@ -28,28 +28,11 @@ if (UNIX)
 ################# WINDOWS
 elseif(WIN32)
 
-if (NOT COMMON_LIB_DIR) 
-    set(COMMON_LIB_DIR "ext")
-endif()
-
-if (NOT HL_INC_DIR) 
-    set(HL_INC_DIR "${COMMON_LIB_DIR}/include")
-endif()
-message(STATUS "HL_INC_DIR: ${HL_INC_DIR}")
-if (NOT HL_LIB_DIR) 
-    set(HL_LIB_DIR "${COMMON_LIB_DIR}/lib")
-endif()
-
-if (NOT HDLL_DESTINATION) 
-set(HDLL_DESTINATION "./installed/lib")
-endif()
-
-
 
 #### CHECKS
-if (NOT EXISTS ${HL_LIB_DIR})
-    message(FATAL_ERROR "Hashlink libraries not found. They are included with the installation or build of hashlink. Please specify the hashlink library directory using HL_LIB_DIR as a -D option. See config.cmake for pathing information.")
-endif()
+#if (NOT EXISTS ${HL_LIB_DIR})
+#    message(FATAL_ERROR "Hashlink libraries not found. They are included with the installation or build of hashlink. Please specify the hashlink library directory using HL_LIB_DIR as a -D option. See config.cmake for pathing information.")
+#endif()
 
 
 ################# END
