@@ -86,12 +86,8 @@ rcSpan* rcHeightfield_rcSpanAt(rcHeightfield *context, int pos) {
 ";
 
 
-	static var hlDir = null;
 	public static function main() {
 		var b = new Build();
-					case "--hl":
-						hlDir = args.shift();
-
 		b.parseArgs();
 
 	}
